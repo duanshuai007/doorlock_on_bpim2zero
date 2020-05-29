@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+#-*- coding:utf-8 -*-
+
+import mmap
+import struct
+
+class GPIO:
+	#-------------------------------------------------------------------------------------#
+	#定义GPIO相对0x01C20000的偏移地址
+	PIO_ADDR_OFFSET = 0x0800    
+
+	#定义GPIOA的寄存器相对0x01C20000的偏移地址
+	#作者只写了GPIOA的寄存器定义，如果需要使用其他IO，请参考datasheet在下面增加定义
+	PIO_PA_CFG0_REG = PIO_ADDR_OFFSET + 0x00
+	PIO_PA_CFG1_REG = PIO_ADDR_OFFSET + 0x04
+	PIO_PA_CFG2_REG = PIO_ADDR_OFFSET + 0x08
+	PIO_PA_CFG3_REG = PIO_ADDR_OFFSET + 0x0C
+	PIO_PA_DATA_REG = PIO_ADDR_OFFSET + 0x10
+
+	PIO_PA_DRV0_REG = PIO_ADDR_OFFSET + 0x14
+	PIO_PA_DRV1_REG = PIO_ADDR_OFFSET + 0x18
+	PIO_PA_PUL0_REG = PIO_ADDR_OFFSET + 0x1C
+	PIO_PA_PUL1_REG = PIO_ADDR_OFFSET + 0x20
+
+	#-------------------------------------------------------------------------------------#
+	#以下是构造函数和析构函数
+	def __init__(self):
+		self.m_mmap = None
+		self.fd = None
+
+	def __del__(self):
+		if(self.m_mmap != None):
+			self.m_mmap.close()
+		if(self.fd != None):
+			self.fd.close()
+
+	#-------------------------------------------------------------------------------------#
+	#以下是成员函数
+	def Init(self):
+		"""
+		GPIO初始化函数
+		函数会打开/dev/mem文件，并映射从0x01C20000地址开始，共8192字节长度（2页）的内存空间到用户的虚拟地址
+		返回值：无
+		"""
+		START_ADDR = 0x01C20000
+		self.fd = open("/dev/mem", "rb+")
+		self.m_mmap = mmap.mmap(self.fd.fileno(), 4096 * 2, mmap.MAP_SHARED, mmap.PROT_WRITE | mmap.PROT_READ, mmap.ACCESS_WRITE, START_ADDR)
+		assert self.m_mmap != None,"Init Fails"
+
+
+	def ReadReg(self,reg_addr):
+		"""
+		读取一个寄存器的值
+		reg_addr:要读取的寄存器地址（必须为4的倍数），且范围在2个pagesize内，即小于8192
+		返回值：寄存器的值（4字节）
+		"""
+		assert self.m_mmap != None,"Init Fails"
+		assert reg_addr % 4 == 0,"reg_addr must be mutiple of 4"
+		assert 0 <= reg_addr <= 8192,"reg_addr must be less than 8192,which is 2 pagesize"
+
+		self.m_mmap.seek(reg_addr)
+		ReadBytes = self.m_mmap.read(4)
+		print("read:{}".format(ReadBytes))
+		return struct.unpack('L',ReadBytes)[0]
+
+	def WriteReg(self,reg_addr,value):
+		"""
+		写一个寄存器的值
+		reg_addr:要写入的寄存器地址（必须为4的倍数），且范围在2个pagesize内，即小于8192
+		value:要写入的值，整形，一次写入四个字节长度的整数，即0xffffffff
+		返回值：无
+		"""     
+		assert self.m_mmap != None,"Init Fails"
+		assert reg_addr % 4 == 0,"reg_addr must be mutiple of 4"
+		assert 0 <= reg_addr <= 8192,"reg_addr must be less than 8192,which is 2 pagesize"
+		assert 0 <= value <= 0xFFFFFFFF,"value must be less than 0xFFFFFFFF,which is 4 bytes"
+
+		self.m_mmap.seek(reg_addr)
+		BytesToWrite = struct.pack('L',value)
+		print("write:{}".format(BytesToWrite))
+		self.m_mmap.write(BytesToWrite)
+		return
