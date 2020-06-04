@@ -189,37 +189,29 @@ SAY "\nGood bye !\n"
 ## 开机启动网络管理脚本
 
 将pppd和wifi网络的启动放在一个脚本文件中进行统一管理，通过设置为后台守护进程一直监视进程保证进程执行。  
-去掉`/etc/rc.local`中关于`pppd`和`wpa`的语句，然后加入`/root/start_network.sh &`，脚本内容如下.
+去掉`/etc/rc.local`中关于`pppd`和`wpa`的语句，然后加入
+
 
 ```
-#!/bin/bash
-
-#开机启动脚本，启动wpa 和 pppd线程
-
-PPPD=$(which pppd)
-
-while true
-do
-	ps -ef | grep wpa_supplicant | grep -v grep > /dev/null
-		if [ $? -ne 0 ] 
-		then 
-			ifconfig | grep wlan0 > /dev/null
-			if [ $? -ne 0 ]
-			then
-				#equl 1 mean wlan0 not exists
-				/sbin/wpa_supplicant -iwlan0 -c /etc/wpa.conf > /var/log/wpalog 2>&1 &
-				sleep 1
-				dhclient wlan0
-			fi
-		fi
-
-	ps -ef | grep pppd | grep -v grep > /dev/null
-	if [ $? -ne 0 ]
-	then
-		${PPPD} call myapp &
-	fi
-
-	sleep 10
-done
+/root/start_network.sh &
+/root/monitor_network.sh &
 ```
+
+
+## 硬件控制
+
+#### 控制GPIO
+
+控制gpio有两种方式
+
+* 1 使用python的mmap库对内存进行映射，然后直接对寄存器就可以进行读写控制。通过这种方式实现了对PA3引脚的读写。
+
+* 2 编写驱动程序引脚进行控制，使用gpio_request，gpio_set_value,gpio_get_value等内核函数对gpio进行读写操作，并传递到用户空间。
+
+
+#### 控制SPI
+
+在BPIM2-zero中有两个spi，其中spi0是默认提供的spi接口，linux还提供了一个通用驱动程序spidev.c，我们的设备接在了spi1上，无法直接使用Linux的spi驱动，所以选择使用字符设备驱动读写寄存器的方式来对spi进行控制。
+
+
 
