@@ -3,7 +3,6 @@
 
 import serial
 import os
-import time
 
 s = serial.Serial("/dev/ttyS2", 115200, 8, serial.PARITY_NONE, 1, 0.5)
 

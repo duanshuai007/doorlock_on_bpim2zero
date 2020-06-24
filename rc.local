@@ -1,0 +1,35 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+#关门
+#echo 12 >  /sys/class/gpio/export
+#echo out > /sys/class/gpio/gpio12/direction
+#echo 1 >   /sys/class/gpio/gpio12/value
+#echo 12 >  /sys/class/gpio/unexport
+#屏幕rst
+#echo 16 >  /sys/class/gpio/export
+#echo out > /sys/class/gpio/gpio16/direction
+#echo 0 >   /sys/class/gpio/gpio16/value
+#echo 16 >  /sys/class/gpio/unexport
+
+python3 /root/showimage.py 1
+
+/root/start_network.sh &
+/root/watch_mqtt.sh &
+
+mac=$(ifconfig eth0 | grep HWaddr | awk -F" " '{print $5}' | awk -F":" '{print $1$2$3$4$5$6}')
+echo ${mac} > /tmp/eth0macaddr
+
+/root/monitor_network.sh &
+
+exit 0

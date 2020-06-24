@@ -12,22 +12,21 @@
 #include <linux/device.h>
 #include <linux/fs.h>
 #include <linux/delay.h>
+#include <asm/io.h>
 
 
 /*
  *	因为BPIM2zero 固件只有SPI0的驱动，没有SPI1的驱动
  *	lcd屏幕需要SPI的驱动，又接在了SPI1接口上，所以选择模拟SPI的方式进行驱动
  */
-
 #define PIN_SDA		15	//PA15
 #define PIN_SCK		14	//PA14
 #define PIN_RST		16	//PA16
 #define PIN_A0		21	//PA21
 #define PIN_CS		13	//PA13
 
-#define SPI_1_REG_ADDR	0x01C69000
-
-#define READREG(addr) ((unsigned int *)((addr)))
+//#define SPI_1_REG_ADDR	0x01C69000
+//#define READREG(addr) ((unsigned int *)((addr)))
 
 #define CS_ENABLE	0
 #define CS_DISABLE	1
@@ -35,24 +34,6 @@
 #define A0_DATA		1
 #define RST_ENABLE	0
 #define RST_DISABLE	1
-
-#define R0	0x24
-#define R1	0x28
-#define R2	0x81
-#define	R3	0xE8
-#define R4	0xA0
-#define R5	0xA4
-#define R6	0xA6
-#define R7	0xA8
-#define R8	0xC0
-#define R9	0xC8
-#define R10	0xD8
-#define R11	0xD0
-#define R12	0xD4
-#define R13	0xE2
-#define R14	0xE3
-#define R15	0xF1
-
 
 typedef struct pin_desc_t {
 	int sda;	//数据输出线
@@ -63,74 +44,33 @@ typedef struct pin_desc_t {
 } pin_desc_t;
 
 #define DEFAULT_MAJOR	0
+#define USE_SEMAPHORE	1
 
 typedef struct lcd_t {
 	int dev_major;
 	struct class *class;
 	struct cdev *cdev;
-	struct device *device;
 	struct pin_desc_t pin;
-	void __iomem *pioreg;
-	struct kobject *kobj;
-	int pin_irq_number;
-	char buffer[1024];
+	char buffer[162];
+	unsigned int linepoint;
+	int usedflag;
+#if USE_SEMAPHORE
+	struct semaphore sem;
+#endif
 } lcd_t;
 
 static lcd_t *lcd = NULL;
 
-//kobject OPS
-//该函数被__ATTR_RO(name)自动扩展为${name}_show
-static ssize_t led_show(struct kobject *kobjs, struct kobj_attribute *attr, char *buf) {
-	int val;
-	printk(KERN_INFO "read led\n");
-	val = gpio_get_value(lcd->pin.cs);
-	return sprintf(buf, "the led status = %d\n", val);
-}
-
-//这两个函数被_ATTR
-static ssize_t led_status_show(struct kobject *kobjs, struct kobj_attribute *attr, char *buf) {
-	int val;
-	printk(KERN_INFO "led status show\n");
-	val = gpio_get_value(lcd->pin.cs);
-	return sprintf(buf, "led status = %d\n", val);
-}
-
-static ssize_t led_status_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count) 
+static void begin_write_data(void)
 {
-	printk(KERN_INFO "led status store\n");
-	if (0 == memcmp(buf, "on", 2)) {
-		gpio_set_value(lcd->pin.cs, 1);
-	} else if (0 == memcmp(buf, "off", 3)) {
-		gpio_set_value(lcd->pin.cs, 0);
-	} else {
-		printk(KERN_INFO "Not support cmd\n");
-	}
-
-	return count;
-}
-
-static struct kobj_attribute status_attr = __ATTR_RO(led);
-static struct kobj_attribute led_attr = __ATTR( led_status, 0660, led_status_show, led_status_store);
-
-static struct attribute *led_attrs[] = {
-	&status_attr.attr,
-	&led_attr.attr,
-	NULL,
-};
-
-static struct attribute_group attr_g = {
-	.name = "kobject_led",
-	.attrs = led_attrs,
-};
-
-
-static void write_data(unsigned char dat)
-{
-	int i;
-
 	gpio_set_value(lcd->pin.cs, CS_ENABLE);
 	gpio_set_value(lcd->pin.a0, A0_DATA);
-	ndelay(220);
+	ndelay(200);
+}
+
+static void continue_write_data(unsigned char dat)
+{
+	int i;
 
 	for (i = 0; i < 8; i++) {
 		gpio_set_value(lcd->pin.sck, 0);	
@@ -138,12 +78,15 @@ static void write_data(unsigned char dat)
 			gpio_set_value(lcd->pin.sda, 0);
 		else
 			gpio_set_value(lcd->pin.sda, 1);
-		ndelay(50);
+		ndelay(10);
 		gpio_set_value(lcd->pin.sck, 1);	
 		dat <<= 1;
-		ndelay(50);
+		ndelay(10);
 	}
-	ndelay(50);
+}
+
+static void end_write_data(void)
+{
 	gpio_set_value(lcd->pin.cs, CS_DISABLE);
 }
 
@@ -170,49 +113,6 @@ static void write_cmd(unsigned char cmd)
 	gpio_set_value(lcd->pin.cs, CS_DISABLE);
 }
 
-static void lcd_reset(void)
-{
-	gpio_set_value(lcd->pin.rst, RST_ENABLE);
-	ndelay(20);
-	gpio_set_value(lcd->pin.rst, RST_DISABLE);
-	mdelay(210);
-}
-
-//col: 0 - 54
-static void set_lcd_column(unsigned char col)
-{
-	if (col > 54) {
-		printk(KERN_ALERT "lcd col error, col=%d\n", col); 
-		return;
-	}
-	unsigned char realcol = col + 37;
-
-	write_cmd(0x00 | 0x0f & realcol);
-	write_cmd(0x10 | ((realcol >> 4) & 0x0f));
-}
-
-//row:0-159
-static void set_lcd_row(unsigned char row)
-{
-	if (row > 159) {
-		printk(KERN_ALERT "lcd row error, row=%d\n", row);
-		return;
-	}
-
-	write_cmd(0x40 | (row & 0x0f));
-	write_cmd(0x70 | ((row >> 4) & 0x0f));
-}
-
-/*
- *	(0)automodify: 1=行列到达边界时自动修改 0=不自动修改到达边界后不变
- *	(1)modifymode: 1=colmode 0=rowmode
- *	(2)rowmodifymode: 0=+1 1=-1
- */
-static void set_r18(unsigned char automodify, unsigned char modifymode, unsigned char rowmodifymode)
-{
-	write_cmd(0x88 | ((automodify << 0) | (modifymode << 1) | (rowmodifymode << 2)));
-}
-
 static void lcd_window_init(unsigned char start_row, unsigned char start_col, unsigned char width, unsigned char height)
 {
 	if (start_row > 159 || (start_row + height > 160)) {
@@ -224,6 +124,11 @@ static void lcd_window_init(unsigned char start_row, unsigned char start_col, un
 		printk(KERN_ALERT "lcd_window_init col error,start=%d,height=%d\n", start_col, width);
 		return;
 	}
+
+	write_cmd(0x05);//set column
+	write_cmd(0x12);
+	write_cmd(0x60);//set row 
+	write_cmd(0x70);
 
 	//设置窗口左边界
 	write_cmd(0xf4);
@@ -259,27 +164,13 @@ static void lcd_init(void)
 	//电源控制设置
 	//pc0:0->承受lcd负载<=13nF, 1->承受lcd负载为13nF<lcd<=22nF
 	//pc1:0->关闭内置升压电路, 1->启用内部升压电路
-	write_cmd(0x28 | 2);
-
-	//设置对比度电压 取值范围0-255
-	write_cmd(0x81);
-	write_cmd(188);
-
-	//偏压比设置 取值范围0-3
-	write_cmd(0xe8 | 1);
-
-	//设置帧率 取值范围0-3
-	write_cmd(0xa0 | 2);
-	
-	//设置全显示 0->关闭全显示 1->打开全显示
-	write_cmd(0xa4 | 0);
-
-	//设置负性显示 0关闭 1开启
-	write_cmd(0xa6 | 0);
+	write_cmd(0x28 | 3);
 
 	//lcd映像设置
 	write_cmd(0xc0);
 
+	//设置帧率 取值范围0-3
+	write_cmd(0xa0 | 2);
 	//M信号波形设置
 	write_cmd(0xc8);
 	write_cmd(0x0f);
@@ -299,6 +190,20 @@ static void lcd_init(void)
 	//R R R R R G G G
 	//G G G B B B B B
 	write_cmd(0xd4 | 1);
+
+	//偏压比设置 取值范围0-3
+	write_cmd(0xe8 | 1);
+
+
+	//设置对比度电压 取值范围0-255
+	write_cmd(0x81);
+	write_cmd(188);
+	
+	//设置全显示 0->关闭全显示 1->打开全显示
+	//write_cmd(0xa4 | 0);
+
+	//设置负性显示 0关闭 1开启
+	//write_cmd(0xa6 | 0);
 
 	//显示使能设置
 	//(0): 1开显示 0关显示
@@ -340,19 +245,6 @@ static void gpio_config(struct pin_desc_t *ppin)
 	gpio_request(ppin->cs, "lcd_cs");
 	gpio_direction_output(ppin->cs, 1);
 	gpio_set_value(ppin->cs, CS_DISABLE);
-#if 0
-	gpio_request(INTERRUPT_PIN, "interrupt_pin");
-	gpio_direction_input(INTERRUPT_PIN);
-	//设置pin消抖时间20MS
-	gpio_set_debounce(INTERRUPT_PIN, 20);
-	pin_irq_number = gpio_to_irq(INTERRUPT_PIN);
-	printk(KERN_INFO "pin irq number = %d", pin_irq_number);
-	ret = request_irq(pin_irq_number, 
-						(irq_handler_t)pin_irq_handle,
-						IRQF_TRIGGER_RISING,
-						"pin irq",
-						NULL);
-#endif
 }
 
 static void gpio_deconfig(void) {
@@ -363,119 +255,157 @@ static void gpio_deconfig(void) {
 	gpio_free(lcd->pin.cs);
 }
 
-static void pin_timer_handler(unsigned long data)
-{
-	printk(KERN_INFO "enter timer! data=%d", (int)data);
-}
-
-static irqreturn_t pin_irq_handle(int irq, void *devid)
-{
-	printk(KERN_INFO "enter irq, devid=%d!\n", (int)devid);
-
-	return (irqreturn_t)IRQ_HANDLED;
-}
-
 static int lcd_open(struct inode *node, struct file *file)
 {
-	printk(KERN_INFO "led open\n");
-	file->private_data = (void *)lcd;
-
-	printk(KERN_INFO "gpio config\n");
-	gpio_config(&lcd->pin);
-
-	lcd_init();
-	return 0;
-}
-
-static int display_full_window(unsigned char status)
-{
-	int i, j;
-
-	lcd_window_init( 0, 0, 54, 159);
-	lcd_window_enable(true);
-
-	for (i = 0; i < 160; i++) {
-		for (j = 0; j < 54; j++) {
-			write_data(status);
-			write_data(status);
-			write_data(status);
-		}
+	if (down_trylock(&lcd->sem)) {
+		printk(KERN_ALERT "lcd is inuse!\n");
+		return -EBUSY;
 	}
-	lcd_window_enable(false);
-}
 
-static ssize_t lcd_read(struct file *file, char *buf, size_t count, loff_t *pos)
-{
-	int ret = 0;
-	int val;
-	lcd_t *p = (lcd_t *)file->private_data;
-	val = gpio_get_value(p->pin.cs);
-	ret = copy_to_user(buf, &val, 1);
-	if (ret == 0)
+	if (lcd->usedflag) {
+		printk(KERN_INFO "lcd already in use!\n");
+		up(&lcd->sem);
 		return 0;
-	else {
-		printk(KERN_ALERT "error occur when reading!\n");
-		return -EFAULT;
-	}
-	return 1;
-}
-
-
-
-static ssize_t lcd_write(struct file *file, const char *buf, size_t count, loff_t *pos)
-{
-	int ret = 0;
-	int len;
-	
-	lcd_t *p = (lcd_t *)file->private_data;
-
-	if (count > sizeof(p->buffer)) {
-		printk(KERN_ALERT "count too big, should less than\n");
-		return -EFAULT;
-	}
-	
-	len = count;
-
-	ret = copy_from_user(p->buffer, buf, count);
-	if (ret == 0) {
-		if (memcmp(p->buffer, "on", 2) == 0) {
-			printk(KERN_INFO "led on!\n");
-			display_full_window(0);
-		} else if (memcmp(p->buffer, "off", 3) == 0) {
-			printk(KERN_INFO "led off!\n");
-			display_full_window(0xff);
-		} else {
-			printk(KERN_INFO "cmd error\n");
-			return -EFAULT;
-		}
-	} else {
-		printk(KERN_ALERT "error occur when writing!\n");
-		return -EFAULT;
 	}
 
-	return count;
+	lcd->usedflag = 1;
+	file->private_data = (void *)lcd;
+	gpio_config(&lcd->pin);
+	lcd_init();
+	lcd_window_init( 0, 0, 53, 159);
+	lcd_window_enable(true);
+	lcd->linepoint = 0;
+
+	up(&lcd->sem);
+	return 0;
 }
 
 static int lcd_release(struct inode *node, struct file *file)
 {
-	printk(KERN_INFO "led release\n");
+	lcd_t *p = (lcd_t *)file->private_data;
+	if (down_trylock(&p->sem)) {
+		return -EBUSY;
+	}
+	lcd_window_enable(false);
 	file->private_data = NULL;
 	gpio_deconfig();
-
+	p->usedflag = 0;
+	
+	up(&p->sem);
 	return 0;
+}
+
+#define LCD_DRV_MAGIC				'K'
+#define LCD_CMD_MAKE(cmd)			(_IO(LCD_DRV_MAGIC, cmd))
+#define LCD_IOCTL_CMD_GET(cmd)		(_IOC_NR(cmd))
+#define LCD_IOCTL_CMD_IS_VALID(cmd)	((_IOC_TYPE(cmd) == LCD_DRV_MAGIC)?1:0)
+
+#define LCD_WINDOW_START        3
+#define LCD_WINDOW_CONTINUE     4
+#define LCD_WINDOW_END			5
+#define LCD_OPEN_SCREEN			6
+#define LCD_CLOSE_SCREEN		7
+#define LCD_RESET				99
+#define LCD_INIT				100
+
+static long lcd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+{
+	int recvcmd;
+	lcd_t *p = (lcd_t *)file->private_data;
+	int i;
+	int ret = 0;
+
+	if (down_trylock(&p->sem)) {
+		printk(KERN_ALERT "lcd is inuser!\n");
+		return -EBUSY;
+	}
+
+	if (!LCD_IOCTL_CMD_IS_VALID(cmd)) {
+		printk(KERN_ALERT "lcd_ioctl cmd magic error\n");
+		up(&p->sem);
+		return -EINVAL;
+	}
+
+	recvcmd = LCD_IOCTL_CMD_GET(cmd);
+	
+	switch(recvcmd) {
+		case 1:
+			printk(KERN_INFO "show pic!\n");
+			break;
+		case 2:
+			printk(KERN_INFO "clear screen!\n");
+			break;
+		case LCD_WINDOW_START:
+			write_cmd(0xa8 | (0 << 2) | (0 << 1) | (1 << 0));
+			mdelay(15);
+			begin_write_data();
+			if ((unsigned int)arg > sizeof(p->buffer)) {
+				printk(KERN_ALERT "line point too mush!it's should less 162\n");
+				ret = -EINVAL;
+			} else {
+				p->linepoint = (int)arg;
+			}
+			break;
+		case LCD_WINDOW_CONTINUE:
+			if (copy_from_user(p->buffer, (unsigned char *)arg, p->linepoint)) {
+				printk(KERN_ALERT "copy_from_user error\n");
+				ret = -EFAULT;
+				break;
+			}
+			if (p->linepoint == 0) {
+				printk(KERN_ALERT "must set up linepoint value!\n");
+				ret = -EINVAL;
+				break;
+			}
+			//printk(KERN_INFO "LCD_WINDOW_CONTINUE: addr=%08x len=%d\n",  (unsigned char *)arg, p->linepoint);
+			for (i = 0; i < p->linepoint; i++) {
+				//write_data(buffer[i]);
+				continue_write_data(p->buffer[i]);
+			}
+			break;
+		case LCD_WINDOW_END:
+			p->linepoint = 0;
+			end_write_data();
+			break;
+		case LCD_OPEN_SCREEN:
+			write_cmd(0xa8 | (0 << 2) | (0 << 1) | (1 << 0));
+			mdelay(15);
+			break;
+		case LCD_CLOSE_SCREEN:
+			write_cmd(0xa8 | (0 << 2) | (0 << 1) | (0 << 0));
+			mdelay(15);
+			break;
+		case LCD_INIT:
+			lcd_init();
+			lcd_window_init( 0, 0, 53, 159);
+			lcd_window_enable(true);
+			break;
+		case LCD_RESET:
+			write_cmd(0xe2);
+			mdelay(300);
+			break;
+		default:
+			printk(KERN_ALERT "lcd_ioctl inval cmd:%d\n", recvcmd);
+			ret = -EINVAL;
+	}
+
+	up(&p->sem);
+	return ret;
 }
 
 static struct file_operations led_ops = {
 	.owner = THIS_MODULE,
 	.open = lcd_open,
 	.release = lcd_release,
-	.read = lcd_read,
-	.write = lcd_write,
+	//.read = lcd_read,
+	//.write = lcd_write,
+	.unlocked_ioctl = lcd_ioctl,
 };
 
 static int __init lcd_driver_init(void)
 {
 	int ret = 0;
+	struct device *pdev;
 
 	printk(KERN_DEBUG "lcd driver!!!\n");
 
@@ -492,24 +422,15 @@ static int __init lcd_driver_init(void)
 	lcd->pin.a0		= PIN_A0;
 	lcd->pin.cs		= PIN_CS;
 
-	//创建kobj结构体
-	lcd->kobj = kobject_create_and_add("lcd_obj_test", kernel_kobj->parent);
-	if (!lcd->kobj) {
-		printk(KERN_ALERT "kobject_create_and_add failed\n");
-		return -1;
-	}
-	
-	ret = sysfs_create_group(lcd->kobj, &attr_g);
-	if (ret) {
-		printk(KERN_ALERT "sysfs_create_group failed\n");
-	}
-
 	lcd->dev_major = register_chrdev(lcd->dev_major, "led_zy", &led_ops);
 	if (lcd->dev_major < 0) {
 		printk(KERN_ALERT "register chrdev failed\n");
 		return ret;
 	}
 	
+	lcd->usedflag = 0;
+
+	sema_init(&lcd->sem, 1);
 	printk(KERN_INFO "major = %d\n", lcd->dev_major);
 	//CREATE DEVICE CLASS
 	lcd->class = class_create(THIS_MODULE, "spilcd");	//对应/sys/class/spilcd
@@ -520,16 +441,13 @@ static int __init lcd_driver_init(void)
 	}
 
 	printk(KERN_INFO "devno=%d\n", MKDEV(lcd->dev_major, 0));
-	lcd->device = device_create(lcd->class, NULL, MKDEV(lcd->dev_major, 0), NULL, "spilcd"); //对应/dev/spilcd
-
-	if (IS_ERR(lcd->device)) {
+	pdev = device_create(lcd->class, NULL, MKDEV(lcd->dev_major, 0), NULL, "spilcd"); //对应/dev/spilcd
+	if (IS_ERR(pdev)) {
 		class_destroy(lcd->class);
 		unregister_chrdev(MKDEV(lcd->dev_major, 0), "led_zy");
 		printk(KERN_ALERT "device create failed\n");
-		return PTR_ERR(lcd->device);
+		return PTR_ERR(pdev);
 	}
-
-	//setup_timer(&lcd->pin_timer, &pin_timer_handler, 0);
 
 	return 0;
 }
@@ -537,12 +455,12 @@ static int __init lcd_driver_init(void)
 static void __exit lcd_driver_exit(void)
 {
 	printk(KERN_DEBUG "lcd driver exit!!!\n");
-
-	kobject_put(lcd->kobj);
-
+	
 	device_destroy(lcd->class, MKDEV(lcd->dev_major, 0));
 	class_destroy(lcd->class);
 	unregister_chrdev(MKDEV(lcd->dev_major, 0), "led_zy");
+
+	kfree(lcd);
 }
 
 module_init(lcd_driver_init);

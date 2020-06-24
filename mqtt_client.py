@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-
-
 import sys
 import os
 import logging
@@ -10,35 +8,68 @@ import paho.mqtt.client as mqtt
 import queue
 import threading
 import time
+import config
+import json
+import uuid
+
+import display.generate_pillow_buffer as sc
+from LoggingQueue import LoggingProducer, LoggingConsumer
+import display.wx2vcode as wx
+import message_struct as ms
+import spilcd_api
 
 class mqtt_client(mqtt.Client):
-
-	debug = True
-	username = None
-	password = None
-	verbose = False
-	sub_topic_list = []
-
-	publish_queue = None
-	delete_list = []
+	#debug = True
 	logger = None
 	
+	sub_topic_list = []
+	delete_list = []
+
+	wx2vcode = None
+
+	def set_device_sn(self, sn):
+		self.device_sn = sn	
+
+	def set_wx2vcode_hand(self, hand, screen):
+		self.wx2vcode = hand
+		self.screen = screen
+		#self.screen.closesceen()
+
+	def set_logger(self, logger):
+		self.logger = logger
+
+	def set_user_and_password(self, username, password):
+		self.username_pw_set(username, password)
+
+	def set_cafile(self, filename:str)->bool:
+		try:
+			if not os.path.exists(filename):
+				self.logger.error("cafile is not exists")
+				exit(1)
+			self.tls_set(ca_certs=filename, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_1)
+			self.tls_insecure_set(False)
+			return True
+		except Exception as e:
+			self.logger.error("tls_set error:{}".format(e))
+			return False
+
 	def on_connect(self, mqttc, obj, flags, rc):
 		#flags中的标志位能够知道此次连接时第一次连接还是短线后重连的
-		print(flags)
-		print("rc={}".format(rc))
-		print("Connection returned result: " + mqtt.connack_string(rc))
+		self.logger.info("Connection returned result: " + mqtt.connack_string(rc))
 		if rc == 0:
-			print("connect success")
+			self.logger.info("connect success")
+			self.subscribe(self.sub_topic_list)
+			#self.device_sn = uuid.UUID(int = uuid.getnode()).hex[-12:]
+			#self.logger.info("device sn = {}".format(self.device_sn))
 
 	#执行mqttc.disconnect()主动断开连接会触发该函数
 	#当因为什么原因导致客户端断开连接时也会触发该函数,ctrl-c停止程序不会触发该函数
 	def on_disconnect(self, mqttc, obj, rc):
-		print("obj={}, rc={}".format(obj, rc))
-		if obj is not None:
-			mqttc.user_data_set(obj + 1)
-			if obj == 0:
-				mqttc.reconnect()
+		self.logger.info("on_disconnect obj={}, rc={}".format(obj, rc))
+		#if obj is not None:
+			#mqttc.user_data_set(obj + 1)
+			#if obj == 0:
+		mqttc.reconnect()
 
 	'''
 	mqttc:	the client instance for this callback
@@ -46,91 +77,204 @@ class mqtt_client(mqtt.Client):
 	msg:	an instance of MQTTMessage. This is a class with members ``topic``, ``payload``, ``qos``, ``retain``.
 	'''
 	def on_message(self, mqttc, obj, msg):
-		print("on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-		if msg.retain == 0:
-			print("retain = Flase")
-			if self.publish_queue is not None:
-				self.publish_queue.put({"topic":'/public/TEST/duan/will', "payload":b'get hello world', 'qos':1, 'retain':True})
-		else:
-			if obj == True:
-				print("Clearing topic " + msg.topic)
-			print("retain = True")
+		self.logger.info("on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+		try:
+			if msg.retain == 0:
+				#self.logger.info("retain = Flase")
+				json_msg = json.loads(str(msg.payload, encoding="utf-8"))
+				if json_msg["device_sn"] == self.device_sn:
+					local_time = int(time.time())
+					recv_time = int(json_msg["stime"])
+					if (local_time - recv_time < 10):
+						if self.work_queue is not None:
+							self.work_queue.put([msg.topic, json_msg])
+						else:
+							#device busy，message lost
+							pass
+					else:
+						#timeout, message lost
+						if msg.topic == ms.OPENDOOR_TOPIC:
+							ms.OPENDOOR_RESP_MSG["device_sn"] = self.device_sn
+							ms.OPENDOOR_RESP_MSG["result"] = 2
+							ms.OPENDOOR_RESP_MSG["identify"] = json_msg["identify"]
+							ms.OPENDOOR_RESP_MSG["rtime"] = int(time.time())
+							sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
+							self.publish_queue.put({"topic":ms.OPENDOOR_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
+						else:
+							ms.QR_RESPONSE["device_sn"] = self.device_sn
+							ms.QR_RESPONSE["rtime"] = int(time.time())
+							ms.QR_RESPONSE["type"] = json_msg["type"]
+							ms.QR_RESPONSE["identify"] = json_msg["identify"]
+							ms.QR_RESPONSE["status"] = 2
+							sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
+							self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
+			else:
+				#if obj == True:
+				#	self.logger.info("Clearing topic " + msg.topic)
+				self.logger.info("retain = True:{} {} {}".format(msg,topic, msg,qos, msg.payload))
+		except Exception as e:
+			self.logger.error("on message exception:{}".format(e))
 
 	def on_publish(self, mqttc, obj, mid):
 		#重要，用来确认publish的消息发送出去了。有时即使publish返回成功，但消息却没有发送。
-		print("on public,mid:{}".format(mid))
 		for item in self.delete_list:
 			if mid == item["mid"]:
-				print("on publish remove msg, mid={}".format(mid))
+				self.logger.info("on publish remove msg, mid={}".format(mid))
 				self.delete_list.remove(item)
+		pass
 
 	def on_subscribe(self, mqttc, obj, mid, granted_qos):
-		print("Subscribed: " + str(mid) + " " + str(granted_qos))
+		self.logger.info("Subscribed: " + str(mid) + " " + str(granted_qos))
 
+	'''
 	def on_log(self, mqttc, obj, level, string):
-		print(string)
+		self.logger.info(string)
+	'''
 
 	def setsubscribe(self, topic=None, qos=0):
 		self.sub_topic_list.append((topic, qos))
 
 	def do_select(self):
-		self.publish_queue = queue.Queue(8)
+		self.publish_queue = queue.Queue(32)
 		while True:
 			try:
 				if not self.publish_queue.empty():
 					msg = self.publish_queue.get()
 					info = self.publish(topic = msg["topic"], payload = msg["payload"], qos = msg["qos"], retain = msg["retain"])
 					if info.rc == mqtt.MQTT_ERR_SUCCESS:
-						self.delete_list.append({"mid":info.mid, "msg":msg})
+						#self.delete_list.append({"mid":info.mid, "msg":msg})
 						info.wait_for_publish()
-				time.sleep(0.1)
+				time.sleep(0.01)
+				'''
 				for wait in self.delete_list:
 					msg = wait["msg"]
-					print("resend mesage from delete list")
+					self.logger.info("resend mesage from delete list")
 					info = self.publish(topic = msg["topic"], payload = msg["payload"], qos = msg["qos"], retain = msg["retain"])
 					if info.rc == mqtt.MQTT_ERR_SUCCESS:
-						print("resend success, remove {}".format(wait))
+						self.logger.info("resend success, remove {}".format(wait))
 						self.delete_list.remove(wait)
+				'''
 			except Exception as e:
-				print("select error:{}".format(e))	
-			
-	def run(self, host=None, port=1883, keepalive=60):
-		thread_select = threading.Thread(target = self.do_select)
-		thread_select.setDaemon(False)
-		thread_select.start()
+				self.logger.info("select error:{}".format(e))	
+	
+	def do_hardware_work(self):
+		self.work_queue = queue.Queue(32)
+		doorlock_open_flag = False
+		doorlock_open_time = 0
+		doorlock_continue_time = int(config.config().get("DOORLOCK", "OPEN_TIME")) * 1000
+		image_show_flag = False
+		image_show_time = 0
+		image_continue_time = int(config.config().get("DOORLOCK", "2VCODE_TIME")) * 1000
+		spilcd_api.on()
+		while True:
+			try:
+				if not self.work_queue.empty():
+					[topic, json_msg] = self.work_queue.get()
+					#json_msg = json.loads(str(msg.payload, encoding="utf-8"))
+					if topic == ms.OPENDOOR_TOPIC:
+						#执行开锁动作,返回动作响应信息
+						if json_msg["action"] == 1:
+							gpio_val = 0
+							doorlock_open_flag = True
+							doorlock_open_time = int(time.time() * 1000)
+						else:
+							gpio_val = 1
+						
+						#self.gpio_handler.writePin(self.gpio_group, self.gpio_pin, gpio_val)
+						spilcd_api.set_doorlock(gpio_val)
+						#time.sleep(0.020)	#20ms delay
+						#val = self.gpio_handler.readPin(self.gpio_group, self.gpio_pin)
+						#if val == gpio_val:
+						#	status = 1
+						#else:
+						#	status = 0
+						ms.OPENDOOR_RESP_MSG["device_sn"]	= self.device_sn
+						ms.OPENDOOR_RESP_MSG["rtime"]		= int(time.time())
+						ms.OPENDOOR_RESP_MSG["result"]		= 1
+						ms.OPENDOOR_RESP_MSG["identify"]	= json_msg["identify"]
+						sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
+						self.publish_queue.put({"topic":ms.OPENDOOR_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
 
-		self.will_set(topic='/public/TEST/duan/will', payload="test will message!", qos=2, retain=False)
-		self.reconnect_delay_set(min_delay=10, max_delay=120)
-		logging.basicConfig(level=logging.INFO)
-		self.logger = logging.getLogger(__name__)
-		#self.enable_logger(self.logger)
-		'''
-		if not usetls:
-			tlsVersion = None
-		else:
-			tlsVersion = ssl.PROTOCOL_TLSv1_2
-			#tlsVersion = ssl.PROTOCOL_TLSv1_1
-			#tlsVersion = ssl.PROTOCOL_TLSv1
+						pass
+					elif topic == ms.QR_TOPIC:
+						#执行显示二维码动作,该动作不需要返回响应信息
+						ms.QR_RESPONSE["device_sn"] = self.device_sn
+						ms.QR_RESPONSE["rtime"]		= int(time.time())
+						ms.QR_RESPONSE["type"]		= json_msg["type"]
+						ms.QR_RESPONSE["identify"]  = json_msg["identify"]
+						ms.QR_RESPONSE["status"]	= 0
+						if json_msg["type"] == 1:
+							filepath = self.wx2vcode.get_2vcode(json_msg["message"])
+							if filepath is not None:
+								ret = self.screen.show_image_on_screen(filepath, True, True)
+								if ret == True:
+									ms.QR_RESPONSE["status"] = 1
+									image_show_flag = True
+									image_show_time = int(time.time() * 1000)
+						elif json_msg["type"] == 3:
+							ret = self.screen.show_qrcode_2vcode_on_screen(json_msg["message"])
+							if ret == True:
+								ms.QR_RESPONSE["status"] = 1
+								image_show_flag = True
+								image_show_time = int(time.time() * 1000)
+						elif json_msg["type"] == 2:
+							ret = self.screen.down_image_and_show_image_on_screen(json_msg["message"])
+							if ret == True:
+								ms.QR_RESPONSE["status"] = 1
+								image_show_flag = True
+								image_show_time = int(time.time() * 1000)
+						else:
+							pass
+						sendmsg = json.dumps(ms.QR_RESPONSE)
+						self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
+					else:
+						self.logger.info("invaild topic = {}".format(topic))
+						#send response failed
+				if doorlock_open_flag == True:
+					curtime = int(time.time() * 1000)
+					#self.logger.info("curtime={} opentime={}".format(curtime, doorlock_open_time))
+					if curtime - doorlock_open_time > doorlock_continue_time:	#1000ms
+						#self.gpio_handler.writePin(self.gpio_group, self.gpio_pin, 1)
+						spilcd_api.set_doorlock(1)
+						doorlock_open_flag = False
+				if image_show_flag == True:
+					curtime = int(time.time() * 1000)
+					if curtime - image_show_time > image_continue_time:
+						#clear screen
+						spilcd_api.close_screen()
+						image_show_flag = False
+						pass
 
-		if secure:
-			cert_required = ssl.CERT_REQUIRED
-		else:
-			cert_required = ssl.CERT_NONE
+				time.sleep(0.01)
+			except Exception as e:
+				self.logger.info("do hardware work except:{}".format(e))
 
-		#mqttc.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=cert_required, tls_version=tlsVersion)	
-		#mqttc.tls_insecure_set(True)
-		'''
+	def start_other_thread(self):
+		publish_thread = threading.Thread(target = self.do_select)
+		publish_thread.setDaemon(False)
+		publish_thread.start()
 		
-		self.username_pw_set(self.username, self.password)
-		self.connect(host, port, keepalive)
-		#self.subscribe(topic)
-		'''
-		for topic, qos in self.sub_topic_list:
-			print("topic:{} qos:{}".format(topic, qos))
-			self.subscribe(topic, qos)
-		'''
-		self.subscribe(self.sub_topic_list)
-		self.loop_forever()
+		work_thread = threading.Thread(target = self.do_hardware_work)
+		work_thread.setDaemon(False)
+		work_thread.start()
+
+	def run_mqtt(self, host=None, port=1883, keepalive=60):
+		try:
+			self.will_set(topic='/acs_will', payload="device error", qos=2, retain=False)
+			self.reconnect_delay_set(min_delay=10, max_delay=60)
+			#logging.basicConfig(level=logging.INFO)
+			#self.logger = logging.getLogger(__name__)
+			self.connect(host, port, keepalive)
+			'''
+			for topic, qos in self.sub_topic_list:
+				self.logger.info("topic:{} qos:{}".format(topic, qos))
+				self.subscribe(topic, qos)
+			'''
+			return True
+		except Exception as e:
+			self.logger.error("run error:{}".format(e))
+			return False
+
 
 if __name__ == "__main__":
 	'''
@@ -141,12 +285,38 @@ if __name__ == "__main__":
 	protocol=MQTTv311 or MQTTv31
 	transport="tcp" or "websockets"
 	'''
-	mc = mqtt_client(	client_id = "client_id_duan12", 
-						clean_session = False,
+	if len(sys.argv) < 2:
+		print("paramter must be 2")
+		exit(1)
+	device_sn = sys.argv[1]
+
+	LoggingConsumer()
+	logger = LoggingProducer().getlogger()
+
+	c = config.config()
+	host = c.get("MQTT", "HOST")
+	port = int(c.get("MQTT", "PORT"))
+	user = c.get("MQTT", "USER")
+	passwd = c.get("MQTT", "PASSWD")
+	cafile = c.get("MQTT", "CAFILE")
+	wx2vcode_hand = wx.wx_2vcode()
+	logger.info("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
+	mc = mqtt_client(	client_id = device_sn, 
+						clean_session = True,
 						userdata = None,
 						protocol = mqtt.MQTTv31,
 						transport = 'tcp')
-	mc.setsubscribe(topic='/public/TEST/duan', qos=0)
-	mc.setsubscribe(topic='/public/TEST/duan/qos1', qos=1)
-	mc.setsubscribe(topic='/public/TEST/duan/qos2', qos=2)
-	mc.run(host="mq.tongxinmao.com", port=18830, keepalive=60)
+	mc.set_logger(logger)
+	mc.set_device_sn(device_sn)
+	mc.setsubscribe(topic=ms.OPENDOOR_TOPIC, qos=0)
+	mc.setsubscribe(topic=ms.QR_TOPIC, qos=0)
+	mc.set_user_and_password(user, passwd)
+	if mc.set_cafile(cafile) == False:
+		exit(1)
+	time.sleep(0.2)
+	screen = sc.screen()
+	mc.set_wx2vcode_hand(wx2vcode_hand, screen)
+	if mc.run_mqtt(host=host, port=port, keepalive=60) == False:
+		exit(1)
+	mc.start_other_thread()
+	mc.loop_forever()

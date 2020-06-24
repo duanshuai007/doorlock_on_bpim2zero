@@ -214,4 +214,31 @@ SAY "\nGood bye !\n"
 在BPIM2-zero中有两个spi，其中spi0是默认提供的spi接口，linux还提供了一个通用驱动程序spidev.c，我们的设备接在了spi1上，无法直接使用Linux的spi驱动，所以选择使用字符设备驱动读写寄存器的方式来对spi进行控制。
 
 
+## 启动mqtt程序
 
+#### 启动mqtt程序之前需要先安装spilcd
+
+* insmod /root/hardware_ctrl/linux/char/lcd_driver_simulation_spi.ko
+
+#### 生成spilcd python模块
+
+```
+cd display
+python3 setup.py install
+```
+
+最后在/root目录下执行`pyhthon3 mqtt_client.py`启动客户端程序。
+
+* log信息输出在/root/log/server.log文件中
+
+
+## 修改/etc/rc.local
+
+使用eth0的mac地址作为设备的id.
+```
+/root/start_network.sh &
+/root/monitor_network.sh &
+mac=$(ifconfig  -a | grep HWaddr | grep eth0 | awk -F" " '{print $5}' | awk -F":" '{print $1$2$3$4$5$6}')
+echo ${mac} > /tmp/eth0macaddr
+python3 /root/mqtt_client.py ${mac} &
+```
