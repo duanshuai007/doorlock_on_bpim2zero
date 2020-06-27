@@ -12,19 +12,21 @@ def initialization():
 	spilcd_api.set_doorlock(1)
 	#spilcd_api.close_screen()
 	screen = sc.screen()
-	screen.show_image_on_screen("/root/display/test_160x160.jpg", True, True)
+	#screen.show_image_on_screen("/root/display/logo_160x160.jpg", True, True)
+	screen.show_logo()
 	watchdog.open()
 
 def show_error_icon():
 	screen = sc.screen()
-	screen.show_image_on_screen("/root/display/error.png", True, True)
+	#screen.show_image_on_screen("/root/display/error_160x160.png", True, True)
+	screen.show_erroricon()
 
 def show_space():
 	#spilcd_api.on()
 	#spilcd_api.close_screen()
 	#spilcd_api.set_doorlock(1)
 	screen = sc.screen()
-	screen.show_white()
+	screen.show_logo()
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
@@ -32,7 +34,7 @@ if __name__ == "__main__":
 		exit(1)
 	
 	p = int(sys.argv[1])
-	print("p={}".format(p))
+	#print("p={}".format(p))
 	if p == 1:
 		initialization()
 	elif p == 2:

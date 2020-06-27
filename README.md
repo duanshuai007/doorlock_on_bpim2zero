@@ -242,3 +242,59 @@ mac=$(ifconfig  -a | grep HWaddr | grep eth0 | awk -F" " '{print $5}' | awk -F":
 echo ${mac} > /tmp/eth0macaddr
 python3 /root/mqtt_client.py ${mac} &
 ```
+
+## 烧写镜像的方法
+
+### 1.拷贝镜像到本地
+
+sudo bpi-copy /dev/sdb ubuntu.img 7296
+
+
+### 2.烧写镜像到sd卡
+
+sudo bpi-copy ubuntu.img /dev/sdb 7296
+
+
+## 修改镜像大小的方法
+
+1.首先sd卡插入读卡器，连接到电脑上。  
+执行mount命令，会发现/dev/sdx1 /dev/sdx2的挂载点。  
+
+2.  
+umount /dev/sdx1  
+umount /dev/sdx2  
+
+3.
+dd if=/dev/sdx of=test.img
+
+4.
+sudo modprobe loop  
+sudo losetup -f  
+这是会返回`/dev/loop0`
+
+sudo losetup /dev/loop0 test.img
+
+sudo partprobe /dev/loop0
+
+sudo gparted /dev/loop0  
+
+
+在图形界面工具中，调整分区的大小。
+调整完毕后几的点几apply按钮保存配置。
+
+
+sudo losetup -d /dev/loop0
+
+fdisk -l test.img
+
+	Disk test.img: 28.8 GiB, 30908350464 bytes, 60367872 sectors
+	Units: sectors of 1 * 512 = 512 bytes
+	Sector size (logical/physical): 512 bytes / 512 bytes
+	I/O size (minimum/optimal): 512 bytes / 512 bytes
+	Disklabel type: dos
+	Disk identifier: 0xcaaba8e3
+	Device     Boot  Start      End Sectors  Size Id Type
+	test.img1        49152   253951  204800  100M 83 Linux
+	test.img2       253952 10113023 9859072  4.7G 83 Linux
+最后执行以下命令，镜像就会变成修改的大小了。
+sudo truncate --size=$[(10113023+1)*512] test.img

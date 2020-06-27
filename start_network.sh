@@ -16,10 +16,32 @@ echo "*/10 * * * * /usr/sbin/ntpdate cn.pool.ntp.org > /dev/null" >> /var/spool/
 
 #insmod /root/hardware_ctrl/linux/char/lcd_driver_simulation_spi.ko 
 flag=0
+feedcount=0
+
+start() {
+	#pid=$(ps -ef | grep mqtt | grep -v grep | awk -F" " '{print $2}')
+	mac=$(cat /tmp/eth0macaddr)
+	python3 /root/mqtt_client.py ${mac} &
+}
+
+stop() {
+	pid=$(ps -ef | grep mqtt_client | grep -v grep | awk -F" " '{print $2}')
+	if [ ! -z "${pid}" ]
+	then
+		kill -9 ${pid}
+	fi  
+}
+
+restart() {
+	stop
+	start
+}
+
+NETFILE="/tmp/netstatus"
+
 while true
 do
-	sleep 5
-
+	sleep 1
 	#echo "ssid=${ssid} psk=${psk}"
 	ps -ef | grep wpa_supplicant | grep -v grep > /dev/null
 	if [ $? -ne 0 ] 
@@ -32,7 +54,7 @@ do
 		wpa_passphrase ${ssid} ${psk} > /etc/wpa.conf
 		echo "ctrl_interface=/var/run/wpa_supplicant" >> /etc/wpa.conf
 		wpa_supplicant -iwlan0 -c /etc/wpa.conf > /var/log/wpalog 2>&1 &
-		wpa_cli -iwlan0 add_n
+		wpa_cli -iwlan0 add_n > /dev/null
 	else
 		if [ ${flag} -eq 0 ]
 		then
@@ -68,6 +90,27 @@ do
 		fi
 	fi
 
-	sleep 25
+	feedcount=$(expr ${feedcount} + 1)
+	if [ ${feedcount} -ge 5 ] 
+	then
+		feedcount=0
+		python3 /root/watchdog/watchdog_feed.py > /dev/null 2&>1
+	fi  
+
+	if [ -f ${NETFILE} ]
+	then
+		sta=$(cat ${NETFILE}) 
+		if [ "${sta}" == "OK" ]
+		then
+			num=$(ps -ef | grep mqtt_client | grep -v grep | wc -l)
+			if [ ${num} -eq 0 ] 
+			then
+				start
+			elif [ ${num} -gt 1 ] 
+			then
+				stop
+			fi  
+		fi  
+	fi  
 done
 

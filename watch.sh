@@ -4,7 +4,6 @@ start() {
 	echo "start all"
 	/root/start_network.sh &
 	/root/monitor_network.sh &
-	/root/watch_mqtt.sh &
 }
 
 stop() {
@@ -16,12 +15,6 @@ stop() {
 	fi
 	
 	pid=$(ps -ef | grep monitor_network | grep -v grep | awk -F" " '{print $2}')
-	if [ -n "${pid}" ]
-	then
-		kill -9 ${pid}
-	fi
-	
-	pid=$(ps -ef | grep watch_mqtt | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
 		kill -9 ${pid}

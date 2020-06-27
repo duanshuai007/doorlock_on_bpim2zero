@@ -16,11 +16,16 @@ import spilcd_api
 
 class screen():
 
+	__logo_buffer = []
+	__error_buffer = []
+
 	def __init__(self):
 		self.log = LoggingQueue.LoggingProducer().getlogger()
 		#self.spilcd = spilcd_api()
 		#self.spilcd.on()
 		spilcd_api.on()
+		self.__error_buffer = self.read_image_return_list("/root/display/error_160x160.png")
+		self.__logo_buffer = self.read_image_return_list("/root/display/logo_160x160.png")	
 
 	'''
 		通过qrcode生成二维码信息，不用保存图片，将生成
@@ -87,6 +92,31 @@ class screen():
 				self.log.error("show_qrcode_2vcode_on_screen error:{}".format(e))
 				return False
 		return False
+
+	def read_image_return_list(self, filename):
+		try:
+			im = Image.open(filename)
+			im = im.convert('L')
+			(w,h) = im.size
+			if w != 160 or h != 160:
+				self.log.error("read_image_return_list input image size must be (160x160)")
+				return None
+			img = []
+			for r in range(h):
+				l = []
+				c = w
+				while c > 0:
+					c -= 1
+					pv = im.getpixel((c, r))
+					if pv < 180:
+						l.append(0xf)
+					else:
+						l.append(0x0)
+				img.append(l)
+			return img
+		except Exception as e:
+			self.log.error("read_image_return_list error:{}".format(e))
+			return None
 
 	'''
 		输入图片的路径，通过PIL模块对图片处理
@@ -184,6 +214,17 @@ class screen():
 			return self.show_image_on_screen("/tmp/test.jpg", True, True)
 		else:
 			return False
+	
+	def show_erroricon(self):
+		#self.show_image_on_screen("/root/display/error_160x160.png", True, True)
+		if self.__error_buffer is not None:
+			spilcd_api.show(self.__error_buffer)
+		pass
+	def show_logo(self):
+		#self.show_image_on_screen("/root/display/logo_160x160.png", True, True)
+		if self.__logo_buffer is not None:
+			spilcd_api.show(self.__logo_buffer)
+		pass
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:

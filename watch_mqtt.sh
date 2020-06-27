@@ -32,10 +32,16 @@ do
 		sta=$(cat ${NETFILE}) 
 		if [ "${sta}" == "OK" ]
 		then
-			pid=$(ps -ef | grep mqtt_client | grep -v grep | awk -F" " '{print $2}')
-			if [ -z "${pid}" ]
+			#pid=$(ps -ef | grep mqtt_client | grep -v grep | awk -F" " '{print $2}')
+			#if [ -z "${pid}" ]
+			num=$(ps -ef | grep mqtt_client | grep -v grep | wc -l)
+			#	echo "num=${num}"
+			if [ ${num} -eq 0 ]
 			then
 				start
+			elif [ ${num} -gt 1 ]
+			then
+				stop
 			fi
 		fi
 	fi

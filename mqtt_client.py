@@ -225,6 +225,10 @@ class mqtt_client(mqtt.Client):
 								image_show_time = int(time.time() * 1000)
 						else:
 							pass
+
+						if ms.QR_RESPONSE["status"] == 0:
+							self.screen.show_erroricon()
+
 						sendmsg = json.dumps(ms.QR_RESPONSE)
 						self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
 					else:
@@ -241,7 +245,8 @@ class mqtt_client(mqtt.Client):
 					curtime = int(time.time() * 1000)
 					if curtime - image_show_time > image_continue_time:
 						#clear screen
-						spilcd_api.close_screen()
+						#spilcd_api.close_screen()
+						self.screen.show_logo()
 						image_show_flag = False
 						pass
 
