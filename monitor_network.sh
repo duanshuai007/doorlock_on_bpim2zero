@@ -118,6 +118,7 @@ do
 						if [ ! -z "${gateway}" ]
 						then
 							route add 114.114.114.114 gw ${gateway} wlan0
+							sleep 1
 							ping 114.114.114.114 -I wlan0 -c 1 > /dev/null
 							#ping成功则切换网络，否则放弃
 							if [ $? -eq 0 ]
@@ -144,6 +145,7 @@ do
 			"ppp0")
 				#检测默认网络是否可用，如果可用，择切换到默认网络
 				route add 114.114.114.114 ppp0
+				sleep 1
 				ping 114.114.114.114 -I ppp0 -c 1 > /dev/null
 				#ping成功则切换网络，否则放弃
 				if [ $? -eq 0 ]
