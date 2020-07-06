@@ -6,6 +6,7 @@ OPENDOOR_TOPIC = "/door_ctrl"
 OPENDOOR_RESP_TOPIC = "/door_response"
 QR_TOPIC = "/qr_ctrl"
 QR_RESP_TOPIC = "/qr_response"
+DEVICE_ONLINE_TOPIC = "/online_response"
 
 OPENDOOR_MSG = {
 	"device_sn" : "",
@@ -58,4 +59,11 @@ QR_RESPONSE = {
 	"type" : 0,
 	"identify" : 0,
 	"status" : "",
+}
+
+DEVICE_ONLINE = {
+	"device_sn" : "",
+	"rtime" : 0,
+	"on_line" : 0,
+	"identify" : 0,
 }

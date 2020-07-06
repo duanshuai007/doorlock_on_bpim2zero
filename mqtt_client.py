@@ -10,7 +10,8 @@ import threading
 import time
 import config
 import json
-import uuid
+import copy
+import random
 
 import display.generate_pillow_buffer as sc
 from LoggingQueue import LoggingProducer, LoggingConsumer
@@ -59,8 +60,14 @@ class mqtt_client(mqtt.Client):
 		if rc == 0:
 			self.logger.info("connect success")
 			self.subscribe(self.sub_topic_list)
-			#self.device_sn = uuid.UUID(int = uuid.getnode()).hex[-12:]
-			#self.logger.info("device sn = {}".format(self.device_sn))
+			
+			resp = copy.deepcopy(ms.DEVICE_ONLINE)
+			resp["device_sn"] = self.device_sn
+			resp["rtime"] = int(time.time())
+			resp["on_line"] = 1
+			resp["identify"] = random.randint(100000, 999999)
+			respjson = json.dumps(resp)
+			self.publish_queue.put({"topic":ms.DEVICE_ONLINE_TOPIC, "payload":respjson, 'qos':2, 'retain':False})
 
 	#执行mqttc.disconnect()主动断开连接会触发该函数
 	#当因为什么原因导致客户端断开连接时也会触发该函数,ctrl-c停止程序不会触发该函数
@@ -77,12 +84,12 @@ class mqtt_client(mqtt.Client):
 	msg:	an instance of MQTTMessage. This is a class with members ``topic``, ``payload``, ``qos``, ``retain``.
 	'''
 	def on_message(self, mqttc, obj, msg):
-		self.logger.info("on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 		try:
 			if msg.retain == 0:
 				#self.logger.info("retain = Flase")
 				json_msg = json.loads(str(msg.payload, encoding="utf-8"))
 				if json_msg["device_sn"] == self.device_sn:
+					self.logger.info("on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 					local_time = int(time.time())
 					recv_time = int(json_msg["stime"])
 					if (local_time - recv_time < 10):
@@ -93,6 +100,7 @@ class mqtt_client(mqtt.Client):
 							pass
 					else:
 						#timeout, message lost
+						self.logger.warn("on message: this message timestamp was timeout")
 						if msg.topic == ms.OPENDOOR_TOPIC:
 							ms.OPENDOOR_RESP_MSG["device_sn"] = self.device_sn
 							ms.OPENDOOR_RESP_MSG["result"] = 2
@@ -171,6 +179,7 @@ class mqtt_client(mqtt.Client):
 				if not self.work_queue.empty():
 					[topic, json_msg] = self.work_queue.get()
 					#json_msg = json.loads(str(msg.payload, encoding="utf-8"))
+					#self.logger.info("topic={}, msg={}".format(topic, json_msg))
 					if topic == ms.OPENDOOR_TOPIC:
 						#执行开锁动作,返回动作响应信息
 						if json_msg["action"] == 1:
@@ -180,21 +189,13 @@ class mqtt_client(mqtt.Client):
 						else:
 							gpio_val = 1
 						
-						#self.gpio_handler.writePin(self.gpio_group, self.gpio_pin, gpio_val)
 						spilcd_api.set_doorlock(gpio_val)
-						#time.sleep(0.020)	#20ms delay
-						#val = self.gpio_handler.readPin(self.gpio_group, self.gpio_pin)
-						#if val == gpio_val:
-						#	status = 1
-						#else:
-						#	status = 0
 						ms.OPENDOOR_RESP_MSG["device_sn"]	= self.device_sn
 						ms.OPENDOOR_RESP_MSG["rtime"]		= int(time.time())
 						ms.OPENDOOR_RESP_MSG["result"]		= 1
 						ms.OPENDOOR_RESP_MSG["identify"]	= json_msg["identify"]
 						sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
 						self.publish_queue.put({"topic":ms.OPENDOOR_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
-
 						pass
 					elif topic == ms.QR_TOPIC:
 						#执行显示二维码动作,该动作不需要返回响应信息
@@ -234,6 +235,7 @@ class mqtt_client(mqtt.Client):
 					else:
 						self.logger.info("invaild topic = {}".format(topic))
 						#send response failed
+				'''
 				if doorlock_open_flag == True:
 					curtime = int(time.time() * 1000)
 					#self.logger.info("curtime={} opentime={}".format(curtime, doorlock_open_time))
@@ -249,7 +251,7 @@ class mqtt_client(mqtt.Client):
 						self.screen.show_logo()
 						image_show_flag = False
 						pass
-
+				'''
 				time.sleep(0.01)
 			except Exception as e:
 				self.logger.info("do hardware work except:{}".format(e))
@@ -265,7 +267,13 @@ class mqtt_client(mqtt.Client):
 
 	def run_mqtt(self, host=None, port=1883, keepalive=60):
 		try:
-			self.will_set(topic='/acs_will', payload="device error", qos=2, retain=False)
+			resp = copy.deepcopy(ms.DEVICE_ONLINE)
+			resp["device_sn"] = self.device_sn
+			resp["rtime"] = int(time.time())
+			resp["on_line"] = 0 
+			resp["identify"] = random.randint(100000, 999999)
+			respjson = json.dumps(resp)
+			self.will_set(topic=ms.DEVICE_ONLINE_TOPIC, payload=respjson, qos=2, retain=False)
 			self.reconnect_delay_set(min_delay=10, max_delay=60)
 			#logging.basicConfig(level=logging.INFO)
 			#self.logger = logging.getLogger(__name__)

@@ -59,7 +59,7 @@ class mqtt_client(mqtt.Client):
 	msg:	an instance of MQTTMessage. This is a class with members ``topic``, ``payload``, ``qos``, ``retain``.
 	'''
 	def on_message(self, mqttc, obj, msg):
-		print("on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+		print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ":on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 		try:
 			if msg.retain == 0:
 				#print("retain = Flase")
@@ -95,7 +95,7 @@ class mqtt_client(mqtt.Client):
 				if not self.publish_queue.empty():
 					print("get publish message")
 					msg = self.publish_queue.get()
-					print("publish:{} {}".format(time.localtime(), msg))
+					print("publish:{} {}".format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), msg))
 					info = self.publish(topic = msg["topic"], payload = msg["payload"], qos = msg["qos"], retain = msg["retain"])
 					if info.rc == mqtt.MQTT_ERR_SUCCESS:
 						self.delete_list.append({"mid":info.mid, "msg":msg})
@@ -116,7 +116,9 @@ class mqtt_client(mqtt.Client):
 		#devid = "0a2c1867f161"
 		#	devid = "d66fabdd3dce"
 		#devid = "02420877c9cc"
-		devid = "02421a71c57b"
+		#devid = "02421a71c57b"
+		devid = "024251720577"
+		message_delay = 60*3
 		ms.OPENDOOR_MSG["device_sn"] = devid
 		ms.OPENDOOR_MSG["action"] = 1
 		ms.OPENDOOR_MSG["identify"] = 123456678765432
@@ -154,26 +156,24 @@ class mqtt_client(mqtt.Client):
 				ms.OPENDOOR_MSG["stime"] = int(time.time())
 				sendmsg = json.dumps(ms.OPENDOOR_MSG)
 				self.publish_queue.put({"topic":ms.OPENDOOR_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
-				time.sleep(2)
+				time.sleep(message_delay)
 				
 				ms.QR_GETWX2VCODE["stime"] = int(time.time())
 				sendmsg = json.dumps(ms.QR_GETWX2VCODE)
 				self.publish_queue.put({"topic":ms.QR_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
-				time.sleep(5)
+				time.sleep(message_delay)
 
 				ms.QR_DOWN2VCODE["stime"] = int(time.time())
 				sendmsg = json.dumps(ms.QR_DOWN2VCODE)
 				self.publish_queue.put({"topic":ms.QR_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
-				time.sleep(5)
+				time.sleep(message_delay)
 
 				ms.QR_GENERATE2VCODE["stime"] = int(time.time())
 				sendmsg = json.dumps(ms.QR_GENERATE2VCODE)
 				self.publish_queue.put({"topic":ms.QR_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
-				time.sleep(5)
+				time.sleep(message_delay)
 				
 	def run(self, host=None, port=1883, keepalive=60):
-
-		
 		publish_thread = threading.Thread(target = self.do_select)
 		publish_thread.setDaemon(False)
 		publish_thread.start()
@@ -181,8 +181,7 @@ class mqtt_client(mqtt.Client):
 		test_pub.setDaemon(False)
 		test_pub.start()
 		
-	
-		self.will_set(topic='/acs_will', payload="device error", qos=2, retain=False)
+		#self.will_set(topic=ms.DEVICE_ONLINE_TOPIC, payload=respjson, qos=2, retain=False)
 		self.reconnect_delay_set(min_delay=10, max_delay=120)
 
 		self.username_pw_set(self.username, self.password)
@@ -217,8 +216,9 @@ if __name__ == "__main__":
 						transport = 'tcp')
 	mc.setsubscribe(topic='/acs_open', qos=1)
 	mc.setsubscribe(topic='/qr_code', qos=1)
-	mc.setsubscribe(topic=ms.OPENDOOR_RESP_TOPIC, qos=1)
-	mc.setsubscribe(topic=ms.QR_RESP_TOPIC, qos=1)
+	mc.setsubscribe(topic=ms.OPENDOOR_RESP_TOPIC, qos=2)
+	mc.setsubscribe(topic=ms.QR_RESP_TOPIC, qos=2)
+	mc.setsubscribe(topic='/online_response', qos=2)
 	mc.set_user_and_password(user, passwd)
 	mc.set_cafile(cafile)
 	mc.run(host=host, port=port, keepalive=60)

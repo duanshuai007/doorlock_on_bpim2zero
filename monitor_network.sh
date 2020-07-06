@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #监控网络是否可用
+#只要当该进程重启时才会根据日期创建新的log文件
 
 #route del default wlan0
 #route add default gw 192.168.200.252 wlan0
@@ -9,21 +10,57 @@
 dat=$(date "+%Y%m%d")
 LOGFILE=/var/log/monitor_network_${dat}.log
 GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+NETSTAT=/tmp/netstatus
+
+cat /dev/null > ${NETSTAT}
+
+fail_count=0
+err_count=0
+not_set_route=0
+count=0
+connect_wifi_time=0
+
+run_dhclient() {
+	case $1 in 
+		"wlan0")
+			pid=$(ps -ef | grep "dhclient wlan0" | grep -v grep | awk -F" " '{print $2}')
+			if [ -n "${pid}" ]
+			then
+				kill -9 ${pid}
+			fi
+			dhclient wlan0
+			;;
+		"eth0")
+			pid=$(ps -ef | grep "dhclient eth0" | grep -v grep | awk -F" " '{print $2}')
+			if [ -n "${pid}" ]
+			then
+				kill -9 ${pid}
+			fi
+			dhclient eth0
+			;;
+		*)
+			;;
+	esac
+}
 
 setDefaultRoute() {
-	#dhclient -r
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 	echo $1 > /tmp/current_network
+	dhclient -r
 	case $1 in
 		"wlan0")
 			echo "${GET_TIMESTAMP}:set wlan0 as default route" >> ${LOGFILE}
 			route del default ppp0  > /dev/null 2>&1
-			dhclient wlan0
+			run_dhclient wlan0
 			;;
 		"ppp0")
 			echo "${GET_TIMESTAMP}:set ppp0 as default route" >> ${LOGFILE}
-			dhclient -r
 			route add default ppp0
+			;;
+		"eth0")
+			echo "${GET_TIMESTAMP}:set eth0 as default route" >> ${LOGFILE}
+			route del default ppp0  > /dev/null 2>&1
+			run_dhclient eth0
 			;;
 		*)
 			echo "${GET_TIMESTAMP}:error paramters" >> ${LOGFILE}
@@ -31,6 +68,21 @@ setDefaultRoute() {
 	esac
 	
 	echo "nameserver 114.114.114.114" > /etc/resolv.conf
+}
+
+kill_mqtt_thread() {
+	fail_count=0
+	echo "" > ${NETSTAT}
+	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+	echo "${GET_TIMESTAMP}:net is change, kill old thread and restart" >> ${LOGFILE}
+	pid=$(ps -ef | grep mqtt_client | grep -v grep | awk -F" " '{print $2}')
+	echo "pid = ${pid}" >> ${LOGFILE}
+	if [ ! -z "${pid}" ]
+	then
+		echo "kill ${pid}" >> ${LOGFILE}
+		kill -9 ${pid}
+		sleep 1
+	fi
 }
 
 #cat /dev/null > ${LOGFILE}
@@ -63,15 +115,7 @@ do
 done
 
 CURRENT_NET=$(cat /root/net.conf | grep choice |  awk -F"=" '{print $2}')
-CONTINUE=0
-fail_count=0
-err_count=0
-not_set_route=0
-count=0
-net_is_change=0
-can_create_mqtt_thread=0
-connect_wifi_time=0
-net_is_connect=0
+
 while true
 do
 	#check network is ok
@@ -82,7 +126,6 @@ do
 	if [ "${CURRENT_NET}" != "${DEFAULT_NET}" ]
 	then
 		#当前网络不等于默认的网络
-		CONTINUE=1
 		case "${DEFAULT_NET}" in
 			"wlan0")
 				#检测默认网络是否可用，如果可用，择切换到默认网络
@@ -104,18 +147,13 @@ do
 				then 
 					#获取gateway
 					#echo "" > /etc/resolv.conf
-					dhclient -r
-					dhclient wlan0
+					ip addr flush dev wlan0
+					run_dhclient wlan0
 					if [ -f /run/resolvconf/interface/wlan0.dhclient ]
 					then
 						gateway=$(cat /run/resolvconf/interface/wlan0.dhclient | grep -w nameserver | awk -F" " '{print $2}')
-						#gateway=$(cat /etc/resolv.conf | grep -w nameserver | awk -F" " '{print $2}')
-						#if [ -z "${gateway}" ] 
-						#then
-						#	gateway=$(cat /etc/resolv.conf | grep -w nameserver | awk -F"=" '{print $2}')
-						#fi
 						#获取到gateway后添加测试用的路由，进行ping测试
-						if [ ! -z "${gateway}" ]
+						if [ -n "${gateway}" ]
 						then
 							route add 114.114.114.114 gw ${gateway} wlan0
 							sleep 1
@@ -124,26 +162,26 @@ do
 							if [ $? -eq 0 ]
 							then 
 								CURRENT_NET="wlan0"
-								python3 /root/showimage.py 3
+								#python3 /root/showimage.py 3
+								kill_mqtt_thread
 								setDefaultRoute wlan0
 								fail_count=0
-								net_is_change=1
 								not_set_route=1
-								net_is_connect=1
 							else
-								echo "ping failed" >> ${LOGFILE}
+								echo "wlan0 ping failed" >> ${LOGFILE}
 							fi
 							route del 114.114.114.114 gw ${gateway} wlan0
 						else
-							echo "not find vaild gateway" >> ${LOGFILE}
+							echo "wlan0 not find vaild gateway" >> ${LOGFILE}
 						fi
 					else
-						echo "not find /run/resolvconf/interface/wlan0.dhclient " >> ${LOGFILE}
+						echo "wlan0 not find /run/resolvconf/interface/wlan0.dhclient " >> ${LOGFILE}
 					fi
 				fi
 				;;
 			"ppp0")
 				#检测默认网络是否可用，如果可用，择切换到默认网络
+				ip addr flush dev ppp0
 				route add 114.114.114.114 ppp0
 				sleep 1
 				ping 114.114.114.114 -I ppp0 -c 1 > /dev/null
@@ -151,14 +189,43 @@ do
 				if [ $? -eq 0 ]
 				then
 					CURRENT_NET="ppp0"
-					python3 /root/showimage.py 3
+					#python3 /root/showimage.py 3
+					kill_mqtt_thread
 					setDefaultRoute ppp0
 					fail_count=0
-					net_is_change=1
 					not_set_route=1
-					net_is_connect=1
 				fi
 				route del 114.114.114.114 ppp0
+				;;
+			"eth0")
+				ip addr flush dev eth0
+				run_dhclient eth0
+				if [ -f /run/resolvconf/interface/eth0.dhclient ]
+				then
+					gateway=$(cat /run/resolvconf/interface/eth0.dhclient | grep -w nameserver | awk -F" " '{print $2}')
+					if [ -n "${gateway}" ]
+					then
+						route add 114.114.114.114 gw ${gateway} eth0
+						sleep 1
+						ping 114.114.114.114 -I eth0 -c 1 > /dev/null
+						if [ $? -eq 0 ]
+						then
+							CURRENT_NET="eth0"
+							#python3 /root/showimage.py 3
+							kill_mqtt_thread
+							setDefaultRoute eth0
+							fail_count=0
+							not_set_route=1
+						else
+							echo "eth0 ping failed" >> ${LOGFILE}
+						fi
+						route del 114.114.114.114 gw ${gateway} eth0
+					else
+						echo "eth0 not find vaild gateway" >> ${LOGFILE}
+					fi
+				else
+					echo "eth0 not find /run/resolvconf/interface/eth0.dhclient " >> ${LOGFILE}
+				fi
 				;;
 			*)
 				sleep 5
@@ -174,33 +241,38 @@ do
 				sta=$(wpa_cli -iwlan0 status | grep wpa_state | awk -F"=" '{print $2}')	
 				if [ "${sta}" == "COMPLETED" ]
 				then 
-					CONTINUE=1
 					if [ ${not_set_route} -eq 0 ]
 					then	
 						echo "${GET_TIMESTAMP}:wlan0 state is COMPLETED" >> ${LOGFILE}
 						not_set_route=1
 						python3 /root/showimage.py 3
+						kill_mqtt_thread
 						setDefaultRoute wlan0
 						fail_count=0
-						net_is_change=1
-						net_is_connect=1
 					fi
 				else
 					echo "${GET_TIMESTAMP}:wlan0 state is not COMPLETED" >> ${LOGFILE}
-					CONTINUE=0
 				fi
 				;;
 			"ppp0")
-				CONTINUE=1
 				#echo "${GET_TIMESTAMP}:set ppp0 default route" >> ${LOGFILE}
 				if [ ${not_set_route} -eq 0 ]
 				then 
 					not_set_route=1
 					python3 /root/showimage.py 3
+					kill_mqtt_thread
 					setDefaultRoute ppp0
 					fail_count=0
-					net_is_change=1
-					net_is_connect=1
+				fi
+				;;
+			"eth0")
+				if [ ${not_set_route} -eq 0 ]
+				then 
+					not_set_route=1
+					python3 /root/showimage.py 3
+					kill_mqtt_thread
+					setDefaultRoute eth0
+					fail_count=0
 				fi
 				;;
 			*)
@@ -210,98 +282,44 @@ do
 		esac
 	fi
 
-	if [ ${CONTINUE} -eq 0 ]
+	#系统启动时会从配置文件net.conf中读取默认配置的网络并进行连接
+	if [ ${count} -ge 6 ]
 	then
-		err_count=$(expr ${err_count} + 1)
-		if [ ${err_count} -ge 5 ]
-		then
-			#wifi连接不上，超时后设置ppp0连接
-			GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-			echo "${GET_TIMESTAMP}:${CURRENT_NET} connect error ${err_count}" >> ${LOGFILE}
-			err_count=0
-			not_set_route=0
-			net_is_connect=0
-			python3 /root/showimage.py 2
-			if [ "${CURRENT_NET}" == "wlan0" ] 
-			then
-				setDefaultRoute ppp0
-				CURRENT_NET="ppp0"
-				net_is_change=1
-			else
-				setDefaultRoute wlan0
-				CURRENT_NET="wlan0"
-				net_is_change=1
-			fi
-		fi
-	
-		sleep 5
-		continue
-	fi
-
-	if [ ${net_is_connect} -eq 1 ]
-	then
-		if [ ${count} -ge 6 ]
-		then
-			count=0
-			#traceroute www.baidu.com > /dev/null 2>&1
-			ping www.baidu.com -c 1 > /dev/null
-			if [ $? -eq 0 ]
-			then
-				#equl 0 mean network is fine
-				#echo 0 > /dev/null	
-				fail_count=0
-			else
-				fail_count=$(expr ${fail_count} + 1)
-				if [ ${fail_count} -ge 3 ]
-				then
-					fail_count=0
-					net_is_connect=0
-					GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-					echo "${GET_TIMESTAMP}:network[${CURRENT_NET}] is bad, now change network" >> ${LOGFILE}
-					python3 /root/showimage.py 2
-					if [ "${CURRENT_NET}" == "wlan0" ]
-					then
-						CURRENT_NET="ppp0"
-						setDefaultRoute ppp0
-						net_is_change=1
-					elif [ "${CURRENT_NET}" == "ppp0" ]
-					then
-						CURRENT_NET="wlan0"
-						setDefaultRoute wlan0
-						net_is_change=1
-					fi
-				fi
-			fi
-		fi
-	fi
-
-	if [ ${net_is_change} -eq 1 ]
-	then
-		fail_count=0
-		echo "" > /tmp/netstatus
-		GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-		echo "${GET_TIMESTAMP}:net is change, kill old thread and restart" >> ${LOGFILE}
-		pid=$(ps -ef | grep mqtt_client | grep -v grep | awk -F" " '{print $2}')
-		echo "pid = ${pid}" >> ${LOGFILE}
-		if [ ! -z "${pid}" ]
-		then
-			echo "kill ${pid}" >> ${LOGFILE}
-			kill -9 ${pid}
-			sleep 1
-		fi
-		can_create_mqtt_thread=1
-		#mac=$(cat /tmp/eth0macaddr)
-		#python3 /root/mqtt_client.py ${mac} &
-		net_is_change=0
-	fi
-
-	if [ ${can_create_mqtt_thread} -eq 1 ]
-	then 
-		ping baidu.com -c 1 > /dev/null
+		count=0
+		#traceroute www.baidu.com > /dev/null 2>&1
+		ping www.baidu.com -c 1 > /dev/null
 		if [ $? -eq 0 ]
 		then
-			can_create_mqtt_thread=0
-			echo "OK" > /tmp/netstatus
+			#equl 0 mean network is fine
+			fail_count=0
+			sta=$(cat ${NETSTAT})
+			if [ -z "${sta}" ]
+			then
+				/root/update_time.sh
+				echo "OK" > ${NETSTAT}
+			fi
+		else
+			fail_count=$(expr ${fail_count} + 1)
+			if [ ${fail_count} -ge 3 ]
+			then
+				fail_count=0
+				#err_count=0
+				GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+				echo "${GET_TIMESTAMP}:network[${CURRENT_NET}] is bad, now change network" >> ${LOGFILE}
+				python3 /root/showimage.py 2
+				if [ "${CURRENT_NET}" == "eth0" ]
+				then
+					CURRENT_NET="wlan0"
+				elif [ "${CURRENT_NET}" == "wlan0" ]
+				then
+					CURRENT_NET="ppp0"
+				elif [ "${CURRENT_NET}" == "ppp0" ]
+				then
+					CURRENT_NET="eth0"
+				fi
+				kill_mqtt_thread
+				setDefaultRoute ${CURRENT_NET}
+			fi
 		fi
 	fi
 

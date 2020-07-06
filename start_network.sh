@@ -6,42 +6,57 @@ PPPD=$(which pppd)
 
 cat /dev/null > /var/log/zywllog
 LOG_FILE=/var/log/zywllog
+NETFILE="/tmp/netstatus"
+MACFILE="/tmp/eth0macaddr"
 CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-echo "---> $0 start work!@${CUR_TIME}" > ${LOG_FILE}
+echo "${CUR_TIME}:$0 start work!}" >> ${LOG_FILE}
 
-ps -ef | grep start_network | grep -v grep | awk -F" " '{print $2}' > /var/run/start_network.pid
+/bin/dmesg -n 1
 
-echo "*/10 * * * * /usr/sbin/ntpdate ntp.api.bz > /dev/null" > /var/spool/cron/crontabs/root
-echo "*/10 * * * * /usr/sbin/ntpdate cn.pool.ntp.org > /dev/null" >> /var/spool/cron/crontabs/root
+#ps -ef | grep start_network | grep -v grep | awk -F" " '{print $2}' > /var/run/start_network.pid
+
+#echo "*/10 * * * * /usr/sbin/ntpdate ntp.api.bz > /dev/null" > /var/spool/cron/crontabs/root
+#echo "*/10 * * * * /usr/sbin/ntpdate cn.pool.ntp.org > /dev/null" >> /var/spool/cron/crontabs/root
+#echo "*/10 * * * * /bin/bash /root/update_time.sh" >> /var/spool/cron/crontabs/root
+#service cron start
+
+cp /root/ntp.conf /etc/
 
 #insmod /root/hardware_ctrl/linux/char/lcd_driver_simulation_spi.ko 
+
 flag=0
 feedcount=0
 
-start() {
+mqtt_start() {
 	#pid=$(ps -ef | grep mqtt | grep -v grep | awk -F" " '{print $2}')
-	mac=$(cat /tmp/eth0macaddr)
-	python3 /root/mqtt_client.py ${mac} &
+	mac=$(cat ${MACFILE})
+	if [ -n "${mac}" ]
+	then
+		python3 /root/mqtt_client.py ${mac} &
+	else
+		mac=$(ifconfig eth0 | grep HWaddr | awk -F" " '{print $5}' | awk -F":" '{print $1$2$3$4$5$6}')
+		echo ${mac} > ${MACFILE}
+		python3 /root/mqtt_client.py ${mac} &
+	fi
 }
 
-stop() {
+mqtt_stop() {
 	pid=$(ps -ef | grep mqtt_client | grep -v grep | awk -F" " '{print $2}')
-	if [ ! -z "${pid}" ]
+	if [ -n "${pid}" ]
 	then
 		kill -9 ${pid}
-	fi  
+	fi
 }
 
-restart() {
-	stop
-	start
+mqtt_restart() {
+	mqtt_stop
+	mqtt_start
 }
-
-NETFILE="/tmp/netstatus"
 
 while true
 do
 	sleep 1
+
 	#echo "ssid=${ssid} psk=${psk}"
 	ps -ef | grep wpa_supplicant | grep -v grep > /dev/null
 	if [ $? -ne 0 ] 
@@ -50,7 +65,7 @@ do
 		ssid=$(cat /root/net.conf | grep -w ssid | awk -F"=" '{print $2}')
 		psk=$(cat /root/net.conf | grep -w psk | awk -F"=" '{print $2}')
 		CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-		echo "---> $0 wlan0 will start@${CUR_TIME}" >> ${LOG_FILE}
+		echo "${CUR_TIME}:$0 wlan0 will start" >> ${LOG_FILE}
 		wpa_passphrase ${ssid} ${psk} > /etc/wpa.conf
 		echo "ctrl_interface=/var/run/wpa_supplicant" >> /etc/wpa.conf
 		wpa_supplicant -iwlan0 -c /etc/wpa.conf > /var/log/wpalog 2>&1 &
@@ -77,10 +92,10 @@ do
 		CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
 		if [ "$sta" == "OK" ]
 		then
-			echo "---> $0 ppp0 will start@${CUR_TIME}" >> ${LOG_FILE}
+			echo "${CUR_TIME}:$0 ppp0 will start" >> ${LOG_FILE}
 			${PPPD} call myapp &
 		else
-			echo "---> $0 serial not work@${CUR_TIME}" >> ${LOG_FILE}
+			echo "${CUR_TIME}:$0 serial not work" >> ${LOG_FILE}
 			/root/gpio_ctrl.sh 3 0
 			sleep 0.2
 			/root/gpio_ctrl.sh 3 1
@@ -88,6 +103,12 @@ do
 			/root/gpio_ctrl.sh 3 0
 			/usr/bin/tput reset > /dev/ttyS2
 		fi
+	fi
+
+	ps -ef | grep ntpd | grep -v grep > /dev/null
+	if [ $? -ne 0 ]
+	then 
+		service ntp start
 	fi
 
 	feedcount=$(expr ${feedcount} + 1)
@@ -105,10 +126,14 @@ do
 			num=$(ps -ef | grep mqtt_client | grep -v grep | wc -l)
 			if [ ${num} -eq 0 ] 
 			then
-				start
+				CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+				echo "${CUR_TIME}:mqtt client start" >> ${LOG_FILE}
+				mqtt_start
 			elif [ ${num} -gt 1 ] 
 			then
-				stop
+				CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+				echo "${CUR_TIME}:mqtt client stop" >> ${LOG_FILE}
+				mqtt_stop
 			fi  
 		fi  
 	fi  

@@ -70,7 +70,7 @@ class wx_2vcode():
 			req = request.Request(full_url, bytes(jsonstr, encoding="utf-8"))
 			with request.urlopen(req) as resp:
 				page = resp.read()
-				if len(page) < 100:
+				if len(page) < 300:
 					respjson = json.loads(str(page, encoding="utf-8"))
 					if "errcode" in respjson.keys():
 						if respjson["errcode"] == 42001 or respjson["errcode"] == 40001:	#token过期
