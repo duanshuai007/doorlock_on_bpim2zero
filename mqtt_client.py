@@ -27,9 +27,13 @@ class mqtt_client(mqtt.Client):
 	delete_list = []
 
 	wx2vcode = None
+	publish_queue = None
+	work_queue = None
 
 	def set_device_sn(self, sn):
 		self.device_sn = sn	
+		self.work_queue = queue.Queue(32)
+		self.publish_queue = queue.Queue(32)
 
 	def set_wx2vcode_hand(self, hand, screen):
 		self.wx2vcode = hand
@@ -61,13 +65,11 @@ class mqtt_client(mqtt.Client):
 			self.logger.info("connect success")
 			self.subscribe(self.sub_topic_list)
 			
-			resp = copy.deepcopy(ms.DEVICE_ONLINE)
-			resp["device_sn"] = self.device_sn
-			resp["rtime"] = int(time.time())
-			resp["on_line"] = 1
-			resp["identify"] = random.randint(100000, 999999)
-			respjson = json.dumps(resp)
-			self.publish_queue.put({"topic":ms.DEVICE_ONLINE_TOPIC, "payload":respjson, 'qos':2, 'retain':False})
+			ms.DEVICE_STATUS["device_sn"] = self.device_sn
+			ms.DEVICE_STATUS["status"] = 1
+			ms.DEVICE_STATUS["rtime"] = int(time.time())
+			respjson = json.dumps(ms.DEVICE_STATUS)
+			self.publish_queue.put({"topic":ms.DEVICE_STATUS_TOPIC, "payload":respjson, 'qos':2, 'retain':True})
 
 	#执行mqttc.disconnect()主动断开连接会触发该函数
 	#当因为什么原因导致客户端断开连接时也会触发该函数,ctrl-c停止程序不会触发该函数
@@ -85,41 +87,38 @@ class mqtt_client(mqtt.Client):
 	'''
 	def on_message(self, mqttc, obj, msg):
 		try:
-			if msg.retain == 0:
-				#self.logger.info("retain = Flase")
-				json_msg = json.loads(str(msg.payload, encoding="utf-8"))
-				if json_msg["device_sn"] == self.device_sn:
-					self.logger.info("on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-					local_time = int(time.time())
-					recv_time = int(json_msg["stime"])
-					if (local_time - recv_time < 10):
-						if self.work_queue is not None:
-							self.work_queue.put([msg.topic, json_msg])
-						else:
-							#device busy，message lost
-							pass
+			json_msg = json.loads(str(msg.payload, encoding="utf-8"))
+			if json_msg["device_sn"] == self.device_sn or json_msg["device_sn"] == ms.BOARDCAST_ADDR:
+				self.logger.info("on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+				local_time = int(time.time())
+				recv_time = int(json_msg["stime"])
+				if (abs(local_time - recv_time) < 15):
+					if self.work_queue is not None:
+						self.work_queue.put([msg.topic, json_msg])
 					else:
-						#timeout, message lost
-						self.logger.warn("on message: this message timestamp was timeout")
-						if msg.topic == ms.OPENDOOR_TOPIC:
-							ms.OPENDOOR_RESP_MSG["device_sn"] = self.device_sn
-							ms.OPENDOOR_RESP_MSG["result"] = 2
-							ms.OPENDOOR_RESP_MSG["identify"] = json_msg["identify"]
-							ms.OPENDOOR_RESP_MSG["rtime"] = int(time.time())
-							sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
-							self.publish_queue.put({"topic":ms.OPENDOOR_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
-						else:
-							ms.QR_RESPONSE["device_sn"] = self.device_sn
-							ms.QR_RESPONSE["rtime"] = int(time.time())
-							ms.QR_RESPONSE["type"] = json_msg["type"]
-							ms.QR_RESPONSE["identify"] = json_msg["identify"]
-							ms.QR_RESPONSE["status"] = 2
-							sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
-							self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
-			else:
-				#if obj == True:
-				#	self.logger.info("Clearing topic " + msg.topic)
-				self.logger.info("retain = True:{} {} {}".format(msg,topic, msg,qos, msg.payload))
+						#device busy，message lost
+						self.logger.error("on message:self.work_queue is None")
+						pass
+				else:
+					#timeout, message lost
+					self.logger.warn("on message: this message timestamp was timeout")
+					if msg.topic == ms.OPENDOOR_TOPIC:
+						ms.OPENDOOR_RESP_MSG["device_sn"] = self.device_sn
+						ms.OPENDOOR_RESP_MSG["result"] = 2
+						ms.OPENDOOR_RESP_MSG["identify"] = json_msg["identify"]
+						ms.OPENDOOR_RESP_MSG["rtime"] = int(time.time())
+						sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
+						self.publish_queue.put({"topic":ms.OPENDOOR_RESP_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
+					elif msg.topic == ms.QR_TOPIC:
+						ms.QR_RESPONSE["device_sn"] = self.device_sn
+						ms.QR_RESPONSE["rtime"] = int(time.time())
+						ms.QR_RESPONSE["type"] = json_msg["type"]
+						ms.QR_RESPONSE["identify"] = json_msg["identify"]
+						ms.QR_RESPONSE["status"] = 2
+						sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
+						self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+					else:
+						pass
 		except Exception as e:
 			self.logger.error("on message exception:{}".format(e))
 
@@ -143,7 +142,6 @@ class mqtt_client(mqtt.Client):
 		self.sub_topic_list.append((topic, qos))
 
 	def do_select(self):
-		self.publish_queue = queue.Queue(32)
 		while True:
 			try:
 				if not self.publish_queue.empty():
@@ -166,10 +164,10 @@ class mqtt_client(mqtt.Client):
 				self.logger.info("select error:{}".format(e))	
 	
 	def do_hardware_work(self):
-		self.work_queue = queue.Queue(32)
 		doorlock_open_flag = False
 		doorlock_open_time = 0
-		doorlock_continue_time = int(config.config().get("DOORLOCK", "OPEN_TIME")) * 1000
+		doorlock_time = int(config.config().get("DOORLOCK", "OPEN_TIME"))
+		doorlock_continue_time = doorlock_time * 1000
 		image_show_flag = False
 		image_show_time = 0
 		image_continue_time = int(config.config().get("DOORLOCK", "2VCODE_TIME")) * 1000
@@ -195,7 +193,7 @@ class mqtt_client(mqtt.Client):
 						ms.OPENDOOR_RESP_MSG["result"]		= 1
 						ms.OPENDOOR_RESP_MSG["identify"]	= json_msg["identify"]
 						sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
-						self.publish_queue.put({"topic":ms.OPENDOOR_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
+						self.publish_queue.put({"topic":ms.OPENDOOR_RESP_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
 						pass
 					elif topic == ms.QR_TOPIC:
 						#执行显示二维码动作,该动作不需要返回响应信息
@@ -206,43 +204,77 @@ class mqtt_client(mqtt.Client):
 						ms.QR_RESPONSE["status"]	= 0
 						if json_msg["type"] == 1:
 							filepath = self.wx2vcode.get_2vcode(json_msg["message"])
+							#self.logger.info("wx2ccode ret = {}".format(filepath))
 							if filepath is not None:
+								#self.logger.info("filepath = {}".format(filepath))
 								ret = self.screen.show_image_on_screen(filepath, True, True)
 								if ret == True:
 									ms.QR_RESPONSE["status"] = 1
 									image_show_flag = True
 									image_show_time = int(time.time() * 1000)
-						elif json_msg["type"] == 3:
-							ret = self.screen.show_qrcode_2vcode_on_screen(json_msg["message"])
-							if ret == True:
-								ms.QR_RESPONSE["status"] = 1
-								image_show_flag = True
-								image_show_time = int(time.time() * 1000)
 						elif json_msg["type"] == 2:
 							ret = self.screen.down_image_and_show_image_on_screen(json_msg["message"])
 							if ret == True:
 								ms.QR_RESPONSE["status"] = 1
 								image_show_flag = True
 								image_show_time = int(time.time() * 1000)
+						elif json_msg["type"] == 3:
+							ret = self.screen.show_qrcode_2vcode_on_screen(json_msg["message"])
+							if ret == True:
+								ms.QR_RESPONSE["status"] = 1
+								image_show_flag = True
+								image_show_time = int(time.time() * 1000)
 						else:
 							pass
-
+						
 						if ms.QR_RESPONSE["status"] == 0:
 							self.screen.show_erroricon()
-
+						
 						sendmsg = json.dumps(ms.QR_RESPONSE)
-						self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
+						self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
 					else:
-						self.logger.info("invaild topic = {}".format(topic))
-						#send response failed
-				'''
+						'''
+							this topic is my test
+						'''
+						if topic == ms.DEVICE_INFO_TOPIC:
+							ms.DEVICE_INFO["device_sn"] = self.device_sn
+							#doorlock  = 0: get doorlock time
+							#doorlock != 0: set doorlock time
+							if json_msg["doorlock"] != 0:
+								c = config.config()
+								ret = c.set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
+								if ret == False:
+									ms.DEVICE_INFO["doorlock"] = "failed"
+								else:
+									doorlock_time = int(json_msg["doorlock"])
+									doorlock_continue_time = doorlock_time * 1000
+									ms.DEVICE_INFO["doorlock"] = "success"
+								pass
+							else:
+								ms.DEVICE_INFO["doorlock"] = doorlock_time
+									
+							current = os.popen("cat /tmp/current_network").read().split('\n')[0]
+							ms.DEVICE_INFO["current"] = current
+							
+							cmd1="ifconfig {} | grep 'inet addr' ".format(current)
+							cmd2 = "{}{}{}{}".format(" | awk -F\" \" ", "'{", "print $2", "}'")
+							cmd3 = "{}{}{}{}".format(" | awk -F\":\" ", "'{", "print $2", "}'")
+							cmd = "{}{}{}".format(cmd1, cmd2, cmd3)
+							ip = os.popen(cmd).read().split('\n')[0]
+							ms.DEVICE_INFO["ip"] = ip
+							sendmsg = json.dumps(ms.DEVICE_INFO)
+							self.publish_queue.put({"topic":ms.DEVICE_INFO_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+							pass	
+						else:
+							self.logger.info("invaild topic = {}".format(topic))
+							#send response failed
+				
 				if doorlock_open_flag == True:
 					curtime = int(time.time() * 1000)
-					#self.logger.info("curtime={} opentime={}".format(curtime, doorlock_open_time))
 					if curtime - doorlock_open_time > doorlock_continue_time:	#1000ms
-						#self.gpio_handler.writePin(self.gpio_group, self.gpio_pin, 1)
 						spilcd_api.set_doorlock(1)
 						doorlock_open_flag = False
+				'''
 				if image_show_flag == True:
 					curtime = int(time.time() * 1000)
 					if curtime - image_show_time > image_continue_time:
@@ -267,13 +299,11 @@ class mqtt_client(mqtt.Client):
 
 	def run_mqtt(self, host=None, port=1883, keepalive=60):
 		try:
-			resp = copy.deepcopy(ms.DEVICE_ONLINE)
-			resp["device_sn"] = self.device_sn
-			resp["rtime"] = int(time.time())
-			resp["on_line"] = 0 
-			resp["identify"] = random.randint(100000, 999999)
-			respjson = json.dumps(resp)
-			self.will_set(topic=ms.DEVICE_ONLINE_TOPIC, payload=respjson, qos=2, retain=False)
+			ms.DEVICE_STATUS["device_sn"] = self.device_sn
+			ms.DEVICE_STATUS["status"] = 0
+			ms.DEVICE_STATUS["rtime"] = int(time.time())
+			respjson = json.dumps(ms.DEVICE_STATUS)
+			self.will_set(topic=ms.DEVICE_STATUS_TOPIC, payload=respjson, qos=2, retain=True)
 			self.reconnect_delay_set(min_delay=10, max_delay=60)
 			#logging.basicConfig(level=logging.INFO)
 			#self.logger = logging.getLogger(__name__)
@@ -323,6 +353,7 @@ if __name__ == "__main__":
 	mc.set_device_sn(device_sn)
 	mc.setsubscribe(topic=ms.OPENDOOR_TOPIC, qos=0)
 	mc.setsubscribe(topic=ms.QR_TOPIC, qos=0)
+	mc.setsubscribe(topic=ms.DEVICE_INFO_TOPIC, qos=0)
 	mc.set_user_and_password(user, passwd)
 	if mc.set_cafile(cafile) == False:
 		exit(1)

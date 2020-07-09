@@ -1,12 +1,15 @@
 #!/usr/nbin/env python3
 #-*- coding:utf-8 -*-
 
-
+BOARDCAST_ADDR = "ffffffffffff"
 OPENDOOR_TOPIC = "/door_ctrl"
 OPENDOOR_RESP_TOPIC = "/door_response"
 QR_TOPIC = "/qr_ctrl"
 QR_RESP_TOPIC = "/qr_response"
-DEVICE_ONLINE_TOPIC = "/online_response"
+DEVICE_STATUS_TOPIC = "/status"
+
+DEVICE_INFO_TOPIC = "/test/device_info"
+DEVICE_INFO_RESP_TOPIC = "/test/device_info_resp"
 
 OPENDOOR_MSG = {
 	"device_sn" : "",
@@ -61,9 +64,19 @@ QR_RESPONSE = {
 	"status" : "",
 }
 
-DEVICE_ONLINE = {
+DEVICE_STATUS = {
 	"device_sn" : "",
+	"status" : 0,
 	"rtime" : 0,
-	"on_line" : 0,
-	"identify" : 0,
+}
+
+DEVICE_INFO = {
+	"device_sn" : "",
+	"stime" : 0,
+	# 0  = get doorlock time
+	# !0 = set doorlock time
+	"doorlock" : 0,
+	"ip" : "",
+	"current" : "",
+	"thread status" : ""
 }

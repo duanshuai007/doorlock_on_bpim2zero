@@ -179,18 +179,10 @@ SAY "\NSending break to the modem\n"
 SAY "\nGood bye !\n"
 ```
 
-
-设置pppd开机启动
-
-在/etc/rc.local文件中加入
-
-`pppd call myapp &` 这样就会开机启动脚本。
-
 ## 开机启动网络管理脚本
 
 将pppd和wifi网络的启动放在一个脚本文件中进行统一管理，通过设置为后台守护进程一直监视进程保证进程执行。  
 去掉`/etc/rc.local`中关于`pppd`和`wpa`的语句，然后加入
-
 
 ```
 /root/start_network.sh &
@@ -216,14 +208,10 @@ SAY "\nGood bye !\n"
 
 ## 启动mqtt程序
 
-#### 启动mqtt程序之前需要先安装spilcd
-
-* insmod /root/hardware_ctrl/linux/char/lcd_driver_simulation_spi.ko
-
 #### 生成spilcd python模块
 
 ```
-cd display
+cd hardware_ctrl/python/v1/
 python3 setup.py install
 ```
 
@@ -236,11 +224,10 @@ python3 setup.py install
 
 使用eth0的mac地址作为设备的id.
 ```
+python3 /root/showimage.py 1
 /root/start_network.sh &
+/root/get_eth0_mac.sh
 /root/monitor_network.sh &
-mac=$(ifconfig  -a | grep HWaddr | grep eth0 | awk -F" " '{print $5}' | awk -F":" '{print $1$2$3$4$5$6}')
-echo ${mac} > /tmp/eth0macaddr
-python3 /root/mqtt_client.py ${mac} &
 ```
 
 ## 烧写镜像的方法

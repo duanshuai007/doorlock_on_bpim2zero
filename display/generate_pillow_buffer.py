@@ -16,16 +16,14 @@ import spilcd_api
 
 class screen():
 
-	__logo_buffer = []
-	__error_buffer = []
+#	__logo_buffer = []
+#	__error_buffer = []
 
 	def __init__(self):
 		self.log = LoggingQueue.LoggingProducer().getlogger()
-		#self.spilcd = spilcd_api()
-		#self.spilcd.on()
 		spilcd_api.on()
-		self.__error_buffer = self.read_image_return_list("/root/display/error_160x160.png")
-		self.__logo_buffer = self.read_image_return_list("/root/display/logo_160x160.png")	
+#		self.__error_buffer = self.read_image_return_list("/root/display/error_160x160.png")
+#		self.__logo_buffer = self.read_image_return_list("/root/display/logo_160x160.png")	
 
 	'''
 		通过qrcode生成二维码信息，不用保存图片，将生成
@@ -216,14 +214,14 @@ class screen():
 			return False
 	
 	def show_erroricon(self):
-		#self.show_image_on_screen("/root/display/error_160x160.png", True, True)
-		if self.__error_buffer is not None:
-			spilcd_api.show(self.__error_buffer)
+		self.show_image_on_screen("/root/display/error_160x160.png", True, True)
+#		if self.__error_buffer is not None:
+#			spilcd_api.show(self.__error_buffer)
 		pass
 	def show_logo(self):
-		#self.show_image_on_screen("/root/display/logo_160x160.png", True, True)
-		if self.__logo_buffer is not None:
-			spilcd_api.show(self.__logo_buffer)
+		self.show_image_on_screen("/root/display/logo_160x160.png", True, True)
+#		if self.__logo_buffer is not None:
+#			spilcd_api.show(self.__logo_buffer)
 		pass
 
 if __name__ == "__main__":

@@ -118,7 +118,7 @@ class mqtt_client(mqtt.Client):
 		#devid = "02420877c9cc"
 		#devid = "02421a71c57b"
 		devid = "024251720577"
-		message_delay = 60*3
+		message_delay = 10
 		ms.OPENDOOR_MSG["device_sn"] = devid
 		ms.OPENDOOR_MSG["action"] = 1
 		ms.OPENDOOR_MSG["identify"] = 123456678765432
@@ -138,6 +138,8 @@ class mqtt_client(mqtt.Client):
 		ms.QR_GENERATE2VCODE["type"] = 3
 		ms.QR_GENERATE2VCODE["identify"] = 39389043910329
 		ms.QR_GENERATE2VCODE["message"]["data"] = "this is a test message, this will create a 2vcode and display on 160x160 matrix screen"
+		
+		ms.DEVICE_INFO["device_sn"] = devid
 
 		while True:
 			#time.sleep(3)
@@ -145,13 +147,14 @@ class mqtt_client(mqtt.Client):
 			if self.publish_queue is not None:
 				print("test puiblish send message")
 				#self.publish_queue.put({"topic":"/acs_open", "payload":"{\"device_sn\":\"00001\"},\"action\":1,\"identify\":\"1234567\"", 'qos':2, 'retain':False})
-				'''
+				'''	
 				ms.OPENDOOR_MSG["action"] = 0
 				ms.OPENDOOR_MSG["stime"] = int(time.time())
 				sendmsg = json.dumps(ms.OPENDOOR_MSG)
 				self.publish_queue.put({"topic":ms.OPENDOOR_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
-				time.sleep(2)
+				time.sleep(10)
 				'''
+
 				ms.OPENDOOR_MSG["action"] = 1
 				ms.OPENDOOR_MSG["stime"] = int(time.time())
 				sendmsg = json.dumps(ms.OPENDOOR_MSG)
@@ -173,14 +176,25 @@ class mqtt_client(mqtt.Client):
 				self.publish_queue.put({"topic":ms.QR_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
 				time.sleep(message_delay)
 				
+				'''
+				ms.DEVICE_INFO["stime"] = int(time.time())
+				ms.DEVICE_INFO["doorlock"] = 20
+				sendmsg = json.dumps(ms.DEVICE_INFO)
+				self.publish_queue.put({"topic":ms.DEVICE_INFO_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
+				time.sleep(message_delay)
+				'''
+				
 	def run(self, host=None, port=1883, keepalive=60):
+		
+		'''
 		publish_thread = threading.Thread(target = self.do_select)
 		publish_thread.setDaemon(False)
 		publish_thread.start()
 		test_pub = threading.Thread(target = self.test_publish)
 		test_pub.setDaemon(False)
 		test_pub.start()
-		
+		'''
+
 		#self.will_set(topic=ms.DEVICE_ONLINE_TOPIC, payload=respjson, qos=2, retain=False)
 		self.reconnect_delay_set(min_delay=10, max_delay=120)
 
@@ -218,7 +232,8 @@ if __name__ == "__main__":
 	mc.setsubscribe(topic='/qr_code', qos=1)
 	mc.setsubscribe(topic=ms.OPENDOOR_RESP_TOPIC, qos=2)
 	mc.setsubscribe(topic=ms.QR_RESP_TOPIC, qos=2)
-	mc.setsubscribe(topic='/online_response', qos=2)
+	mc.setsubscribe(topic=ms.DEVICE_STATUS_TOPIC, qos=2)
+	mc.setsubscribe(topic=ms.DEVICE_INFO_RESP_TOPIC, qos=0)
 	mc.set_user_and_password(user, passwd)
 	mc.set_cafile(cafile)
 	mc.run(host=host, port=port, keepalive=60)

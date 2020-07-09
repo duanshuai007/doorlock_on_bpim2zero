@@ -22,12 +22,24 @@ class config():
 				ret = self.rootdir + '/' + ret 
 			return ret 
 		except Exception as e:
-			print("Config get error")
-			#print(e.args)
+			#self.logger.error("Config get error:{} {} {}",format(string, substring, e))
+			print(e)
 		return ''
+
+	def set(self:object, string:str, substring:str, value:str)->bool:
+		try:
+			self.config.set(string, substring, value)
+			with open(self.rootdir + "/config.ini", 'w') as f:
+				self.config.write(f)
+			return True
+		except Exception as e:
+			print("Config set error:{}".format(e))
+			return False
 
 if __name__ == '__main__':
 	c = config()
 	r = c.get("MQTT", "USER")
+	print(r)
+	r = c.set("DOORLOCK", "OPEN_TIME", "20")
 	print(r)
 	pass

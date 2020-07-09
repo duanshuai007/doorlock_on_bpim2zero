@@ -15,7 +15,6 @@ NETSTAT=/tmp/netstatus
 cat /dev/null > ${NETSTAT}
 
 fail_count=0
-err_count=0
 not_set_route=0
 count=0
 connect_wifi_time=0
@@ -114,7 +113,8 @@ do
 	fi
 done
 
-CURRENT_NET=$(cat /root/net.conf | grep choice |  awk -F"=" '{print $2}')
+#CURRENT_NET=$(cat /root/net.conf | grep choice |  awk -F"=" '{print $2}')
+CURRENT_NET="eth0"
 
 while true
 do
@@ -131,18 +131,20 @@ do
 				#检测默认网络是否可用，如果可用，择切换到默认网络
 				if [ ${connect_wifi_time} -eq 0 ]
 				then
-					connect_wifi_time=1
 					ssid=$(cat /root/net.conf | grep -w ssid | awk -F"=" '{print $2}')
 					psk=$(cat /root/net.conf | grep -w psk | awk -F"=" '{print $2}')
+					echo "connect to wifi ssid:${ssid} psk:${psk}" >> ${LOGFILE}
 					/root/connect_wifi.sh ${ssid} ${psk}
-				elif [ ${connect_wifi_time} -ge 5 ]
+				fi
+
+				connect_wifi_time=$(expr ${connect_wifi_time} + 1)
+				if [ ${connect_wifi_time} -ge 5 ]
 				then
 					connect_wifi_time=0
-				else
-					connect_wifi_time=$(expr ${connect_wifi_time} + 1)
 				fi
+
 				sta=$(wpa_cli -iwlan0 status | grep wpa_state | awk -F"=" '{print $2}')
-				echo "${GET_TIMESTAMP}:sta = ${sta}" >> ${LOGFILE}
+				#echo "${GET_TIMESTAMP}:sta = ${sta}" >> ${LOGFILE}
 				if [ "${sta}" == "COMPLETED" ]
 				then 
 					#获取gateway
@@ -151,7 +153,8 @@ do
 					run_dhclient wlan0
 					if [ -f /run/resolvconf/interface/wlan0.dhclient ]
 					then
-						gateway=$(cat /run/resolvconf/interface/wlan0.dhclient | grep -w nameserver | awk -F" " '{print $2}')
+						iphead=$(ifconfig wlan0 | grep "inet addr" | awk -F" " '{print $2}' | awk -F":" '{print $2}' | awk -F"." '{print $1"\."$2"\."$3"\."}')
+						gateway=$(cat /run/resolvconf/interface/wlan0.dhclient | grep -w nameserver | grep "${iphead}" | awk -F" " '{print $2}')
 						#获取到gateway后添加测试用的路由，进行ping测试
 						if [ -n "${gateway}" ]
 						then
@@ -202,7 +205,8 @@ do
 				run_dhclient eth0
 				if [ -f /run/resolvconf/interface/eth0.dhclient ]
 				then
-					gateway=$(cat /run/resolvconf/interface/eth0.dhclient | grep -w nameserver | awk -F" " '{print $2}')
+					iphead=$(ifconfig eth0 | grep "inet addr" | awk -F" " '{print $2}' | awk -F":" '{print $2}' | awk -F"." '{print $1"\."$2"\."$3"\."}')
+					gateway=$(cat /run/resolvconf/interface/eth0.dhclient | grep -w nameserver | grep "${iphead}" | awk -F" " '{print $2}')
 					if [ -n "${gateway}" ]
 					then
 						route add 114.114.114.114 gw ${gateway} eth0
@@ -283,11 +287,11 @@ do
 	fi
 
 	#系统启动时会从配置文件net.conf中读取默认配置的网络并进行连接
-	if [ ${count} -ge 6 ]
+	if [ ${count} -ge 3 ]
 	then
 		count=0
 		#traceroute www.baidu.com > /dev/null 2>&1
-		ping www.baidu.com -c 1 > /dev/null
+		ping www.baidu.com -I ${CURRENT_NET} -c 1 > /dev/null
 		if [ $? -eq 0 ]
 		then
 			#equl 0 mean network is fine
@@ -303,7 +307,6 @@ do
 			if [ ${fail_count} -ge 3 ]
 			then
 				fail_count=0
-				#err_count=0
 				GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 				echo "${GET_TIMESTAMP}:network[${CURRENT_NET}] is bad, now change network" >> ${LOGFILE}
 				python3 /root/showimage.py 2

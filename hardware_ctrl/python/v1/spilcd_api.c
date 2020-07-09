@@ -448,8 +448,8 @@ PyMODINIT_FUNC PyInit_spilcd_api(void)
 	if (!PyEval_ThreadsInitialized())
 		PyEval_InitThreads();
 
-	sem_init(&sem_as_open, 0, 1);
-	sem_init(&sem_write, 0, 1);
+	sem_init(&sem_as_open, 1, 1);
+	sem_init(&sem_write, 1, 1);
 	/*if (Py_AtExit(cleanup) != 0) {
 		
 	}*/

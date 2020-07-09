@@ -9,12 +9,10 @@ import watchdog
 
 def initialization():
 	spilcd_api.on()
-	spilcd_api.set_doorlock(1)
-	#spilcd_api.close_screen()
 	screen = sc.screen()
-	#screen.show_image_on_screen("/root/display/logo_160x160.jpg", True, True)
 	screen.show_logo()
 	watchdog.open()
+	spilcd_api.set_doorlock(1)
 
 def show_error_icon():
 	screen = sc.screen()
