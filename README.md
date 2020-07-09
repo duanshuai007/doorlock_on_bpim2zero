@@ -285,3 +285,46 @@ fdisk -l test.img
 	test.img2       253952 10113023 9859072  4.7G 83 Linux
 最后执行以下命令，镜像就会变成修改的大小了。
 sudo truncate --size=$[(10113023+1)*512] test.img
+
+## 获取已知设备sn的设备ip
+
+在没有串口线的情况下通过mqtt来获取设备ip
+
+订阅topic:`/test/device_info_resp`
+
+生成数据
+
+```
+sendmsg = 
+{
+	"device_sn" : "", 
+	"stime" : 0,
+	# 0  = get doorlock time
+	# !0 = set doorlock time
+	"doorlock" : 0,
+	"ip" : "", 
+	"current" : "", 
+	"thread status" : ""
+}
+```
+
+填充`device_sn`以及`stime`，在python3脚本程序中`stime=int(time.time())`  
+如果不想修改`doorlock`时间，则该项一定要设置为0  
+然后将数据转换为bytes  
+json.dumps(sendmsg)  
+然后通过mqtt 将该信息publish 到 `/test/device_info` 该主题上。
+
+通过订阅信息就能接收到返回的信息
+
+```
+on message:/test/device_info_resp 0 b'{"current": "eth0", "doorlock": "success", "stime": 0, "device_sn": "024251720577", "thread status": "", "ip": "192.168.200.54"}'
+```
+就获得了设备的ip地址，就可以通过ssh登陆了。
+
+也可以通过该条信息来设置`doorlock`的时间。
+
+```
+当doorlock = 0 时，程序查询设备上的doorlock时间，并通过信息返回。
+当doorlock 不等于 0 时，程序会将doorlock的值设置为本地的doorlock时间，成功返回success，失败返回failed
+设置的doorlock立即生效
+```

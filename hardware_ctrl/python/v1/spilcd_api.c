@@ -448,6 +448,10 @@ PyMODINIT_FUNC PyInit_spilcd_api(void)
 	if (!PyEval_ThreadsInitialized())
 		PyEval_InitThreads();
 
+	//第二个参数的意义时该信号量是进程间共享还是一个进程的多个线程间共享
+	//0 = 一个进程的多个线程间共享
+	//1 = 多个进程间共享
+	//第三个参数是该信号量的初始值
 	sem_init(&sem_as_open, 1, 1);
 	sem_init(&sem_write, 1, 1);
 	/*if (Py_AtExit(cleanup) != 0) {
