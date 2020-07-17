@@ -282,9 +282,9 @@ class mqtt_client(mqtt.Client):
 									packetsize = json_msg["firmware"]["packetsize"]
 									md5str = json_msg["firmware"]["md5"]
 									download_url = json_msg["firmware"]["url"]
-									filename = "/home/download/firmware_{}.tar.gz".format(json_msg["firmware"]["version"])
-									#if downloadtool.download_firmware(download_url, packetsize, md5str, filename) == True:
-									if sendmsg is not None:	#for test allways in
+									filename = "/home/download/firmware_{}.des3.tar.gz".format(json_msg["firmware"]["version"])
+									if downloadtool.download_firmware(download_url, md5str, filename) == True:
+									#if sendmsg is not None:	#for test allways in
 										ms.UPDATE_RESP_INFO["firmware"]["status"] = "download success"
 										ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
 										sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
@@ -293,13 +293,12 @@ class mqtt_client(mqtt.Client):
 										with open("/home/ubuntu/update_status", "w") as f:
 											update_message="{}:{}:0".format("start", update_version)
 											f.write(update_message)
-									'''
 									else:
 										ms.UPDATE_RESP_INFO["firmware"]["status"] = "download failed"
 										ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
 										sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
 										self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
-									'''
+									
 						elif topic == ms.OPENSSH_TOPIC:
 							enable = json_msg["enable"]
 							opentime = json_msg["opentime"]

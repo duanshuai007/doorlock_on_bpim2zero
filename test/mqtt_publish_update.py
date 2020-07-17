@@ -123,11 +123,11 @@ class mqtt_client(mqtt.Client):
 	def test_publish(self):
 		devid = self.device_sn
 		ms.UPDATE_INFO["device_sn"] = devid
-		ms.UPDATE_INFO["firmware"]["url"] = "http://wwww.baidu.com"
+		ms.UPDATE_INFO["firmware"]["url"] = "https://acstest.iotwonderful.cn/api/upgrade/download?file_name=upgrade/6b863767.gz"
 		ms.UPDATE_INFO["firmware"]["version"] = int(self.version)
 		ms.UPDATE_INFO["firmware"]["packetsize"] = 1024
 		ms.UPDATE_INFO["firmware"]["enable"] = 1
-		ms.UPDATE_INFO["firmware"]["md5"] = 3829183210838201
+		ms.UPDATE_INFO["firmware"]["md5"] = "6b8637672f0460b6f8436f7eec4868fa"
 		while True:
 			time.sleep(1)
 			#print("test_publish")

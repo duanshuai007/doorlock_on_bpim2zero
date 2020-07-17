@@ -16,6 +16,9 @@ DEVICE_INFO_TOPIC = "/test/device_info"
 DEVICE_INFO_RESP_TOPIC = "/test/device_info_resp"
 
 DOORSTONE="iotwonderful"
+UPGRADE_TOKEN_URL="https://acstest.iotwonderful.cn/api/upgrade/login"
+UPGRADE_USERNAME="xinchao@iotwonderful.com"
+UPGRADE_PASSWORD="123456"
 
 OPENDOOR_MSG = {
 	"device_sn" : "",

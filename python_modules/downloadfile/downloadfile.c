@@ -1093,6 +1093,20 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_LookupSpecial(PyObject* obj, PyObj
 #define __Pyx_PyObject_LookupSpecial(o,n) __Pyx_PyObject_GetAttrStr(o,n)
 #endif
 
+/* PyIntCompare.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_EqObjC(PyObject *op1, PyObject *op2, long intval, long inplace);
+
+/* DictGetItem.proto */
+#if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
+static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key);
+#define __Pyx_PyObject_Dict_GetItem(obj, name)\
+    (likely(PyDict_CheckExact(obj)) ?\
+     __Pyx_PyDict_GetItem(obj, name) : PyObject_GetItem(obj, name))
+#else
+#define __Pyx_PyDict_GetItem(d, key) PyObject_GetItem(d, key)
+#define __Pyx_PyObject_Dict_GetItem(obj, name)  PyObject_GetItem(obj, name)
+#endif
+
 /* PyErrFetchRestore.proto */
 #if CYTHON_FAST_THREAD_STATE
 #define __Pyx_PyErr_Clear() __Pyx_ErrRestore(NULL, NULL, NULL)
@@ -1272,71 +1286,104 @@ int __pyx_module_is_main_downloadfile = 0;
 
 /* Implementation of 'downloadfile' */
 static PyObject *__pyx_builtin_open;
+static const char __pyx_k_1[] = "1";
 static const char __pyx_k_a[] = "a";
 static const char __pyx_k_b[] = "b";
 static const char __pyx_k_c[] = "c";
 static const char __pyx_k_e[] = "e";
+static const char __pyx_k_m[] = "m";
 static const char __pyx_k_r[] = "r";
+static const char __pyx_k__2[] = "";
+static const char __pyx_k_ms[] = "ms";
 static const char __pyx_k_os[] = "os";
+static const char __pyx_k_rb[] = "rb";
 static const char __pyx_k_end[] = "end";
-static const char __pyx_k_int[] = "int";
 static const char __pyx_k_log[] = "log";
 static const char __pyx_k_md5[] = "md5";
+static const char __pyx_k_msg[] = "msg";
+static const char __pyx_k_req[] = "req";
 static const char __pyx_k_str[] = "str";
 static const char __pyx_k_url[] = "url";
+static const char __pyx_k_data[] = "data";
 static const char __pyx_k_exit[] = "__exit__";
 static const char __pyx_k_file[] = "file";
-static const char __pyx_k_line[] = "line";
+static const char __pyx_k_full[] = "full";
+static const char __pyx_k_json[] = "json";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_name[] = "__name__";
 static const char __pyx_k_open[] = "open";
+static const char __pyx_k_page[] = "page";
 static const char __pyx_k_path[] = "path";
 static const char __pyx_k_read[] = "read";
+static const char __pyx_k_resp[] = "resp";
 static const char __pyx_k_size[] = "size";
 static const char __pyx_k_test[] = "__test__";
+static const char __pyx_k_user[] = "user";
 static const char __pyx_k_check[] = "check";
 static const char __pyx_k_enter[] = "__enter__";
 static const char __pyx_k_error[] = "error";
+static const char __pyx_k_loads[] = "loads";
+static const char __pyx_k_parse[] = "parse";
 static const char __pyx_k_print[] = "print";
+static const char __pyx_k_token[] = "token";
 static const char __pyx_k_utf_8[] = "utf-8";
 static const char __pyx_k_encode[] = "encode";
 static const char __pyx_k_format[] = "format";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_return[] = "return";
+static const char __pyx_k_status[] = "status";
 static const char __pyx_k_update[] = "update";
 static const char __pyx_k_urllib[] = "urllib";
-static const char __pyx_k_filemd5[] = "filemd5";
+static const char __pyx_k_Request[] = "Request";
 static const char __pyx_k_getsize[] = "getsize";
-static const char __pyx_k_handler[] = "handler";
 static const char __pyx_k_hashlib[] = "hashlib";
+static const char __pyx_k_message[] = "message";
+static const char __pyx_k_msgdict[] = "msgdict";
 static const char __pyx_k_request[] = "request";
+static const char __pyx_k_token_2[] = "{}&token={}";
+static const char __pyx_k_urlopen[] = "urlopen";
 static const char __pyx_k_callback[] = "callback";
 static const char __pyx_k_download[] = "download";
+static const char __pyx_k_encoding[] = "encoding";
 static const char __pyx_k_filename[] = "filename";
 static const char __pyx_k_filesize[] = "filesize";
+static const char __pyx_k_md5value[] = "md5value";
+static const char __pyx_k_password[] = "password";
 static const char __pyx_k_test_jpg[] = "test.jpg";
 static const char __pyx_k_getlogger[] = "getlogger";
 static const char __pyx_k_hexdigest[] = "hexdigest";
-static const char __pyx_k_filemd5val[] = "filemd5val";
-static const char __pyx_k_packet_size[] = "packet_size";
+static const char __pyx_k_token_url[] = "token_url";
+static const char __pyx_k_urlencode[] = "urlencode";
+static const char __pyx_k_filehandler[] = "filehandler";
 static const char __pyx_k_urlretrieve[] = "urlretrieve";
 static const char __pyx_k_LoggingQueue[] = "LoggingQueue";
 static const char __pyx_k_downloadfile[] = "downloadfile";
 static const char __pyx_k_get_filetype[] = "get_filetype";
+static const char __pyx_k_urllib_parse[] = "urllib.parse";
 static const char __pyx_k_checkfiletype[] = "checkfiletype";
+static const char __pyx_k_message_struct[] = "message_struct";
 static const char __pyx_k_urllib_request[] = "urllib.request";
 static const char __pyx_k_LoggingProducer[] = "LoggingProducer";
+static const char __pyx_k_UPGRADE_PASSWORD[] = "UPGRADE_PASSWORD";
+static const char __pyx_k_UPGRADE_USERNAME[] = "UPGRADE_USERNAME";
+static const char __pyx_k_UPGRADE_TOKEN_URL[] = "UPGRADE_TOKEN_URL";
 static const char __pyx_k_download_firmware[] = "download_firmware";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_download_md5_error[] = "download {} md5 error.";
-static const char __pyx_k_download_size_error[] = "download[{}] size({}) error.";
 static const char __pyx_k_download_file_size_error[] = "download file size({}) error.";
 static const char __pyx_k_download_file_type_error[] = "download file type error.";
+static const char __pyx_k_get_updatefirmware_token[] = "__get_updatefirmware_token";
 static const char __pyx_k_downloadfile_downloadfile_py[] = "downloadfile/downloadfile.py";
 static const char __pyx_k_download_failed_url_filename_err[] = "download failed, url:{} filename:{} error:{}";
 static const char __pyx_k_https_timgsa_baidu_com_timg_imag[] = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591866200525&di=e880ae3dc16c07985a292a24f3842a1d&imgtype=0&src=http%3A%2F%2Ft9.baidu.com%2Fit%2Fu%3D770196171%2C1212335633%26fm%3D1931";
+static PyObject *__pyx_kp_s_1;
 static PyObject *__pyx_n_s_LoggingProducer;
 static PyObject *__pyx_n_s_LoggingQueue;
+static PyObject *__pyx_n_s_Request;
+static PyObject *__pyx_n_s_UPGRADE_PASSWORD;
+static PyObject *__pyx_n_s_UPGRADE_TOKEN_URL;
+static PyObject *__pyx_n_s_UPGRADE_USERNAME;
+static PyObject *__pyx_kp_b__2;
 static PyObject *__pyx_n_s_a;
 static PyObject *__pyx_n_s_b;
 static PyObject *__pyx_n_s_c;
@@ -1344,75 +1391,99 @@ static PyObject *__pyx_n_s_callback;
 static PyObject *__pyx_n_s_check;
 static PyObject *__pyx_n_s_checkfiletype;
 static PyObject *__pyx_n_s_cline_in_traceback;
+static PyObject *__pyx_n_s_data;
 static PyObject *__pyx_n_s_download;
 static PyObject *__pyx_kp_s_download_failed_url_filename_err;
 static PyObject *__pyx_kp_s_download_file_size_error;
 static PyObject *__pyx_kp_s_download_file_type_error;
 static PyObject *__pyx_n_s_download_firmware;
 static PyObject *__pyx_kp_s_download_md5_error;
-static PyObject *__pyx_kp_s_download_size_error;
 static PyObject *__pyx_n_s_downloadfile;
 static PyObject *__pyx_kp_s_downloadfile_downloadfile_py;
 static PyObject *__pyx_n_s_e;
 static PyObject *__pyx_n_s_encode;
+static PyObject *__pyx_n_s_encoding;
 static PyObject *__pyx_n_s_end;
 static PyObject *__pyx_n_s_enter;
 static PyObject *__pyx_n_s_error;
 static PyObject *__pyx_n_s_exit;
 static PyObject *__pyx_n_s_file;
-static PyObject *__pyx_n_s_filemd5;
-static PyObject *__pyx_n_s_filemd5val;
+static PyObject *__pyx_n_s_filehandler;
 static PyObject *__pyx_n_s_filename;
 static PyObject *__pyx_n_s_filesize;
 static PyObject *__pyx_n_s_format;
+static PyObject *__pyx_n_s_full;
 static PyObject *__pyx_n_s_get_filetype;
+static PyObject *__pyx_n_s_get_updatefirmware_token;
 static PyObject *__pyx_n_s_getlogger;
 static PyObject *__pyx_n_s_getsize;
-static PyObject *__pyx_n_s_handler;
 static PyObject *__pyx_n_s_hashlib;
 static PyObject *__pyx_n_s_hexdigest;
 static PyObject *__pyx_kp_s_https_timgsa_baidu_com_timg_imag;
 static PyObject *__pyx_n_s_import;
-static PyObject *__pyx_n_u_int;
-static PyObject *__pyx_n_s_line;
+static PyObject *__pyx_n_s_json;
+static PyObject *__pyx_n_s_loads;
 static PyObject *__pyx_n_s_log;
+static PyObject *__pyx_n_s_m;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_md5;
+static PyObject *__pyx_n_s_md5value;
+static PyObject *__pyx_n_s_message;
+static PyObject *__pyx_n_s_message_struct;
+static PyObject *__pyx_n_s_ms;
+static PyObject *__pyx_n_s_msg;
+static PyObject *__pyx_n_s_msgdict;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_open;
 static PyObject *__pyx_n_s_os;
-static PyObject *__pyx_n_s_packet_size;
+static PyObject *__pyx_n_s_page;
+static PyObject *__pyx_n_s_parse;
+static PyObject *__pyx_n_s_password;
 static PyObject *__pyx_n_s_path;
 static PyObject *__pyx_n_s_print;
 static PyObject *__pyx_n_s_r;
+static PyObject *__pyx_n_s_rb;
 static PyObject *__pyx_n_s_read;
+static PyObject *__pyx_n_s_req;
 static PyObject *__pyx_n_s_request;
+static PyObject *__pyx_n_s_resp;
 static PyObject *__pyx_n_s_return;
 static PyObject *__pyx_n_s_size;
+static PyObject *__pyx_n_s_status;
 static PyObject *__pyx_n_u_str;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_kp_s_test_jpg;
+static PyObject *__pyx_n_s_token;
+static PyObject *__pyx_kp_s_token_2;
+static PyObject *__pyx_n_s_token_url;
 static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_url;
+static PyObject *__pyx_n_s_urlencode;
 static PyObject *__pyx_n_s_urllib;
+static PyObject *__pyx_n_s_urllib_parse;
 static PyObject *__pyx_n_s_urllib_request;
+static PyObject *__pyx_n_s_urlopen;
 static PyObject *__pyx_n_s_urlretrieve;
+static PyObject *__pyx_n_s_user;
 static PyObject *__pyx_kp_s_utf_8;
 static PyObject *__pyx_pf_12downloadfile_callback(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyObject *__pyx_v_a, CYTHON_UNUSED PyObject *__pyx_v_b, PyObject *__pyx_v_c); /* proto */
 static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_url, PyObject *__pyx_v_filename); /* proto */
-static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_url, PyObject *__pyx_v_packet_size, PyObject *__pyx_v_md5, PyObject *__pyx_v_filename); /* proto */
+static PyObject *__pyx_pf_12downloadfile_4__get_updatefirmware_token(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_12downloadfile_6download_firmware(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_url, PyObject *__pyx_v_md5, PyObject *__pyx_v_filename); /* proto */
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1024;
 static PyObject *__pyx_tuple_;
-static PyObject *__pyx_tuple__2;
-static PyObject *__pyx_tuple__4;
-static PyObject *__pyx_tuple__6;
-static PyObject *__pyx_codeobj__3;
-static PyObject *__pyx_codeobj__5;
-static PyObject *__pyx_codeobj__7;
+static PyObject *__pyx_tuple__3;
+static PyObject *__pyx_tuple__5;
+static PyObject *__pyx_tuple__7;
+static PyObject *__pyx_tuple__9;
+static PyObject *__pyx_codeobj__4;
+static PyObject *__pyx_codeobj__6;
+static PyObject *__pyx_codeobj__8;
+static PyObject *__pyx_codeobj__10;
 /* Late includes */
 
-/* "downloadfile.py":16
+/* "downloadfile.py":19
  * filesize = 0
  * 
  * def callback(a, b, c):             # <<<<<<<<<<<<<<
@@ -1458,17 +1529,17 @@ static PyObject *__pyx_pw_12downloadfile_1callback(PyObject *__pyx_self, PyObjec
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_b)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("callback", 1, 3, 3, 1); __PYX_ERR(0, 16, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("callback", 1, 3, 3, 1); __PYX_ERR(0, 19, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_c)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("callback", 1, 3, 3, 2); __PYX_ERR(0, 16, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("callback", 1, 3, 3, 2); __PYX_ERR(0, 19, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "callback") < 0)) __PYX_ERR(0, 16, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "callback") < 0)) __PYX_ERR(0, 19, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -1483,7 +1554,7 @@ static PyObject *__pyx_pw_12downloadfile_1callback(PyObject *__pyx_self, PyObjec
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("callback", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 16, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("callback", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 19, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("downloadfile.callback", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -1504,16 +1575,16 @@ static PyObject *__pyx_pf_12downloadfile_callback(CYTHON_UNUSED PyObject *__pyx_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("callback", 0);
 
-  /* "downloadfile.py":18
+  /* "downloadfile.py":21
  * def callback(a, b, c):
  * 	global filesize
  * 	filesize = c             # <<<<<<<<<<<<<<
  * 
  * def download(url:str, filename:str)->bool:
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_filesize, __pyx_v_c) < 0) __PYX_ERR(0, 18, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_filesize, __pyx_v_c) < 0) __PYX_ERR(0, 21, __pyx_L1_error)
 
-  /* "downloadfile.py":16
+  /* "downloadfile.py":19
  * filesize = 0
  * 
  * def callback(a, b, c):             # <<<<<<<<<<<<<<
@@ -1533,7 +1604,7 @@ static PyObject *__pyx_pf_12downloadfile_callback(CYTHON_UNUSED PyObject *__pyx_
   return __pyx_r;
 }
 
-/* "downloadfile.py":20
+/* "downloadfile.py":23
  * 	filesize = c
  * 
  * def download(url:str, filename:str)->bool:             # <<<<<<<<<<<<<<
@@ -1576,11 +1647,11 @@ static PyObject *__pyx_pw_12downloadfile_3download(PyObject *__pyx_self, PyObjec
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_filename)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("download", 1, 2, 2, 1); __PYX_ERR(0, 20, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("download", 1, 2, 2, 1); __PYX_ERR(0, 23, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "download") < 0)) __PYX_ERR(0, 20, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "download") < 0)) __PYX_ERR(0, 23, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -1593,14 +1664,14 @@ static PyObject *__pyx_pw_12downloadfile_3download(PyObject *__pyx_self, PyObjec
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("download", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 20, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("download", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 23, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("downloadfile.download", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_url), (&PyString_Type), 1, "url", 1))) __PYX_ERR(0, 20, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_filename), (&PyString_Type), 1, "filename", 1))) __PYX_ERR(0, 20, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_url), (&PyString_Type), 1, "url", 1))) __PYX_ERR(0, 23, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_filename), (&PyString_Type), 1, "filename", 1))) __PYX_ERR(0, 23, __pyx_L1_error)
   __pyx_r = __pyx_pf_12downloadfile_2download(__pyx_self, __pyx_v_url, __pyx_v_filename);
 
   /* function exit code */
@@ -1638,7 +1709,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("download", 0);
 
-  /* "downloadfile.py":21
+  /* "downloadfile.py":24
  * 
  * def download(url:str, filename:str)->bool:
  * 	try:             # <<<<<<<<<<<<<<
@@ -1654,7 +1725,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "downloadfile.py":24
+      /* "downloadfile.py":27
  * 		global log
  * 		global filesize
  * 		if url is not None:             # <<<<<<<<<<<<<<
@@ -1665,22 +1736,22 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
       __pyx_t_5 = (__pyx_t_4 != 0);
       if (__pyx_t_5) {
 
-        /* "downloadfile.py":25
+        /* "downloadfile.py":28
  * 		global filesize
  * 		if url is not None:
  * 			r = urllib.request.urlretrieve(url, filename, callback)             # <<<<<<<<<<<<<<
  * 			r = check.get_filetype(filename)
  * 			if r is None:
  */
-        __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_urllib); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 25, __pyx_L3_error)
+        __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_urllib); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 28, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_request); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 25, __pyx_L3_error)
+        __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_request); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 28, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_8);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_urlretrieve); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 25, __pyx_L3_error)
+        __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_urlretrieve); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 28, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-        __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_callback); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 25, __pyx_L3_error)
+        __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_callback); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 28, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_8);
         __pyx_t_9 = NULL;
         __pyx_t_10 = 0;
@@ -1697,7 +1768,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
         #if CYTHON_FAST_PYCALL
         if (PyFunction_Check(__pyx_t_7)) {
           PyObject *__pyx_temp[4] = {__pyx_t_9, __pyx_v_url, __pyx_v_filename, __pyx_t_8};
-          __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_10, 3+__pyx_t_10); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 25, __pyx_L3_error)
+          __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_10, 3+__pyx_t_10); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 28, __pyx_L3_error)
           __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
           __Pyx_GOTREF(__pyx_t_6);
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -1706,14 +1777,14 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
         #if CYTHON_FAST_PYCCALL
         if (__Pyx_PyFastCFunction_Check(__pyx_t_7)) {
           PyObject *__pyx_temp[4] = {__pyx_t_9, __pyx_v_url, __pyx_v_filename, __pyx_t_8};
-          __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_10, 3+__pyx_t_10); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 25, __pyx_L3_error)
+          __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_10, 3+__pyx_t_10); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 28, __pyx_L3_error)
           __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
           __Pyx_GOTREF(__pyx_t_6);
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         } else
         #endif
         {
-          __pyx_t_11 = PyTuple_New(3+__pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 25, __pyx_L3_error)
+          __pyx_t_11 = PyTuple_New(3+__pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 28, __pyx_L3_error)
           __Pyx_GOTREF(__pyx_t_11);
           if (__pyx_t_9) {
             __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_9); __pyx_t_9 = NULL;
@@ -1727,7 +1798,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
           __Pyx_GIVEREF(__pyx_t_8);
           PyTuple_SET_ITEM(__pyx_t_11, 2+__pyx_t_10, __pyx_t_8);
           __pyx_t_8 = 0;
-          __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_11, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 25, __pyx_L3_error)
+          __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_11, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 28, __pyx_L3_error)
           __Pyx_GOTREF(__pyx_t_6);
           __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         }
@@ -1735,16 +1806,16 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
         __pyx_v_r = __pyx_t_6;
         __pyx_t_6 = 0;
 
-        /* "downloadfile.py":26
+        /* "downloadfile.py":29
  * 		if url is not None:
  * 			r = urllib.request.urlretrieve(url, filename, callback)
  * 			r = check.get_filetype(filename)             # <<<<<<<<<<<<<<
  * 			if r is None:
  * 				log.error("download file type error.")
  */
-        __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_check); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 26, __pyx_L3_error)
+        __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_check); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 29, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_get_filetype); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 26, __pyx_L3_error)
+        __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_get_filetype); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 29, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __pyx_t_7 = NULL;
@@ -1759,13 +1830,13 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
         }
         __pyx_t_6 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_11, __pyx_t_7, __pyx_v_filename) : __Pyx_PyObject_CallOneArg(__pyx_t_11, __pyx_v_filename);
         __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 26, __pyx_L3_error)
+        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 29, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_DECREF_SET(__pyx_v_r, __pyx_t_6);
         __pyx_t_6 = 0;
 
-        /* "downloadfile.py":27
+        /* "downloadfile.py":30
  * 			r = urllib.request.urlretrieve(url, filename, callback)
  * 			r = check.get_filetype(filename)
  * 			if r is None:             # <<<<<<<<<<<<<<
@@ -1776,16 +1847,16 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
         __pyx_t_4 = (__pyx_t_5 != 0);
         if (__pyx_t_4) {
 
-          /* "downloadfile.py":28
+          /* "downloadfile.py":31
  * 			r = check.get_filetype(filename)
  * 			if r is None:
  * 				log.error("download file type error.")             # <<<<<<<<<<<<<<
  * 				return False
  * 			size = os.path.getsize(filename)
  */
-          __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_n_s_log); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 28, __pyx_L3_error)
+          __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_n_s_log); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 31, __pyx_L3_error)
           __Pyx_GOTREF(__pyx_t_11);
-          __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_error); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 28, __pyx_L3_error)
+          __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_error); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 31, __pyx_L3_error)
           __Pyx_GOTREF(__pyx_t_7);
           __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
           __pyx_t_11 = NULL;
@@ -1800,12 +1871,12 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
           }
           __pyx_t_6 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_11, __pyx_kp_s_download_file_type_error) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_kp_s_download_file_type_error);
           __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 28, __pyx_L3_error)
+          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 31, __pyx_L3_error)
           __Pyx_GOTREF(__pyx_t_6);
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-          /* "downloadfile.py":29
+          /* "downloadfile.py":32
  * 			if r is None:
  * 				log.error("download file type error.")
  * 				return False             # <<<<<<<<<<<<<<
@@ -1817,7 +1888,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
           __pyx_r = Py_False;
           goto __pyx_L7_try_return;
 
-          /* "downloadfile.py":27
+          /* "downloadfile.py":30
  * 			r = urllib.request.urlretrieve(url, filename, callback)
  * 			r = check.get_filetype(filename)
  * 			if r is None:             # <<<<<<<<<<<<<<
@@ -1826,19 +1897,19 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
  */
         }
 
-        /* "downloadfile.py":30
+        /* "downloadfile.py":33
  * 				log.error("download file type error.")
  * 				return False
  * 			size = os.path.getsize(filename)             # <<<<<<<<<<<<<<
  * 			if size == filesize:
  * 				return True
  */
-        __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_os); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 30, __pyx_L3_error)
+        __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_os); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 33, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_path); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 30, __pyx_L3_error)
+        __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_path); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 33, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_getsize); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 30, __pyx_L3_error)
+        __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_getsize); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 33, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         __pyx_t_11 = NULL;
@@ -1853,28 +1924,28 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
         }
         __pyx_t_6 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_11, __pyx_v_filename) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_v_filename);
         __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 30, __pyx_L3_error)
+        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 33, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __pyx_v_size = __pyx_t_6;
         __pyx_t_6 = 0;
 
-        /* "downloadfile.py":31
+        /* "downloadfile.py":34
  * 				return False
  * 			size = os.path.getsize(filename)
  * 			if size == filesize:             # <<<<<<<<<<<<<<
  * 				return True
  * 			else:
  */
-        __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_filesize); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 31, __pyx_L3_error)
+        __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_filesize); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 34, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_6);
-        __pyx_t_7 = PyObject_RichCompare(__pyx_v_size, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 31, __pyx_L3_error)
+        __pyx_t_7 = PyObject_RichCompare(__pyx_v_size, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 34, __pyx_L3_error)
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 31, __pyx_L3_error)
+        __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 34, __pyx_L3_error)
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         if (__pyx_t_4) {
 
-          /* "downloadfile.py":32
+          /* "downloadfile.py":35
  * 			size = os.path.getsize(filename)
  * 			if size == filesize:
  * 				return True             # <<<<<<<<<<<<<<
@@ -1886,7 +1957,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
           __pyx_r = Py_True;
           goto __pyx_L7_try_return;
 
-          /* "downloadfile.py":31
+          /* "downloadfile.py":34
  * 				return False
  * 			size = os.path.getsize(filename)
  * 			if size == filesize:             # <<<<<<<<<<<<<<
@@ -1895,7 +1966,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
  */
         }
 
-        /* "downloadfile.py":34
+        /* "downloadfile.py":37
  * 				return True
  * 			else:
  * 				log.error("download file size({}) error.".format(size))             # <<<<<<<<<<<<<<
@@ -1903,12 +1974,12 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
  * 		else:
  */
         /*else*/ {
-          __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_log); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 34, __pyx_L3_error)
+          __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_log); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 37, __pyx_L3_error)
           __Pyx_GOTREF(__pyx_t_6);
-          __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_error); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 34, __pyx_L3_error)
+          __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_error); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 37, __pyx_L3_error)
           __Pyx_GOTREF(__pyx_t_11);
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_download_file_size_error, __pyx_n_s_format); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 34, __pyx_L3_error)
+          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_download_file_size_error, __pyx_n_s_format); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 37, __pyx_L3_error)
           __Pyx_GOTREF(__pyx_t_8);
           __pyx_t_9 = NULL;
           if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
@@ -1922,7 +1993,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
           }
           __pyx_t_6 = (__pyx_t_9) ? __Pyx_PyObject_Call2Args(__pyx_t_8, __pyx_t_9, __pyx_v_size) : __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_v_size);
           __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 34, __pyx_L3_error)
+          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 37, __pyx_L3_error)
           __Pyx_GOTREF(__pyx_t_6);
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
           __pyx_t_8 = NULL;
@@ -1938,12 +2009,12 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
           __pyx_t_7 = (__pyx_t_8) ? __Pyx_PyObject_Call2Args(__pyx_t_11, __pyx_t_8, __pyx_t_6) : __Pyx_PyObject_CallOneArg(__pyx_t_11, __pyx_t_6);
           __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 34, __pyx_L3_error)
+          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 37, __pyx_L3_error)
           __Pyx_GOTREF(__pyx_t_7);
           __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-          /* "downloadfile.py":35
+          /* "downloadfile.py":38
  * 			else:
  * 				log.error("download file size({}) error.".format(size))
  * 				return False             # <<<<<<<<<<<<<<
@@ -1956,7 +2027,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
           goto __pyx_L7_try_return;
         }
 
-        /* "downloadfile.py":24
+        /* "downloadfile.py":27
  * 		global log
  * 		global filesize
  * 		if url is not None:             # <<<<<<<<<<<<<<
@@ -1965,7 +2036,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
  */
       }
 
-      /* "downloadfile.py":37
+      /* "downloadfile.py":40
  * 				return False
  * 		else:
  * 			return False             # <<<<<<<<<<<<<<
@@ -1979,7 +2050,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
         goto __pyx_L7_try_return;
       }
 
-      /* "downloadfile.py":21
+      /* "downloadfile.py":24
  * 
  * def download(url:str, filename:str)->bool:
  * 	try:             # <<<<<<<<<<<<<<
@@ -1994,7 +2065,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-    /* "downloadfile.py":38
+    /* "downloadfile.py":41
  * 		else:
  * 			return False
  * 	except Exception as e:             # <<<<<<<<<<<<<<
@@ -2004,26 +2075,26 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
     __pyx_t_10 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])));
     if (__pyx_t_10) {
       __Pyx_AddTraceback("downloadfile.download", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_7, &__pyx_t_11, &__pyx_t_6) < 0) __PYX_ERR(0, 38, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_7, &__pyx_t_11, &__pyx_t_6) < 0) __PYX_ERR(0, 41, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_INCREF(__pyx_t_11);
       __pyx_v_e = __pyx_t_11;
 
-      /* "downloadfile.py":39
+      /* "downloadfile.py":42
  * 			return False
  * 	except Exception as e:
  * 		log.error("download failed, url:{} filename:{} error:{}".format(url, filename, e))             # <<<<<<<<<<<<<<
  * 		return False
  * 
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_n_s_log); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 39, __pyx_L5_except_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_n_s_log); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 42, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_error); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 39, __pyx_L5_except_error)
+      __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_error); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 42, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_12);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_download_failed_url_filename_err, __pyx_n_s_format); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 39, __pyx_L5_except_error)
+      __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_download_failed_url_filename_err, __pyx_n_s_format); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 42, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_13);
       __pyx_t_14 = NULL;
       __pyx_t_10 = 0;
@@ -2040,7 +2111,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_13)) {
         PyObject *__pyx_temp[4] = {__pyx_t_14, __pyx_v_url, __pyx_v_filename, __pyx_v_e};
-        __pyx_t_9 = __Pyx_PyFunction_FastCall(__pyx_t_13, __pyx_temp+1-__pyx_t_10, 3+__pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 39, __pyx_L5_except_error)
+        __pyx_t_9 = __Pyx_PyFunction_FastCall(__pyx_t_13, __pyx_temp+1-__pyx_t_10, 3+__pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 42, __pyx_L5_except_error)
         __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
         __Pyx_GOTREF(__pyx_t_9);
       } else
@@ -2048,13 +2119,13 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_13)) {
         PyObject *__pyx_temp[4] = {__pyx_t_14, __pyx_v_url, __pyx_v_filename, __pyx_v_e};
-        __pyx_t_9 = __Pyx_PyCFunction_FastCall(__pyx_t_13, __pyx_temp+1-__pyx_t_10, 3+__pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 39, __pyx_L5_except_error)
+        __pyx_t_9 = __Pyx_PyCFunction_FastCall(__pyx_t_13, __pyx_temp+1-__pyx_t_10, 3+__pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 42, __pyx_L5_except_error)
         __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
         __Pyx_GOTREF(__pyx_t_9);
       } else
       #endif
       {
-        __pyx_t_15 = PyTuple_New(3+__pyx_t_10); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 39, __pyx_L5_except_error)
+        __pyx_t_15 = PyTuple_New(3+__pyx_t_10); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 42, __pyx_L5_except_error)
         __Pyx_GOTREF(__pyx_t_15);
         if (__pyx_t_14) {
           __Pyx_GIVEREF(__pyx_t_14); PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_14); __pyx_t_14 = NULL;
@@ -2068,7 +2139,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
         __Pyx_INCREF(__pyx_v_e);
         __Pyx_GIVEREF(__pyx_v_e);
         PyTuple_SET_ITEM(__pyx_t_15, 2+__pyx_t_10, __pyx_v_e);
-        __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_15, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 39, __pyx_L5_except_error)
+        __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_15, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 42, __pyx_L5_except_error)
         __Pyx_GOTREF(__pyx_t_9);
         __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
       }
@@ -2086,17 +2157,17 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
       __pyx_t_8 = (__pyx_t_13) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_13, __pyx_t_9) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_t_9);
       __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 39, __pyx_L5_except_error)
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 42, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-      /* "downloadfile.py":40
+      /* "downloadfile.py":43
  * 	except Exception as e:
  * 		log.error("download failed, url:{} filename:{} error:{}".format(url, filename, e))
  * 		return False             # <<<<<<<<<<<<<<
  * 
- * def download_firmware(url:str, packet_size:int, md5:str, filename:str)->bool:
+ * def __get_updatefirmware_token():
  */
       __Pyx_XDECREF(__pyx_r);
       __Pyx_INCREF(Py_False);
@@ -2109,7 +2180,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "downloadfile.py":21
+    /* "downloadfile.py":24
  * 
  * def download(url:str, filename:str)->bool:
  * 	try:             # <<<<<<<<<<<<<<
@@ -2135,7 +2206,7 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
     goto __pyx_L0;
   }
 
-  /* "downloadfile.py":20
+  /* "downloadfile.py":23
  * 	filesize = c
  * 
  * def download(url:str, filename:str)->bool:             # <<<<<<<<<<<<<<
@@ -2165,20 +2236,642 @@ static PyObject *__pyx_pf_12downloadfile_2download(CYTHON_UNUSED PyObject *__pyx
   return __pyx_r;
 }
 
-/* "downloadfile.py":42
+/* "downloadfile.py":45
  * 		return False
  * 
- * def download_firmware(url:str, packet_size:int, md5:str, filename:str)->bool:             # <<<<<<<<<<<<<<
+ * def __get_updatefirmware_token():             # <<<<<<<<<<<<<<
+ * 	try:
+ * 		#post
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_12downloadfile_5__get_updatefirmware_token(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyMethodDef __pyx_mdef_12downloadfile_5__get_updatefirmware_token = {"__get_updatefirmware_token", (PyCFunction)__pyx_pw_12downloadfile_5__get_updatefirmware_token, METH_NOARGS, 0};
+static PyObject *__pyx_pw_12downloadfile_5__get_updatefirmware_token(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get_updatefirmware_token (wrapper)", 0);
+  __pyx_r = __pyx_pf_12downloadfile_4__get_updatefirmware_token(__pyx_self);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_12downloadfile_4__get_updatefirmware_token(CYTHON_UNUSED PyObject *__pyx_self) {
+  PyObject *__pyx_v_token_url = NULL;
+  PyObject *__pyx_v_message = NULL;
+  PyObject *__pyx_v_data = NULL;
+  PyObject *__pyx_v_req = NULL;
+  PyObject *__pyx_v_resp = NULL;
+  PyObject *__pyx_v_page = NULL;
+  PyObject *__pyx_v_msgdict = NULL;
+  PyObject *__pyx_v_e = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  PyObject *__pyx_t_12 = NULL;
+  int __pyx_t_13;
+  int __pyx_t_14;
+  PyObject *__pyx_t_15 = NULL;
+  int __pyx_t_16;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get_updatefirmware_token", 0);
+
+  /* "downloadfile.py":46
+ * 
+ * def __get_updatefirmware_token():
+ * 	try:             # <<<<<<<<<<<<<<
+ * 		#post
+ * 		#token_url = "https://acstest.iotwonderful.cn/api/upgrade/login"
+ */
+  {
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ExceptionSave(&__pyx_t_1, &__pyx_t_2, &__pyx_t_3);
+    __Pyx_XGOTREF(__pyx_t_1);
+    __Pyx_XGOTREF(__pyx_t_2);
+    __Pyx_XGOTREF(__pyx_t_3);
+    /*try:*/ {
+
+      /* "downloadfile.py":49
+ * 		#post
+ * 		#token_url = "https://acstest.iotwonderful.cn/api/upgrade/login"
+ * 		token_url = ms.UPGRADE_TOKEN_URL             # <<<<<<<<<<<<<<
+ * 		message = {
+ * 			#"user" : "xinchao@iotwonderful.com",
+ */
+      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_ms); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 49, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_UPGRADE_TOKEN_URL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 49, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_v_token_url = __pyx_t_5;
+      __pyx_t_5 = 0;
+
+      /* "downloadfile.py":53
+ * 			#"user" : "xinchao@iotwonderful.com",
+ * 			#"password" : "123456"
+ * 			"user" : ms.UPGRADE_USERNAME,             # <<<<<<<<<<<<<<
+ * 			"password" : ms.UPGRADE_PASSWORD
+ * 		}
+ */
+      __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 53, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_ms); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 53, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_UPGRADE_USERNAME); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 53, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_user, __pyx_t_6) < 0) __PYX_ERR(0, 53, __pyx_L3_error)
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+      /* "downloadfile.py":54
+ * 			#"password" : "123456"
+ * 			"user" : ms.UPGRADE_USERNAME,
+ * 			"password" : ms.UPGRADE_PASSWORD             # <<<<<<<<<<<<<<
+ * 		}
+ * 		data = urllib.parse.urlencode(message).encode()
+ */
+      __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_ms); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 54, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_UPGRADE_PASSWORD); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 54, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_password, __pyx_t_4) < 0) __PYX_ERR(0, 53, __pyx_L3_error)
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_v_message = ((PyObject*)__pyx_t_5);
+      __pyx_t_5 = 0;
+
+      /* "downloadfile.py":56
+ * 			"password" : ms.UPGRADE_PASSWORD
+ * 		}
+ * 		data = urllib.parse.urlencode(message).encode()             # <<<<<<<<<<<<<<
+ * 		req = urllib.request.Request(token_url, data=data)
+ * 
+ */
+      __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_urllib); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 56, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_parse); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 56, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_7);
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_urlencode); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 56, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __pyx_t_7 = NULL;
+      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_6))) {
+        __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_6);
+        if (likely(__pyx_t_7)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+          __Pyx_INCREF(__pyx_t_7);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_6, function);
+        }
+      }
+      __pyx_t_4 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_7, __pyx_v_message) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_v_message);
+      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 56, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_encode); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 56, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_t_4 = NULL;
+      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_6))) {
+        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_6);
+        if (likely(__pyx_t_4)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+          __Pyx_INCREF(__pyx_t_4);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_6, function);
+        }
+      }
+      __pyx_t_5 = (__pyx_t_4) ? __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4) : __Pyx_PyObject_CallNoArg(__pyx_t_6);
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 56, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_v_data = __pyx_t_5;
+      __pyx_t_5 = 0;
+
+      /* "downloadfile.py":57
+ * 		}
+ * 		data = urllib.parse.urlencode(message).encode()
+ * 		req = urllib.request.Request(token_url, data=data)             # <<<<<<<<<<<<<<
+ * 
+ * 		with urllib.request.urlopen(req) as resp:
+ */
+      __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_urllib); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 57, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_request); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 57, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_Request); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 57, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 57, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_INCREF(__pyx_v_token_url);
+      __Pyx_GIVEREF(__pyx_v_token_url);
+      PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_v_token_url);
+      __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 57, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_data, __pyx_v_data) < 0) __PYX_ERR(0, 57, __pyx_L3_error)
+      __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_6, __pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 57, __pyx_L3_error)
+      __Pyx_GOTREF(__pyx_t_7);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_v_req = __pyx_t_7;
+      __pyx_t_7 = 0;
+
+      /* "downloadfile.py":59
+ * 		req = urllib.request.Request(token_url, data=data)
+ * 
+ * 		with urllib.request.urlopen(req) as resp:             # <<<<<<<<<<<<<<
+ * 			page = resp.read()
+ * 			msgdict = json.loads(str(page, encoding="utf-8"))
+ */
+      /*with:*/ {
+        __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_urllib); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 59, __pyx_L3_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_request); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 59, __pyx_L3_error)
+        __Pyx_GOTREF(__pyx_t_6);
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_urlopen); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 59, __pyx_L3_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __pyx_t_6 = NULL;
+        if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
+          __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_4);
+          if (likely(__pyx_t_6)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+            __Pyx_INCREF(__pyx_t_6);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_4, function);
+          }
+        }
+        __pyx_t_7 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_6, __pyx_v_req) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_req);
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 59, __pyx_L3_error)
+        __Pyx_GOTREF(__pyx_t_7);
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __pyx_t_8 = __Pyx_PyObject_LookupSpecial(__pyx_t_7, __pyx_n_s_exit); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 59, __pyx_L3_error)
+        __Pyx_GOTREF(__pyx_t_8);
+        __pyx_t_6 = __Pyx_PyObject_LookupSpecial(__pyx_t_7, __pyx_n_s_enter); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 59, __pyx_L9_error)
+        __Pyx_GOTREF(__pyx_t_6);
+        __pyx_t_5 = NULL;
+        if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_6))) {
+          __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_6);
+          if (likely(__pyx_t_5)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+            __Pyx_INCREF(__pyx_t_5);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_6, function);
+          }
+        }
+        __pyx_t_4 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_6);
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 59, __pyx_L9_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __pyx_t_6 = __pyx_t_4;
+        __pyx_t_4 = 0;
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        /*try:*/ {
+          {
+            __Pyx_PyThreadState_declare
+            __Pyx_PyThreadState_assign
+            __Pyx_ExceptionSave(&__pyx_t_9, &__pyx_t_10, &__pyx_t_11);
+            __Pyx_XGOTREF(__pyx_t_9);
+            __Pyx_XGOTREF(__pyx_t_10);
+            __Pyx_XGOTREF(__pyx_t_11);
+            /*try:*/ {
+              __pyx_v_resp = __pyx_t_6;
+              __pyx_t_6 = 0;
+
+              /* "downloadfile.py":60
+ * 
+ * 		with urllib.request.urlopen(req) as resp:
+ * 			page = resp.read()             # <<<<<<<<<<<<<<
+ * 			msgdict = json.loads(str(page, encoding="utf-8"))
+ * 			if msgdict is not None:
+ */
+              __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_resp, __pyx_n_s_read); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 60, __pyx_L13_error)
+              __Pyx_GOTREF(__pyx_t_7);
+              __pyx_t_4 = NULL;
+              if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
+                __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_7);
+                if (likely(__pyx_t_4)) {
+                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+                  __Pyx_INCREF(__pyx_t_4);
+                  __Pyx_INCREF(function);
+                  __Pyx_DECREF_SET(__pyx_t_7, function);
+                }
+              }
+              __pyx_t_6 = (__pyx_t_4) ? __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_4) : __Pyx_PyObject_CallNoArg(__pyx_t_7);
+              __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+              if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 60, __pyx_L13_error)
+              __Pyx_GOTREF(__pyx_t_6);
+              __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+              __pyx_v_page = __pyx_t_6;
+              __pyx_t_6 = 0;
+
+              /* "downloadfile.py":61
+ * 		with urllib.request.urlopen(req) as resp:
+ * 			page = resp.read()
+ * 			msgdict = json.loads(str(page, encoding="utf-8"))             # <<<<<<<<<<<<<<
+ * 			if msgdict is not None:
+ * 				if msgdict["status"] == 0:
+ */
+              __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_json); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 61, __pyx_L13_error)
+              __Pyx_GOTREF(__pyx_t_7);
+              __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_loads); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 61, __pyx_L13_error)
+              __Pyx_GOTREF(__pyx_t_4);
+              __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+              __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 61, __pyx_L13_error)
+              __Pyx_GOTREF(__pyx_t_7);
+              __Pyx_INCREF(__pyx_v_page);
+              __Pyx_GIVEREF(__pyx_v_page);
+              PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_v_page);
+              __pyx_t_5 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 61, __pyx_L13_error)
+              __Pyx_GOTREF(__pyx_t_5);
+              if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_encoding, __pyx_kp_s_utf_8) < 0) __PYX_ERR(0, 61, __pyx_L13_error)
+              __pyx_t_12 = __Pyx_PyObject_Call(((PyObject *)(&PyString_Type)), __pyx_t_7, __pyx_t_5); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 61, __pyx_L13_error)
+              __Pyx_GOTREF(__pyx_t_12);
+              __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+              __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+              __pyx_t_5 = NULL;
+              if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
+                __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
+                if (likely(__pyx_t_5)) {
+                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+                  __Pyx_INCREF(__pyx_t_5);
+                  __Pyx_INCREF(function);
+                  __Pyx_DECREF_SET(__pyx_t_4, function);
+                }
+              }
+              __pyx_t_6 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_t_12) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_12);
+              __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+              __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+              if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 61, __pyx_L13_error)
+              __Pyx_GOTREF(__pyx_t_6);
+              __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+              __pyx_v_msgdict = __pyx_t_6;
+              __pyx_t_6 = 0;
+
+              /* "downloadfile.py":62
+ * 			page = resp.read()
+ * 			msgdict = json.loads(str(page, encoding="utf-8"))
+ * 			if msgdict is not None:             # <<<<<<<<<<<<<<
+ * 				if msgdict["status"] == 0:
+ * 					return msgdict["token"]
+ */
+              __pyx_t_13 = (__pyx_v_msgdict != Py_None);
+              __pyx_t_14 = (__pyx_t_13 != 0);
+              if (__pyx_t_14) {
+
+                /* "downloadfile.py":63
+ * 			msgdict = json.loads(str(page, encoding="utf-8"))
+ * 			if msgdict is not None:
+ * 				if msgdict["status"] == 0:             # <<<<<<<<<<<<<<
+ * 					return msgdict["token"]
+ * 		return None
+ */
+                __pyx_t_6 = __Pyx_PyObject_Dict_GetItem(__pyx_v_msgdict, __pyx_n_s_status); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 63, __pyx_L13_error)
+                __Pyx_GOTREF(__pyx_t_6);
+                __pyx_t_4 = __Pyx_PyInt_EqObjC(__pyx_t_6, __pyx_int_0, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 63, __pyx_L13_error)
+                __Pyx_GOTREF(__pyx_t_4);
+                __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+                __pyx_t_14 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_14 < 0)) __PYX_ERR(0, 63, __pyx_L13_error)
+                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+                if (__pyx_t_14) {
+
+                  /* "downloadfile.py":64
+ * 			if msgdict is not None:
+ * 				if msgdict["status"] == 0:
+ * 					return msgdict["token"]             # <<<<<<<<<<<<<<
+ * 		return None
+ * 	except Exception as e:
+ */
+                  __Pyx_XDECREF(__pyx_r);
+                  __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_v_msgdict, __pyx_n_s_token); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 64, __pyx_L13_error)
+                  __Pyx_GOTREF(__pyx_t_4);
+                  __pyx_r = __pyx_t_4;
+                  __pyx_t_4 = 0;
+                  goto __pyx_L17_try_return;
+
+                  /* "downloadfile.py":63
+ * 			msgdict = json.loads(str(page, encoding="utf-8"))
+ * 			if msgdict is not None:
+ * 				if msgdict["status"] == 0:             # <<<<<<<<<<<<<<
+ * 					return msgdict["token"]
+ * 		return None
+ */
+                }
+
+                /* "downloadfile.py":62
+ * 			page = resp.read()
+ * 			msgdict = json.loads(str(page, encoding="utf-8"))
+ * 			if msgdict is not None:             # <<<<<<<<<<<<<<
+ * 				if msgdict["status"] == 0:
+ * 					return msgdict["token"]
+ */
+              }
+
+              /* "downloadfile.py":59
+ * 		req = urllib.request.Request(token_url, data=data)
+ * 
+ * 		with urllib.request.urlopen(req) as resp:             # <<<<<<<<<<<<<<
+ * 			page = resp.read()
+ * 			msgdict = json.loads(str(page, encoding="utf-8"))
+ */
+            }
+            __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+            goto __pyx_L18_try_end;
+            __pyx_L13_error:;
+            __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
+            __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+            __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+            __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+            /*except:*/ {
+              __Pyx_AddTraceback("downloadfile.__get_updatefirmware_token", __pyx_clineno, __pyx_lineno, __pyx_filename);
+              if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_6, &__pyx_t_12) < 0) __PYX_ERR(0, 59, __pyx_L15_except_error)
+              __Pyx_GOTREF(__pyx_t_4);
+              __Pyx_GOTREF(__pyx_t_6);
+              __Pyx_GOTREF(__pyx_t_12);
+              __pyx_t_5 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_6, __pyx_t_12); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 59, __pyx_L15_except_error)
+              __Pyx_GOTREF(__pyx_t_5);
+              __pyx_t_15 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_5, NULL);
+              __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+              __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+              if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 59, __pyx_L15_except_error)
+              __Pyx_GOTREF(__pyx_t_15);
+              __pyx_t_14 = __Pyx_PyObject_IsTrue(__pyx_t_15);
+              __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
+              if (__pyx_t_14 < 0) __PYX_ERR(0, 59, __pyx_L15_except_error)
+              __pyx_t_13 = ((!(__pyx_t_14 != 0)) != 0);
+              if (__pyx_t_13) {
+                __Pyx_GIVEREF(__pyx_t_4);
+                __Pyx_GIVEREF(__pyx_t_6);
+                __Pyx_XGIVEREF(__pyx_t_12);
+                __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_6, __pyx_t_12);
+                __pyx_t_4 = 0; __pyx_t_6 = 0; __pyx_t_12 = 0; 
+                __PYX_ERR(0, 59, __pyx_L15_except_error)
+              }
+              __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+              __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+              __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
+              goto __pyx_L14_exception_handled;
+            }
+            __pyx_L15_except_error:;
+            __Pyx_XGIVEREF(__pyx_t_9);
+            __Pyx_XGIVEREF(__pyx_t_10);
+            __Pyx_XGIVEREF(__pyx_t_11);
+            __Pyx_ExceptionReset(__pyx_t_9, __pyx_t_10, __pyx_t_11);
+            goto __pyx_L3_error;
+            __pyx_L17_try_return:;
+            __Pyx_XGIVEREF(__pyx_t_9);
+            __Pyx_XGIVEREF(__pyx_t_10);
+            __Pyx_XGIVEREF(__pyx_t_11);
+            __Pyx_ExceptionReset(__pyx_t_9, __pyx_t_10, __pyx_t_11);
+            goto __pyx_L10_return;
+            __pyx_L14_exception_handled:;
+            __Pyx_XGIVEREF(__pyx_t_9);
+            __Pyx_XGIVEREF(__pyx_t_10);
+            __Pyx_XGIVEREF(__pyx_t_11);
+            __Pyx_ExceptionReset(__pyx_t_9, __pyx_t_10, __pyx_t_11);
+            __pyx_L18_try_end:;
+          }
+        }
+        /*finally:*/ {
+          /*normal exit:*/{
+            if (__pyx_t_8) {
+              __pyx_t_11 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_tuple_, NULL);
+              __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+              if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 59, __pyx_L3_error)
+              __Pyx_GOTREF(__pyx_t_11);
+              __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+            }
+            goto __pyx_L12;
+          }
+          __pyx_L10_return: {
+            __pyx_t_11 = __pyx_r;
+            __pyx_r = 0;
+            if (__pyx_t_8) {
+              __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_tuple_, NULL);
+              __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+              if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 59, __pyx_L3_error)
+              __Pyx_GOTREF(__pyx_t_10);
+              __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            }
+            __pyx_r = __pyx_t_11;
+            __pyx_t_11 = 0;
+            goto __pyx_L7_try_return;
+          }
+          __pyx_L12:;
+        }
+        goto __pyx_L24;
+        __pyx_L9_error:;
+        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+        goto __pyx_L3_error;
+        __pyx_L24:;
+      }
+
+      /* "downloadfile.py":65
+ * 				if msgdict["status"] == 0:
+ * 					return msgdict["token"]
+ * 		return None             # <<<<<<<<<<<<<<
+ * 	except Exception as e:
+ * 		print(e)
+ */
+      __Pyx_XDECREF(__pyx_r);
+      __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+      goto __pyx_L7_try_return;
+
+      /* "downloadfile.py":46
+ * 
+ * def __get_updatefirmware_token():
+ * 	try:             # <<<<<<<<<<<<<<
+ * 		#post
+ * 		#token_url = "https://acstest.iotwonderful.cn/api/upgrade/login"
+ */
+    }
+    __pyx_L3_error:;
+    __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+
+    /* "downloadfile.py":66
+ * 					return msgdict["token"]
+ * 		return None
+ * 	except Exception as e:             # <<<<<<<<<<<<<<
+ * 		print(e)
+ * 		return None
+ */
+    __pyx_t_16 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])));
+    if (__pyx_t_16) {
+      __Pyx_AddTraceback("downloadfile.__get_updatefirmware_token", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      if (__Pyx_GetException(&__pyx_t_12, &__pyx_t_6, &__pyx_t_4) < 0) __PYX_ERR(0, 66, __pyx_L5_except_error)
+      __Pyx_GOTREF(__pyx_t_12);
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx_t_6);
+      __pyx_v_e = __pyx_t_6;
+
+      /* "downloadfile.py":67
+ * 		return None
+ * 	except Exception as e:
+ * 		print(e)             # <<<<<<<<<<<<<<
+ * 		return None
+ * 
+ */
+      if (__Pyx_PrintOne(0, __pyx_v_e) < 0) __PYX_ERR(0, 67, __pyx_L5_except_error)
+
+      /* "downloadfile.py":68
+ * 	except Exception as e:
+ * 		print(e)
+ * 		return None             # <<<<<<<<<<<<<<
+ * 
+ * def download_firmware(url:str, md5:str, filename:str)->bool:
+ */
+      __Pyx_XDECREF(__pyx_r);
+      __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+      goto __pyx_L6_except_return;
+    }
+    goto __pyx_L5_except_error;
+    __pyx_L5_except_error:;
+
+    /* "downloadfile.py":46
+ * 
+ * def __get_updatefirmware_token():
+ * 	try:             # <<<<<<<<<<<<<<
+ * 		#post
+ * 		#token_url = "https://acstest.iotwonderful.cn/api/upgrade/login"
+ */
+    __Pyx_XGIVEREF(__pyx_t_1);
+    __Pyx_XGIVEREF(__pyx_t_2);
+    __Pyx_XGIVEREF(__pyx_t_3);
+    __Pyx_ExceptionReset(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+    goto __pyx_L1_error;
+    __pyx_L7_try_return:;
+    __Pyx_XGIVEREF(__pyx_t_1);
+    __Pyx_XGIVEREF(__pyx_t_2);
+    __Pyx_XGIVEREF(__pyx_t_3);
+    __Pyx_ExceptionReset(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+    goto __pyx_L0;
+    __pyx_L6_except_return:;
+    __Pyx_XGIVEREF(__pyx_t_1);
+    __Pyx_XGIVEREF(__pyx_t_2);
+    __Pyx_XGIVEREF(__pyx_t_3);
+    __Pyx_ExceptionReset(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+    goto __pyx_L0;
+  }
+
+  /* "downloadfile.py":45
+ * 		return False
+ * 
+ * def __get_updatefirmware_token():             # <<<<<<<<<<<<<<
+ * 	try:
+ * 		#post
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_12);
+  __Pyx_AddTraceback("downloadfile.__get_updatefirmware_token", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_token_url);
+  __Pyx_XDECREF(__pyx_v_message);
+  __Pyx_XDECREF(__pyx_v_data);
+  __Pyx_XDECREF(__pyx_v_req);
+  __Pyx_XDECREF(__pyx_v_resp);
+  __Pyx_XDECREF(__pyx_v_page);
+  __Pyx_XDECREF(__pyx_v_msgdict);
+  __Pyx_XDECREF(__pyx_v_e);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "downloadfile.py":70
+ * 		return None
+ * 
+ * def download_firmware(url:str, md5:str, filename:str)->bool:             # <<<<<<<<<<<<<<
  * 	try:
  * 		global log
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_12downloadfile_5download_firmware(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_12downloadfile_5download_firmware = {"download_firmware", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_12downloadfile_5download_firmware, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_12downloadfile_5download_firmware(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_12downloadfile_7download_firmware(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_12downloadfile_7download_firmware = {"download_firmware", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_12downloadfile_7download_firmware, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_12downloadfile_7download_firmware(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_url = 0;
-  PyObject *__pyx_v_packet_size = 0;
   PyObject *__pyx_v_md5 = 0;
   PyObject *__pyx_v_filename = 0;
   int __pyx_lineno = 0;
@@ -2188,14 +2881,12 @@ static PyObject *__pyx_pw_12downloadfile_5download_firmware(PyObject *__pyx_self
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("download_firmware (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_url,&__pyx_n_s_packet_size,&__pyx_n_s_md5,&__pyx_n_s_filename,0};
-    PyObject* values[4] = {0,0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_url,&__pyx_n_s_md5,&__pyx_n_s_filename,0};
+    PyObject* values[3] = {0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
-        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-        CYTHON_FALLTHROUGH;
         case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
         CYTHON_FALLTHROUGH;
         case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
@@ -2212,51 +2903,43 @@ static PyObject *__pyx_pw_12downloadfile_5download_firmware(PyObject *__pyx_self
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
-        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_packet_size)) != 0)) kw_args--;
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_md5)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("download_firmware", 1, 4, 4, 1); __PYX_ERR(0, 42, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("download_firmware", 1, 3, 3, 1); __PYX_ERR(0, 70, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
-        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_md5)) != 0)) kw_args--;
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_filename)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("download_firmware", 1, 4, 4, 2); __PYX_ERR(0, 42, __pyx_L3_error)
-        }
-        CYTHON_FALLTHROUGH;
-        case  3:
-        if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_filename)) != 0)) kw_args--;
-        else {
-          __Pyx_RaiseArgtupleInvalid("download_firmware", 1, 4, 4, 3); __PYX_ERR(0, 42, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("download_firmware", 1, 3, 3, 2); __PYX_ERR(0, 70, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "download_firmware") < 0)) __PYX_ERR(0, 42, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "download_firmware") < 0)) __PYX_ERR(0, 70, __pyx_L3_error)
       }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
     __pyx_v_url = ((PyObject*)values[0]);
-    __pyx_v_packet_size = values[1];
-    __pyx_v_md5 = ((PyObject*)values[2]);
-    __pyx_v_filename = ((PyObject*)values[3]);
+    __pyx_v_md5 = ((PyObject*)values[1]);
+    __pyx_v_filename = ((PyObject*)values[2]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("download_firmware", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 42, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("download_firmware", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 70, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("downloadfile.download_firmware", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_url), (&PyString_Type), 1, "url", 1))) __PYX_ERR(0, 42, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_md5), (&PyString_Type), 1, "md5", 1))) __PYX_ERR(0, 42, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_filename), (&PyString_Type), 1, "filename", 1))) __PYX_ERR(0, 42, __pyx_L1_error)
-  __pyx_r = __pyx_pf_12downloadfile_4download_firmware(__pyx_self, __pyx_v_url, __pyx_v_packet_size, __pyx_v_md5, __pyx_v_filename);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_url), (&PyString_Type), 1, "url", 1))) __PYX_ERR(0, 70, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_md5), (&PyString_Type), 1, "md5", 1))) __PYX_ERR(0, 70, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_filename), (&PyString_Type), 1, "filename", 1))) __PYX_ERR(0, 70, __pyx_L1_error)
+  __pyx_r = __pyx_pf_12downloadfile_6download_firmware(__pyx_self, __pyx_v_url, __pyx_v_md5, __pyx_v_filename);
 
   /* function exit code */
   goto __pyx_L0;
@@ -2267,13 +2950,13 @@ static PyObject *__pyx_pw_12downloadfile_5download_firmware(PyObject *__pyx_self
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_url, PyObject *__pyx_v_packet_size, PyObject *__pyx_v_md5, PyObject *__pyx_v_filename) {
-  CYTHON_UNUSED PyObject *__pyx_v_r = NULL;
-  PyObject *__pyx_v_size = NULL;
-  PyObject *__pyx_v_filemd5 = NULL;
-  PyObject *__pyx_v_handler = NULL;
-  PyObject *__pyx_v_line = NULL;
-  PyObject *__pyx_v_filemd5val = NULL;
+static PyObject *__pyx_pf_12downloadfile_6download_firmware(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_url, PyObject *__pyx_v_md5, PyObject *__pyx_v_filename) {
+  PyObject *__pyx_v_token = NULL;
+  PyObject *__pyx_v_full = NULL;
+  PyObject *__pyx_v_m = NULL;
+  PyObject *__pyx_v_filehandler = NULL;
+  PyObject *__pyx_v_msg = NULL;
+  PyObject *__pyx_v_md5value = NULL;
   PyObject *__pyx_v_e = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -2302,9 +2985,9 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("download_firmware", 0);
 
-  /* "downloadfile.py":43
+  /* "downloadfile.py":71
  * 
- * def download_firmware(url:str, packet_size:int, md5:str, filename:str)->bool:
+ * def download_firmware(url:str, md5:str, filename:str)->bool:
  * 	try:             # <<<<<<<<<<<<<<
  * 		global log
  * 		if url is not None:
@@ -2318,196 +3001,245 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "downloadfile.py":45
+      /* "downloadfile.py":73
  * 	try:
  * 		global log
  * 		if url is not None:             # <<<<<<<<<<<<<<
- * 			r = urllib.request.urlretrieve(url, filename)
- * 			size = os.path.getsize(filename)
+ * 			token = __get_updatefirmware_token()
+ * 			if token is not None:
  */
       __pyx_t_4 = (__pyx_v_url != ((PyObject*)Py_None));
       __pyx_t_5 = (__pyx_t_4 != 0);
       if (__pyx_t_5) {
 
-        /* "downloadfile.py":46
+        /* "downloadfile.py":74
  * 		global log
  * 		if url is not None:
- * 			r = urllib.request.urlretrieve(url, filename)             # <<<<<<<<<<<<<<
- * 			size = os.path.getsize(filename)
- * 			if size == packet_size:
+ * 			token = __get_updatefirmware_token()             # <<<<<<<<<<<<<<
+ * 			if token is not None:
+ * 				full = "{}&token={}".format(url, token)
  */
-        __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_urllib); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 46, __pyx_L3_error)
+        __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_get_updatefirmware_token); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 74, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_request); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 46, __pyx_L3_error)
-        __Pyx_GOTREF(__pyx_t_8);
-        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_urlretrieve); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 46, __pyx_L3_error)
-        __Pyx_GOTREF(__pyx_t_7);
-        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         __pyx_t_8 = NULL;
-        __pyx_t_9 = 0;
-        if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
+        if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_7))) {
           __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_7);
           if (likely(__pyx_t_8)) {
             PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
             __Pyx_INCREF(__pyx_t_8);
             __Pyx_INCREF(function);
             __Pyx_DECREF_SET(__pyx_t_7, function);
-            __pyx_t_9 = 1;
           }
         }
-        #if CYTHON_FAST_PYCALL
-        if (PyFunction_Check(__pyx_t_7)) {
-          PyObject *__pyx_temp[3] = {__pyx_t_8, __pyx_v_url, __pyx_v_filename};
-          __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 46, __pyx_L3_error)
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_GOTREF(__pyx_t_6);
-        } else
-        #endif
-        #if CYTHON_FAST_PYCCALL
-        if (__Pyx_PyFastCFunction_Check(__pyx_t_7)) {
-          PyObject *__pyx_temp[3] = {__pyx_t_8, __pyx_v_url, __pyx_v_filename};
-          __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 46, __pyx_L3_error)
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_GOTREF(__pyx_t_6);
-        } else
-        #endif
-        {
-          __pyx_t_10 = PyTuple_New(2+__pyx_t_9); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 46, __pyx_L3_error)
-          __Pyx_GOTREF(__pyx_t_10);
-          if (__pyx_t_8) {
-            __Pyx_GIVEREF(__pyx_t_8); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_8); __pyx_t_8 = NULL;
-          }
-          __Pyx_INCREF(__pyx_v_url);
-          __Pyx_GIVEREF(__pyx_v_url);
-          PyTuple_SET_ITEM(__pyx_t_10, 0+__pyx_t_9, __pyx_v_url);
-          __Pyx_INCREF(__pyx_v_filename);
-          __Pyx_GIVEREF(__pyx_v_filename);
-          PyTuple_SET_ITEM(__pyx_t_10, 1+__pyx_t_9, __pyx_v_filename);
-          __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_10, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 46, __pyx_L3_error)
-          __Pyx_GOTREF(__pyx_t_6);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        }
-        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __pyx_v_r = __pyx_t_6;
-        __pyx_t_6 = 0;
-
-        /* "downloadfile.py":47
- * 		if url is not None:
- * 			r = urllib.request.urlretrieve(url, filename)
- * 			size = os.path.getsize(filename)             # <<<<<<<<<<<<<<
- * 			if size == packet_size:
- * 				filemd5 = hashlib.md5()
- */
-        __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_os); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 47, __pyx_L3_error)
-        __Pyx_GOTREF(__pyx_t_7);
-        __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_path); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 47, __pyx_L3_error)
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_getsize); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 47, __pyx_L3_error)
-        __Pyx_GOTREF(__pyx_t_7);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = NULL;
-        if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
-          __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_7);
-          if (likely(__pyx_t_10)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-            __Pyx_INCREF(__pyx_t_10);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_7, function);
-          }
-        }
-        __pyx_t_6 = (__pyx_t_10) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_10, __pyx_v_filename) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_v_filename);
-        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 47, __pyx_L3_error)
+        __pyx_t_6 = (__pyx_t_8) ? __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_8) : __Pyx_PyObject_CallNoArg(__pyx_t_7);
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 74, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __pyx_v_size = __pyx_t_6;
+        __pyx_v_token = __pyx_t_6;
         __pyx_t_6 = 0;
 
-        /* "downloadfile.py":48
- * 			r = urllib.request.urlretrieve(url, filename)
- * 			size = os.path.getsize(filename)
- * 			if size == packet_size:             # <<<<<<<<<<<<<<
- * 				filemd5 = hashlib.md5()
- * 				with open(filename, 'r') as handler:
+        /* "downloadfile.py":75
+ * 		if url is not None:
+ * 			token = __get_updatefirmware_token()
+ * 			if token is not None:             # <<<<<<<<<<<<<<
+ * 				full = "{}&token={}".format(url, token)
+ * 
  */
-        __pyx_t_6 = PyObject_RichCompare(__pyx_v_size, __pyx_v_packet_size, Py_EQ); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 48, __pyx_L3_error)
-        __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 48, __pyx_L3_error)
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        if (__pyx_t_5) {
+        __pyx_t_5 = (__pyx_v_token != Py_None);
+        __pyx_t_4 = (__pyx_t_5 != 0);
+        if (__pyx_t_4) {
 
-          /* "downloadfile.py":49
- * 			size = os.path.getsize(filename)
- * 			if size == packet_size:
- * 				filemd5 = hashlib.md5()             # <<<<<<<<<<<<<<
- * 				with open(filename, 'r') as handler:
- * 					line = handler.read(1024)
+          /* "downloadfile.py":76
+ * 			token = __get_updatefirmware_token()
+ * 			if token is not None:
+ * 				full = "{}&token={}".format(url, token)             # <<<<<<<<<<<<<<
+ * 
+ * 				urllib.request.urlretrieve(full, filename)
  */
-          __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_hashlib); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 49, __pyx_L3_error)
+          __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_token_2, __pyx_n_s_format); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 76, __pyx_L3_error)
           __Pyx_GOTREF(__pyx_t_7);
-          __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_md5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 49, __pyx_L3_error)
-          __Pyx_GOTREF(__pyx_t_10);
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __pyx_t_7 = NULL;
-          if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_10))) {
-            __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_10);
-            if (likely(__pyx_t_7)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
-              __Pyx_INCREF(__pyx_t_7);
+          __pyx_t_8 = NULL;
+          __pyx_t_9 = 0;
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
+            __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_7);
+            if (likely(__pyx_t_8)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+              __Pyx_INCREF(__pyx_t_8);
               __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_10, function);
+              __Pyx_DECREF_SET(__pyx_t_7, function);
+              __pyx_t_9 = 1;
             }
           }
-          __pyx_t_6 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_10);
-          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 49, __pyx_L3_error)
-          __Pyx_GOTREF(__pyx_t_6);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __pyx_v_filemd5 = __pyx_t_6;
+          #if CYTHON_FAST_PYCALL
+          if (PyFunction_Check(__pyx_t_7)) {
+            PyObject *__pyx_temp[3] = {__pyx_t_8, __pyx_v_url, __pyx_v_token};
+            __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 76, __pyx_L3_error)
+            __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+            __Pyx_GOTREF(__pyx_t_6);
+          } else
+          #endif
+          #if CYTHON_FAST_PYCCALL
+          if (__Pyx_PyFastCFunction_Check(__pyx_t_7)) {
+            PyObject *__pyx_temp[3] = {__pyx_t_8, __pyx_v_url, __pyx_v_token};
+            __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 76, __pyx_L3_error)
+            __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+            __Pyx_GOTREF(__pyx_t_6);
+          } else
+          #endif
+          {
+            __pyx_t_10 = PyTuple_New(2+__pyx_t_9); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 76, __pyx_L3_error)
+            __Pyx_GOTREF(__pyx_t_10);
+            if (__pyx_t_8) {
+              __Pyx_GIVEREF(__pyx_t_8); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_8); __pyx_t_8 = NULL;
+            }
+            __Pyx_INCREF(__pyx_v_url);
+            __Pyx_GIVEREF(__pyx_v_url);
+            PyTuple_SET_ITEM(__pyx_t_10, 0+__pyx_t_9, __pyx_v_url);
+            __Pyx_INCREF(__pyx_v_token);
+            __Pyx_GIVEREF(__pyx_v_token);
+            PyTuple_SET_ITEM(__pyx_t_10, 1+__pyx_t_9, __pyx_v_token);
+            __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_10, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 76, __pyx_L3_error)
+            __Pyx_GOTREF(__pyx_t_6);
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          }
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __pyx_v_full = __pyx_t_6;
           __pyx_t_6 = 0;
 
-          /* "downloadfile.py":50
- * 			if size == packet_size:
- * 				filemd5 = hashlib.md5()
- * 				with open(filename, 'r') as handler:             # <<<<<<<<<<<<<<
- * 					line = handler.read(1024)
- * 					filemd5.update(line.encode('utf-8'))
+          /* "downloadfile.py":78
+ * 				full = "{}&token={}".format(url, token)
+ * 
+ * 				urllib.request.urlretrieve(full, filename)             # <<<<<<<<<<<<<<
+ * 
+ * 				m = hashlib.md5()
+ */
+          __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_urllib); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 78, __pyx_L3_error)
+          __Pyx_GOTREF(__pyx_t_7);
+          __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_request); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 78, __pyx_L3_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_urlretrieve); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 78, __pyx_L3_error)
+          __Pyx_GOTREF(__pyx_t_7);
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          __pyx_t_10 = NULL;
+          __pyx_t_9 = 0;
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
+            __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_7);
+            if (likely(__pyx_t_10)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+              __Pyx_INCREF(__pyx_t_10);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_7, function);
+              __pyx_t_9 = 1;
+            }
+          }
+          #if CYTHON_FAST_PYCALL
+          if (PyFunction_Check(__pyx_t_7)) {
+            PyObject *__pyx_temp[3] = {__pyx_t_10, __pyx_v_full, __pyx_v_filename};
+            __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 78, __pyx_L3_error)
+            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_GOTREF(__pyx_t_6);
+          } else
+          #endif
+          #if CYTHON_FAST_PYCCALL
+          if (__Pyx_PyFastCFunction_Check(__pyx_t_7)) {
+            PyObject *__pyx_temp[3] = {__pyx_t_10, __pyx_v_full, __pyx_v_filename};
+            __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 78, __pyx_L3_error)
+            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_GOTREF(__pyx_t_6);
+          } else
+          #endif
+          {
+            __pyx_t_8 = PyTuple_New(2+__pyx_t_9); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 78, __pyx_L3_error)
+            __Pyx_GOTREF(__pyx_t_8);
+            if (__pyx_t_10) {
+              __Pyx_GIVEREF(__pyx_t_10); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_10); __pyx_t_10 = NULL;
+            }
+            __Pyx_INCREF(__pyx_v_full);
+            __Pyx_GIVEREF(__pyx_v_full);
+            PyTuple_SET_ITEM(__pyx_t_8, 0+__pyx_t_9, __pyx_v_full);
+            __Pyx_INCREF(__pyx_v_filename);
+            __Pyx_GIVEREF(__pyx_v_filename);
+            PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_9, __pyx_v_filename);
+            __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_8, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 78, __pyx_L3_error)
+            __Pyx_GOTREF(__pyx_t_6);
+            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          }
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+          /* "downloadfile.py":80
+ * 				urllib.request.urlretrieve(full, filename)
+ * 
+ * 				m = hashlib.md5()             # <<<<<<<<<<<<<<
+ * 				with open(filename, 'rb') as filehandler:
+ * 					msg = '1'
+ */
+          __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_hashlib); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 80, __pyx_L3_error)
+          __Pyx_GOTREF(__pyx_t_7);
+          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_md5); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 80, __pyx_L3_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __pyx_t_7 = NULL;
+          if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_8))) {
+            __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_8);
+            if (likely(__pyx_t_7)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
+              __Pyx_INCREF(__pyx_t_7);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_8, function);
+            }
+          }
+          __pyx_t_6 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_8);
+          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 80, __pyx_L3_error)
+          __Pyx_GOTREF(__pyx_t_6);
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          __pyx_v_m = __pyx_t_6;
+          __pyx_t_6 = 0;
+
+          /* "downloadfile.py":81
+ * 
+ * 				m = hashlib.md5()
+ * 				with open(filename, 'rb') as filehandler:             # <<<<<<<<<<<<<<
+ * 					msg = '1'
+ * 					while msg != b'':
  */
           /*with:*/ {
-            __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 50, __pyx_L3_error)
+            __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 81, __pyx_L3_error)
             __Pyx_GOTREF(__pyx_t_6);
             __Pyx_INCREF(__pyx_v_filename);
             __Pyx_GIVEREF(__pyx_v_filename);
             PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_v_filename);
-            __Pyx_INCREF(__pyx_n_s_r);
-            __Pyx_GIVEREF(__pyx_n_s_r);
-            PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_n_s_r);
-            __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_6, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 50, __pyx_L3_error)
-            __Pyx_GOTREF(__pyx_t_10);
+            __Pyx_INCREF(__pyx_n_s_rb);
+            __Pyx_GIVEREF(__pyx_n_s_rb);
+            PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_n_s_rb);
+            __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_6, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 81, __pyx_L3_error)
+            __Pyx_GOTREF(__pyx_t_8);
             __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-            __pyx_t_11 = __Pyx_PyObject_LookupSpecial(__pyx_t_10, __pyx_n_s_exit); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 50, __pyx_L3_error)
+            __pyx_t_11 = __Pyx_PyObject_LookupSpecial(__pyx_t_8, __pyx_n_s_exit); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 81, __pyx_L3_error)
             __Pyx_GOTREF(__pyx_t_11);
-            __pyx_t_7 = __Pyx_PyObject_LookupSpecial(__pyx_t_10, __pyx_n_s_enter); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 50, __pyx_L11_error)
+            __pyx_t_7 = __Pyx_PyObject_LookupSpecial(__pyx_t_8, __pyx_n_s_enter); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 81, __pyx_L11_error)
             __Pyx_GOTREF(__pyx_t_7);
-            __pyx_t_8 = NULL;
+            __pyx_t_10 = NULL;
             if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
-              __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_7);
-              if (likely(__pyx_t_8)) {
+              __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_7);
+              if (likely(__pyx_t_10)) {
                 PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-                __Pyx_INCREF(__pyx_t_8);
+                __Pyx_INCREF(__pyx_t_10);
                 __Pyx_INCREF(function);
                 __Pyx_DECREF_SET(__pyx_t_7, function);
               }
             }
-            __pyx_t_6 = (__pyx_t_8) ? __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_8) : __Pyx_PyObject_CallNoArg(__pyx_t_7);
-            __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 50, __pyx_L11_error)
+            __pyx_t_6 = (__pyx_t_10) ? __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_10) : __Pyx_PyObject_CallNoArg(__pyx_t_7);
+            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+            if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 81, __pyx_L11_error)
             __Pyx_GOTREF(__pyx_t_6);
             __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
             __pyx_t_7 = __pyx_t_6;
             __pyx_t_6 = 0;
-            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
             /*try:*/ {
               {
                 __Pyx_PyThreadState_declare
@@ -2517,86 +3249,90 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
                 __Pyx_XGOTREF(__pyx_t_13);
                 __Pyx_XGOTREF(__pyx_t_14);
                 /*try:*/ {
-                  __pyx_v_handler = __pyx_t_7;
+                  __pyx_v_filehandler = __pyx_t_7;
                   __pyx_t_7 = 0;
 
-                  /* "downloadfile.py":51
- * 				filemd5 = hashlib.md5()
- * 				with open(filename, 'r') as handler:
- * 					line = handler.read(1024)             # <<<<<<<<<<<<<<
- * 					filemd5.update(line.encode('utf-8'))
- * 				filemd5val = filemd5.hexdigest()
+                  /* "downloadfile.py":82
+ * 				m = hashlib.md5()
+ * 				with open(filename, 'rb') as filehandler:
+ * 					msg = '1'             # <<<<<<<<<<<<<<
+ * 					while msg != b'':
+ * 						msg = filehandler.read(1024)
  */
-                  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_handler, __pyx_n_s_read); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 51, __pyx_L15_error)
-                  __Pyx_GOTREF(__pyx_t_10);
-                  __pyx_t_6 = NULL;
-                  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_10))) {
-                    __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_10);
-                    if (likely(__pyx_t_6)) {
-                      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
-                      __Pyx_INCREF(__pyx_t_6);
-                      __Pyx_INCREF(function);
-                      __Pyx_DECREF_SET(__pyx_t_10, function);
-                    }
-                  }
-                  __pyx_t_7 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_10, __pyx_t_6, __pyx_int_1024) : __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_int_1024);
-                  __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-                  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 51, __pyx_L15_error)
-                  __Pyx_GOTREF(__pyx_t_7);
-                  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-                  __pyx_v_line = __pyx_t_7;
-                  __pyx_t_7 = 0;
+                  __Pyx_INCREF(__pyx_kp_s_1);
+                  __pyx_v_msg = __pyx_kp_s_1;
 
-                  /* "downloadfile.py":52
- * 				with open(filename, 'r') as handler:
- * 					line = handler.read(1024)
- * 					filemd5.update(line.encode('utf-8'))             # <<<<<<<<<<<<<<
- * 				filemd5val = filemd5.hexdigest()
- * 				if filemd5val == md5:
+                  /* "downloadfile.py":83
+ * 				with open(filename, 'rb') as filehandler:
+ * 					msg = '1'
+ * 					while msg != b'':             # <<<<<<<<<<<<<<
+ * 						msg = filehandler.read(1024)
+ * 						m.update(msg)
  */
-                  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_filemd5, __pyx_n_s_update); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 52, __pyx_L15_error)
-                  __Pyx_GOTREF(__pyx_t_10);
-                  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_line, __pyx_n_s_encode); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 52, __pyx_L15_error)
-                  __Pyx_GOTREF(__pyx_t_8);
-                  __pyx_t_15 = NULL;
-                  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
-                    __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_8);
-                    if (likely(__pyx_t_15)) {
-                      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
-                      __Pyx_INCREF(__pyx_t_15);
-                      __Pyx_INCREF(function);
-                      __Pyx_DECREF_SET(__pyx_t_8, function);
-                    }
-                  }
-                  __pyx_t_6 = (__pyx_t_15) ? __Pyx_PyObject_Call2Args(__pyx_t_8, __pyx_t_15, __pyx_kp_s_utf_8) : __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_kp_s_utf_8);
-                  __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-                  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 52, __pyx_L15_error)
-                  __Pyx_GOTREF(__pyx_t_6);
-                  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-                  __pyx_t_8 = NULL;
-                  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_10))) {
-                    __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_10);
-                    if (likely(__pyx_t_8)) {
-                      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
-                      __Pyx_INCREF(__pyx_t_8);
-                      __Pyx_INCREF(function);
-                      __Pyx_DECREF_SET(__pyx_t_10, function);
-                    }
-                  }
-                  __pyx_t_7 = (__pyx_t_8) ? __Pyx_PyObject_Call2Args(__pyx_t_10, __pyx_t_8, __pyx_t_6) : __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_6);
-                  __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-                  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-                  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 52, __pyx_L15_error)
-                  __Pyx_GOTREF(__pyx_t_7);
-                  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-                  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+                  while (1) {
+                    __pyx_t_4 = (__Pyx_PyBytes_Equals(__pyx_v_msg, __pyx_kp_b__2, Py_NE)); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 83, __pyx_L15_error)
+                    if (!__pyx_t_4) break;
 
-                  /* "downloadfile.py":50
- * 			if size == packet_size:
- * 				filemd5 = hashlib.md5()
- * 				with open(filename, 'r') as handler:             # <<<<<<<<<<<<<<
- * 					line = handler.read(1024)
- * 					filemd5.update(line.encode('utf-8'))
+                    /* "downloadfile.py":84
+ * 					msg = '1'
+ * 					while msg != b'':
+ * 						msg = filehandler.read(1024)             # <<<<<<<<<<<<<<
+ * 						m.update(msg)
+ * 				md5value = m.hexdigest()
+ */
+                    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_filehandler, __pyx_n_s_read); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 84, __pyx_L15_error)
+                    __Pyx_GOTREF(__pyx_t_8);
+                    __pyx_t_6 = NULL;
+                    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
+                      __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_8);
+                      if (likely(__pyx_t_6)) {
+                        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
+                        __Pyx_INCREF(__pyx_t_6);
+                        __Pyx_INCREF(function);
+                        __Pyx_DECREF_SET(__pyx_t_8, function);
+                      }
+                    }
+                    __pyx_t_7 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_8, __pyx_t_6, __pyx_int_1024) : __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_int_1024);
+                    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+                    if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 84, __pyx_L15_error)
+                    __Pyx_GOTREF(__pyx_t_7);
+                    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+                    __Pyx_DECREF_SET(__pyx_v_msg, __pyx_t_7);
+                    __pyx_t_7 = 0;
+
+                    /* "downloadfile.py":85
+ * 					while msg != b'':
+ * 						msg = filehandler.read(1024)
+ * 						m.update(msg)             # <<<<<<<<<<<<<<
+ * 				md5value = m.hexdigest()
+ * 				if md5value != md5:
+ */
+                    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_m, __pyx_n_s_update); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 85, __pyx_L15_error)
+                    __Pyx_GOTREF(__pyx_t_8);
+                    __pyx_t_6 = NULL;
+                    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
+                      __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_8);
+                      if (likely(__pyx_t_6)) {
+                        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
+                        __Pyx_INCREF(__pyx_t_6);
+                        __Pyx_INCREF(function);
+                        __Pyx_DECREF_SET(__pyx_t_8, function);
+                      }
+                    }
+                    __pyx_t_7 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_8, __pyx_t_6, __pyx_v_msg) : __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_v_msg);
+                    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+                    if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 85, __pyx_L15_error)
+                    __Pyx_GOTREF(__pyx_t_7);
+                    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+                    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+                  }
+
+                  /* "downloadfile.py":81
+ * 
+ * 				m = hashlib.md5()
+ * 				with open(filename, 'rb') as filehandler:             # <<<<<<<<<<<<<<
+ * 					msg = '1'
+ * 					while msg != b'':
  */
                 }
                 __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
@@ -2605,37 +3341,36 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
                 goto __pyx_L20_try_end;
                 __pyx_L15_error:;
                 __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-                __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
                 __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
                 __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
                 __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
                 /*except:*/ {
                   __Pyx_AddTraceback("downloadfile.download_firmware", __pyx_clineno, __pyx_lineno, __pyx_filename);
-                  if (__Pyx_GetException(&__pyx_t_7, &__pyx_t_10, &__pyx_t_6) < 0) __PYX_ERR(0, 50, __pyx_L17_except_error)
+                  if (__Pyx_GetException(&__pyx_t_7, &__pyx_t_8, &__pyx_t_6) < 0) __PYX_ERR(0, 81, __pyx_L17_except_error)
                   __Pyx_GOTREF(__pyx_t_7);
-                  __Pyx_GOTREF(__pyx_t_10);
-                  __Pyx_GOTREF(__pyx_t_6);
-                  __pyx_t_8 = PyTuple_Pack(3, __pyx_t_7, __pyx_t_10, __pyx_t_6); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 50, __pyx_L17_except_error)
                   __Pyx_GOTREF(__pyx_t_8);
-                  __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_8, NULL);
+                  __Pyx_GOTREF(__pyx_t_6);
+                  __pyx_t_10 = PyTuple_Pack(3, __pyx_t_7, __pyx_t_8, __pyx_t_6); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 81, __pyx_L17_except_error)
+                  __Pyx_GOTREF(__pyx_t_10);
+                  __pyx_t_15 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_10, NULL);
                   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-                  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-                  if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 50, __pyx_L17_except_error)
-                  __Pyx_GOTREF(__pyx_t_16);
-                  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_16);
-                  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
-                  if (__pyx_t_5 < 0) __PYX_ERR(0, 50, __pyx_L17_except_error)
-                  __pyx_t_4 = ((!(__pyx_t_5 != 0)) != 0);
-                  if (__pyx_t_4) {
+                  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+                  if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 81, __pyx_L17_except_error)
+                  __Pyx_GOTREF(__pyx_t_15);
+                  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_15);
+                  __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
+                  if (__pyx_t_4 < 0) __PYX_ERR(0, 81, __pyx_L17_except_error)
+                  __pyx_t_5 = ((!(__pyx_t_4 != 0)) != 0);
+                  if (__pyx_t_5) {
                     __Pyx_GIVEREF(__pyx_t_7);
-                    __Pyx_GIVEREF(__pyx_t_10);
+                    __Pyx_GIVEREF(__pyx_t_8);
                     __Pyx_XGIVEREF(__pyx_t_6);
-                    __Pyx_ErrRestoreWithState(__pyx_t_7, __pyx_t_10, __pyx_t_6);
-                    __pyx_t_7 = 0; __pyx_t_10 = 0; __pyx_t_6 = 0; 
-                    __PYX_ERR(0, 50, __pyx_L17_except_error)
+                    __Pyx_ErrRestoreWithState(__pyx_t_7, __pyx_t_8, __pyx_t_6);
+                    __pyx_t_7 = 0; __pyx_t_8 = 0; __pyx_t_6 = 0; 
+                    __PYX_ERR(0, 81, __pyx_L17_except_error)
                   }
                   __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-                  __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+                  __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
                   __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
                   goto __pyx_L16_exception_handled;
                 }
@@ -2658,7 +3393,7 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
                 if (__pyx_t_11) {
                   __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_tuple_, NULL);
                   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-                  if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 50, __pyx_L3_error)
+                  if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 81, __pyx_L3_error)
                   __Pyx_GOTREF(__pyx_t_14);
                   __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
                 }
@@ -2666,222 +3401,151 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
               }
               __pyx_L14:;
             }
-            goto __pyx_L24;
+            goto __pyx_L26;
             __pyx_L11_error:;
             __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
             goto __pyx_L3_error;
-            __pyx_L24:;
+            __pyx_L26:;
           }
 
-          /* "downloadfile.py":53
- * 					line = handler.read(1024)
- * 					filemd5.update(line.encode('utf-8'))
- * 				filemd5val = filemd5.hexdigest()             # <<<<<<<<<<<<<<
- * 				if filemd5val == md5:
- * 					return True
+          /* "downloadfile.py":86
+ * 						msg = filehandler.read(1024)
+ * 						m.update(msg)
+ * 				md5value = m.hexdigest()             # <<<<<<<<<<<<<<
+ * 				if md5value != md5:
+ * 					log.error("download {} md5 error.".format(url))
  */
-          __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_filemd5, __pyx_n_s_hexdigest); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 53, __pyx_L3_error)
-          __Pyx_GOTREF(__pyx_t_10);
+          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_m, __pyx_n_s_hexdigest); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 86, __pyx_L3_error)
+          __Pyx_GOTREF(__pyx_t_8);
           __pyx_t_7 = NULL;
-          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_10))) {
-            __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_10);
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
+            __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_8);
             if (likely(__pyx_t_7)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
               __Pyx_INCREF(__pyx_t_7);
               __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_10, function);
+              __Pyx_DECREF_SET(__pyx_t_8, function);
             }
           }
-          __pyx_t_6 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_10);
+          __pyx_t_6 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_8);
           __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 53, __pyx_L3_error)
+          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 86, __pyx_L3_error)
           __Pyx_GOTREF(__pyx_t_6);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __pyx_v_filemd5val = __pyx_t_6;
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          __pyx_v_md5value = __pyx_t_6;
           __pyx_t_6 = 0;
 
-          /* "downloadfile.py":54
- * 					filemd5.update(line.encode('utf-8'))
- * 				filemd5val = filemd5.hexdigest()
- * 				if filemd5val == md5:             # <<<<<<<<<<<<<<
- * 					return True
- * 				else:
+          /* "downloadfile.py":87
+ * 						m.update(msg)
+ * 				md5value = m.hexdigest()
+ * 				if md5value != md5:             # <<<<<<<<<<<<<<
+ * 					log.error("download {} md5 error.".format(url))
+ * 					return False
  */
-          __pyx_t_4 = (__Pyx_PyString_Equals(__pyx_v_filemd5val, __pyx_v_md5, Py_EQ)); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 54, __pyx_L3_error)
-          if (__pyx_t_4) {
+          __pyx_t_5 = (__Pyx_PyString_Equals(__pyx_v_md5value, __pyx_v_md5, Py_NE)); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 87, __pyx_L3_error)
+          if (__pyx_t_5) {
 
-            /* "downloadfile.py":55
- * 				filemd5val = filemd5.hexdigest()
- * 				if filemd5val == md5:
- * 					return True             # <<<<<<<<<<<<<<
- * 				else:
- * 					log.error("download {} md5 error.".format(filename))
+            /* "downloadfile.py":88
+ * 				md5value = m.hexdigest()
+ * 				if md5value != md5:
+ * 					log.error("download {} md5 error.".format(url))             # <<<<<<<<<<<<<<
+ * 					return False
+ * 
  */
-            __Pyx_XDECREF(__pyx_r);
-            __Pyx_INCREF(Py_True);
-            __pyx_r = Py_True;
-            goto __pyx_L7_try_return;
-
-            /* "downloadfile.py":54
- * 					filemd5.update(line.encode('utf-8'))
- * 				filemd5val = filemd5.hexdigest()
- * 				if filemd5val == md5:             # <<<<<<<<<<<<<<
- * 					return True
- * 				else:
- */
-          }
-
-          /* "downloadfile.py":57
- * 					return True
- * 				else:
- * 					log.error("download {} md5 error.".format(filename))             # <<<<<<<<<<<<<<
- * 			else:
- * 				log.error("download[{}] size({}) error.".format(filename, size))
- */
-          /*else*/ {
-            __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_n_s_log); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 57, __pyx_L3_error)
-            __Pyx_GOTREF(__pyx_t_10);
-            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_error); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 57, __pyx_L3_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-            __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_download_md5_error, __pyx_n_s_format); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 57, __pyx_L3_error)
+            __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_log); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 88, __pyx_L3_error)
             __Pyx_GOTREF(__pyx_t_8);
-            __pyx_t_15 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
-              __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_8);
-              if (likely(__pyx_t_15)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
-                __Pyx_INCREF(__pyx_t_15);
+            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_error); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 88, __pyx_L3_error)
+            __Pyx_GOTREF(__pyx_t_7);
+            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+            __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_download_md5_error, __pyx_n_s_format); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 88, __pyx_L3_error)
+            __Pyx_GOTREF(__pyx_t_10);
+            __pyx_t_16 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_10))) {
+              __pyx_t_16 = PyMethod_GET_SELF(__pyx_t_10);
+              if (likely(__pyx_t_16)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
+                __Pyx_INCREF(__pyx_t_16);
                 __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_8, function);
+                __Pyx_DECREF_SET(__pyx_t_10, function);
               }
             }
-            __pyx_t_10 = (__pyx_t_15) ? __Pyx_PyObject_Call2Args(__pyx_t_8, __pyx_t_15, __pyx_v_filename) : __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_v_filename);
-            __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-            if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 57, __pyx_L3_error)
-            __Pyx_GOTREF(__pyx_t_10);
-            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            __pyx_t_8 = NULL;
+            __pyx_t_8 = (__pyx_t_16) ? __Pyx_PyObject_Call2Args(__pyx_t_10, __pyx_t_16, __pyx_v_url) : __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_v_url);
+            __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
+            if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 88, __pyx_L3_error)
+            __Pyx_GOTREF(__pyx_t_8);
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __pyx_t_10 = NULL;
             if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_7))) {
-              __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_7);
-              if (likely(__pyx_t_8)) {
+              __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_7);
+              if (likely(__pyx_t_10)) {
                 PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-                __Pyx_INCREF(__pyx_t_8);
+                __Pyx_INCREF(__pyx_t_10);
                 __Pyx_INCREF(function);
                 __Pyx_DECREF_SET(__pyx_t_7, function);
               }
             }
-            __pyx_t_6 = (__pyx_t_8) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_8, __pyx_t_10) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_10);
-            __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-            if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 57, __pyx_L3_error)
+            __pyx_t_6 = (__pyx_t_10) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_10, __pyx_t_8) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_8);
+            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+            if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 88, __pyx_L3_error)
             __Pyx_GOTREF(__pyx_t_6);
             __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
             __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+            /* "downloadfile.py":89
+ * 				if md5value != md5:
+ * 					log.error("download {} md5 error.".format(url))
+ * 					return False             # <<<<<<<<<<<<<<
+ * 
+ * 				return True
+ */
+            __Pyx_XDECREF(__pyx_r);
+            __Pyx_INCREF(Py_False);
+            __pyx_r = Py_False;
+            goto __pyx_L7_try_return;
+
+            /* "downloadfile.py":87
+ * 						m.update(msg)
+ * 				md5value = m.hexdigest()
+ * 				if md5value != md5:             # <<<<<<<<<<<<<<
+ * 					log.error("download {} md5 error.".format(url))
+ * 					return False
+ */
           }
 
-          /* "downloadfile.py":48
- * 			r = urllib.request.urlretrieve(url, filename)
- * 			size = os.path.getsize(filename)
- * 			if size == packet_size:             # <<<<<<<<<<<<<<
- * 				filemd5 = hashlib.md5()
- * 				with open(filename, 'r') as handler:
- */
-          goto __pyx_L10;
-        }
-
-        /* "downloadfile.py":59
- * 					log.error("download {} md5 error.".format(filename))
- * 			else:
- * 				log.error("download[{}] size({}) error.".format(filename, size))             # <<<<<<<<<<<<<<
+          /* "downloadfile.py":91
+ * 					return False
+ * 
+ * 				return True             # <<<<<<<<<<<<<<
  * 		return False
  * 	except Exception as e:
  */
-        /*else*/ {
-          __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_log); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 59, __pyx_L3_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_error); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 59, __pyx_L3_error)
-          __Pyx_GOTREF(__pyx_t_10);
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_download_size_error, __pyx_n_s_format); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 59, __pyx_L3_error)
-          __Pyx_GOTREF(__pyx_t_8);
-          __pyx_t_15 = NULL;
-          __pyx_t_9 = 0;
-          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
-            __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_8);
-            if (likely(__pyx_t_15)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
-              __Pyx_INCREF(__pyx_t_15);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_8, function);
-              __pyx_t_9 = 1;
-            }
-          }
-          #if CYTHON_FAST_PYCALL
-          if (PyFunction_Check(__pyx_t_8)) {
-            PyObject *__pyx_temp[3] = {__pyx_t_15, __pyx_v_filename, __pyx_v_size};
-            __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_8, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 59, __pyx_L3_error)
-            __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-            __Pyx_GOTREF(__pyx_t_7);
-          } else
-          #endif
-          #if CYTHON_FAST_PYCCALL
-          if (__Pyx_PyFastCFunction_Check(__pyx_t_8)) {
-            PyObject *__pyx_temp[3] = {__pyx_t_15, __pyx_v_filename, __pyx_v_size};
-            __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_8, __pyx_temp+1-__pyx_t_9, 2+__pyx_t_9); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 59, __pyx_L3_error)
-            __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-            __Pyx_GOTREF(__pyx_t_7);
-          } else
-          #endif
-          {
-            __pyx_t_17 = PyTuple_New(2+__pyx_t_9); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 59, __pyx_L3_error)
-            __Pyx_GOTREF(__pyx_t_17);
-            if (__pyx_t_15) {
-              __Pyx_GIVEREF(__pyx_t_15); PyTuple_SET_ITEM(__pyx_t_17, 0, __pyx_t_15); __pyx_t_15 = NULL;
-            }
-            __Pyx_INCREF(__pyx_v_filename);
-            __Pyx_GIVEREF(__pyx_v_filename);
-            PyTuple_SET_ITEM(__pyx_t_17, 0+__pyx_t_9, __pyx_v_filename);
-            __Pyx_INCREF(__pyx_v_size);
-            __Pyx_GIVEREF(__pyx_v_size);
-            PyTuple_SET_ITEM(__pyx_t_17, 1+__pyx_t_9, __pyx_v_size);
-            __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_17, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 59, __pyx_L3_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-          }
-          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __pyx_t_8 = NULL;
-          if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_10))) {
-            __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_10);
-            if (likely(__pyx_t_8)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
-              __Pyx_INCREF(__pyx_t_8);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_10, function);
-            }
-          }
-          __pyx_t_6 = (__pyx_t_8) ? __Pyx_PyObject_Call2Args(__pyx_t_10, __pyx_t_8, __pyx_t_7) : __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_7);
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 59, __pyx_L3_error)
-          __Pyx_GOTREF(__pyx_t_6);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        }
-        __pyx_L10:;
+          __Pyx_XDECREF(__pyx_r);
+          __Pyx_INCREF(Py_True);
+          __pyx_r = Py_True;
+          goto __pyx_L7_try_return;
 
-        /* "downloadfile.py":45
+          /* "downloadfile.py":75
+ * 		if url is not None:
+ * 			token = __get_updatefirmware_token()
+ * 			if token is not None:             # <<<<<<<<<<<<<<
+ * 				full = "{}&token={}".format(url, token)
+ * 
+ */
+        }
+
+        /* "downloadfile.py":73
  * 	try:
  * 		global log
  * 		if url is not None:             # <<<<<<<<<<<<<<
- * 			r = urllib.request.urlretrieve(url, filename)
- * 			size = os.path.getsize(filename)
+ * 			token = __get_updatefirmware_token()
+ * 			if token is not None:
  */
       }
 
-      /* "downloadfile.py":60
- * 			else:
- * 				log.error("download[{}] size({}) error.".format(filename, size))
+      /* "downloadfile.py":92
+ * 
+ * 				return True
  * 		return False             # <<<<<<<<<<<<<<
  * 	except Exception as e:
  * 		log.error("download failed, url:{} filename:{} error:{}".format(url, filename, e))
@@ -2891,9 +3555,9 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
       __pyx_r = Py_False;
       goto __pyx_L7_try_return;
 
-      /* "downloadfile.py":43
+      /* "downloadfile.py":71
  * 
- * def download_firmware(url:str, packet_size:int, md5:str, filename:str)->bool:
+ * def download_firmware(url:str, md5:str, filename:str)->bool:
  * 	try:             # <<<<<<<<<<<<<<
  * 		global log
  * 		if url is not None:
@@ -2901,14 +3565,13 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
     }
     __pyx_L3_error:;
     __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-    __Pyx_XDECREF(__pyx_t_17); __pyx_t_17 = 0;
+    __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-    /* "downloadfile.py":61
- * 				log.error("download[{}] size({}) error.".format(filename, size))
+    /* "downloadfile.py":93
+ * 				return True
  * 		return False
  * 	except Exception as e:             # <<<<<<<<<<<<<<
  * 		log.error("download failed, url:{} filename:{} error:{}".format(url, filename, e))
@@ -2917,26 +3580,26 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
     __pyx_t_9 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])));
     if (__pyx_t_9) {
       __Pyx_AddTraceback("downloadfile.download_firmware", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_6, &__pyx_t_10, &__pyx_t_7) < 0) __PYX_ERR(0, 61, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_6, &__pyx_t_7, &__pyx_t_8) < 0) __PYX_ERR(0, 93, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __Pyx_GOTREF(__pyx_t_10);
       __Pyx_GOTREF(__pyx_t_7);
-      __Pyx_INCREF(__pyx_t_10);
-      __pyx_v_e = __pyx_t_10;
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_INCREF(__pyx_t_7);
+      __pyx_v_e = __pyx_t_7;
 
-      /* "downloadfile.py":62
+      /* "downloadfile.py":94
  * 		return False
  * 	except Exception as e:
  * 		log.error("download failed, url:{} filename:{} error:{}".format(url, filename, e))             # <<<<<<<<<<<<<<
  * 		return False
  * 
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_17, __pyx_n_s_log); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 62, __pyx_L5_except_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_16, __pyx_n_s_log); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 94, __pyx_L5_except_error)
+      __Pyx_GOTREF(__pyx_t_16);
+      __pyx_t_17 = __Pyx_PyObject_GetAttrStr(__pyx_t_16, __pyx_n_s_error); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 94, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_17);
-      __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_t_17, __pyx_n_s_error); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 62, __pyx_L5_except_error)
-      __Pyx_GOTREF(__pyx_t_15);
-      __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-      __pyx_t_18 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_download_failed_url_filename_err, __pyx_n_s_format); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 62, __pyx_L5_except_error)
+      __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+      __pyx_t_18 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_download_failed_url_filename_err, __pyx_n_s_format); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 94, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_18);
       __pyx_t_19 = NULL;
       __pyx_t_9 = 0;
@@ -2953,21 +3616,21 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_18)) {
         PyObject *__pyx_temp[4] = {__pyx_t_19, __pyx_v_url, __pyx_v_filename, __pyx_v_e};
-        __pyx_t_17 = __Pyx_PyFunction_FastCall(__pyx_t_18, __pyx_temp+1-__pyx_t_9, 3+__pyx_t_9); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 62, __pyx_L5_except_error)
+        __pyx_t_16 = __Pyx_PyFunction_FastCall(__pyx_t_18, __pyx_temp+1-__pyx_t_9, 3+__pyx_t_9); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 94, __pyx_L5_except_error)
         __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-        __Pyx_GOTREF(__pyx_t_17);
+        __Pyx_GOTREF(__pyx_t_16);
       } else
       #endif
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_18)) {
         PyObject *__pyx_temp[4] = {__pyx_t_19, __pyx_v_url, __pyx_v_filename, __pyx_v_e};
-        __pyx_t_17 = __Pyx_PyCFunction_FastCall(__pyx_t_18, __pyx_temp+1-__pyx_t_9, 3+__pyx_t_9); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 62, __pyx_L5_except_error)
+        __pyx_t_16 = __Pyx_PyCFunction_FastCall(__pyx_t_18, __pyx_temp+1-__pyx_t_9, 3+__pyx_t_9); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 94, __pyx_L5_except_error)
         __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-        __Pyx_GOTREF(__pyx_t_17);
+        __Pyx_GOTREF(__pyx_t_16);
       } else
       #endif
       {
-        __pyx_t_20 = PyTuple_New(3+__pyx_t_9); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 62, __pyx_L5_except_error)
+        __pyx_t_20 = PyTuple_New(3+__pyx_t_9); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 94, __pyx_L5_except_error)
         __Pyx_GOTREF(__pyx_t_20);
         if (__pyx_t_19) {
           __Pyx_GIVEREF(__pyx_t_19); PyTuple_SET_ITEM(__pyx_t_20, 0, __pyx_t_19); __pyx_t_19 = NULL;
@@ -2981,30 +3644,30 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
         __Pyx_INCREF(__pyx_v_e);
         __Pyx_GIVEREF(__pyx_v_e);
         PyTuple_SET_ITEM(__pyx_t_20, 2+__pyx_t_9, __pyx_v_e);
-        __pyx_t_17 = __Pyx_PyObject_Call(__pyx_t_18, __pyx_t_20, NULL); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 62, __pyx_L5_except_error)
-        __Pyx_GOTREF(__pyx_t_17);
+        __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_18, __pyx_t_20, NULL); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 94, __pyx_L5_except_error)
+        __Pyx_GOTREF(__pyx_t_16);
         __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
       }
       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
       __pyx_t_18 = NULL;
-      if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_15))) {
-        __pyx_t_18 = PyMethod_GET_SELF(__pyx_t_15);
+      if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_17))) {
+        __pyx_t_18 = PyMethod_GET_SELF(__pyx_t_17);
         if (likely(__pyx_t_18)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_15);
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_17);
           __Pyx_INCREF(__pyx_t_18);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_15, function);
+          __Pyx_DECREF_SET(__pyx_t_17, function);
         }
       }
-      __pyx_t_8 = (__pyx_t_18) ? __Pyx_PyObject_Call2Args(__pyx_t_15, __pyx_t_18, __pyx_t_17) : __Pyx_PyObject_CallOneArg(__pyx_t_15, __pyx_t_17);
+      __pyx_t_10 = (__pyx_t_18) ? __Pyx_PyObject_Call2Args(__pyx_t_17, __pyx_t_18, __pyx_t_16) : __Pyx_PyObject_CallOneArg(__pyx_t_17, __pyx_t_16);
       __Pyx_XDECREF(__pyx_t_18); __pyx_t_18 = 0;
+      __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+      if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 94, __pyx_L5_except_error)
+      __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 62, __pyx_L5_except_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-      /* "downloadfile.py":63
+      /* "downloadfile.py":95
  * 	except Exception as e:
  * 		log.error("download failed, url:{} filename:{} error:{}".format(url, filename, e))
  * 		return False             # <<<<<<<<<<<<<<
@@ -3016,15 +3679,15 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
       __pyx_r = Py_False;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       goto __pyx_L6_except_return;
     }
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "downloadfile.py":43
+    /* "downloadfile.py":71
  * 
- * def download_firmware(url:str, packet_size:int, md5:str, filename:str)->bool:
+ * def download_firmware(url:str, md5:str, filename:str)->bool:
  * 	try:             # <<<<<<<<<<<<<<
  * 		global log
  * 		if url is not None:
@@ -3048,10 +3711,10 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
     goto __pyx_L0;
   }
 
-  /* "downloadfile.py":42
- * 		return False
+  /* "downloadfile.py":70
+ * 		return None
  * 
- * def download_firmware(url:str, packet_size:int, md5:str, filename:str)->bool:             # <<<<<<<<<<<<<<
+ * def download_firmware(url:str, md5:str, filename:str)->bool:             # <<<<<<<<<<<<<<
  * 	try:
  * 		global log
  */
@@ -3062,7 +3725,7 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_XDECREF(__pyx_t_15);
+  __Pyx_XDECREF(__pyx_t_16);
   __Pyx_XDECREF(__pyx_t_17);
   __Pyx_XDECREF(__pyx_t_18);
   __Pyx_XDECREF(__pyx_t_19);
@@ -3070,12 +3733,12 @@ static PyObject *__pyx_pf_12downloadfile_4download_firmware(CYTHON_UNUSED PyObje
   __Pyx_AddTraceback("downloadfile.download_firmware", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_r);
-  __Pyx_XDECREF(__pyx_v_size);
-  __Pyx_XDECREF(__pyx_v_filemd5);
-  __Pyx_XDECREF(__pyx_v_handler);
-  __Pyx_XDECREF(__pyx_v_line);
-  __Pyx_XDECREF(__pyx_v_filemd5val);
+  __Pyx_XDECREF(__pyx_v_token);
+  __Pyx_XDECREF(__pyx_v_full);
+  __Pyx_XDECREF(__pyx_v_m);
+  __Pyx_XDECREF(__pyx_v_filehandler);
+  __Pyx_XDECREF(__pyx_v_msg);
+  __Pyx_XDECREF(__pyx_v_md5value);
   __Pyx_XDECREF(__pyx_v_e);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -3128,8 +3791,14 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
+  {&__pyx_kp_s_1, __pyx_k_1, sizeof(__pyx_k_1), 0, 0, 1, 0},
   {&__pyx_n_s_LoggingProducer, __pyx_k_LoggingProducer, sizeof(__pyx_k_LoggingProducer), 0, 0, 1, 1},
   {&__pyx_n_s_LoggingQueue, __pyx_k_LoggingQueue, sizeof(__pyx_k_LoggingQueue), 0, 0, 1, 1},
+  {&__pyx_n_s_Request, __pyx_k_Request, sizeof(__pyx_k_Request), 0, 0, 1, 1},
+  {&__pyx_n_s_UPGRADE_PASSWORD, __pyx_k_UPGRADE_PASSWORD, sizeof(__pyx_k_UPGRADE_PASSWORD), 0, 0, 1, 1},
+  {&__pyx_n_s_UPGRADE_TOKEN_URL, __pyx_k_UPGRADE_TOKEN_URL, sizeof(__pyx_k_UPGRADE_TOKEN_URL), 0, 0, 1, 1},
+  {&__pyx_n_s_UPGRADE_USERNAME, __pyx_k_UPGRADE_USERNAME, sizeof(__pyx_k_UPGRADE_USERNAME), 0, 0, 1, 1},
+  {&__pyx_kp_b__2, __pyx_k__2, sizeof(__pyx_k__2), 0, 0, 0, 0},
   {&__pyx_n_s_a, __pyx_k_a, sizeof(__pyx_k_a), 0, 0, 1, 1},
   {&__pyx_n_s_b, __pyx_k_b, sizeof(__pyx_k_b), 0, 0, 1, 1},
   {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
@@ -3137,64 +3806,85 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_check, __pyx_k_check, sizeof(__pyx_k_check), 0, 0, 1, 1},
   {&__pyx_n_s_checkfiletype, __pyx_k_checkfiletype, sizeof(__pyx_k_checkfiletype), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
+  {&__pyx_n_s_data, __pyx_k_data, sizeof(__pyx_k_data), 0, 0, 1, 1},
   {&__pyx_n_s_download, __pyx_k_download, sizeof(__pyx_k_download), 0, 0, 1, 1},
   {&__pyx_kp_s_download_failed_url_filename_err, __pyx_k_download_failed_url_filename_err, sizeof(__pyx_k_download_failed_url_filename_err), 0, 0, 1, 0},
   {&__pyx_kp_s_download_file_size_error, __pyx_k_download_file_size_error, sizeof(__pyx_k_download_file_size_error), 0, 0, 1, 0},
   {&__pyx_kp_s_download_file_type_error, __pyx_k_download_file_type_error, sizeof(__pyx_k_download_file_type_error), 0, 0, 1, 0},
   {&__pyx_n_s_download_firmware, __pyx_k_download_firmware, sizeof(__pyx_k_download_firmware), 0, 0, 1, 1},
   {&__pyx_kp_s_download_md5_error, __pyx_k_download_md5_error, sizeof(__pyx_k_download_md5_error), 0, 0, 1, 0},
-  {&__pyx_kp_s_download_size_error, __pyx_k_download_size_error, sizeof(__pyx_k_download_size_error), 0, 0, 1, 0},
   {&__pyx_n_s_downloadfile, __pyx_k_downloadfile, sizeof(__pyx_k_downloadfile), 0, 0, 1, 1},
   {&__pyx_kp_s_downloadfile_downloadfile_py, __pyx_k_downloadfile_downloadfile_py, sizeof(__pyx_k_downloadfile_downloadfile_py), 0, 0, 1, 0},
   {&__pyx_n_s_e, __pyx_k_e, sizeof(__pyx_k_e), 0, 0, 1, 1},
   {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
+  {&__pyx_n_s_encoding, __pyx_k_encoding, sizeof(__pyx_k_encoding), 0, 0, 1, 1},
   {&__pyx_n_s_end, __pyx_k_end, sizeof(__pyx_k_end), 0, 0, 1, 1},
   {&__pyx_n_s_enter, __pyx_k_enter, sizeof(__pyx_k_enter), 0, 0, 1, 1},
   {&__pyx_n_s_error, __pyx_k_error, sizeof(__pyx_k_error), 0, 0, 1, 1},
   {&__pyx_n_s_exit, __pyx_k_exit, sizeof(__pyx_k_exit), 0, 0, 1, 1},
   {&__pyx_n_s_file, __pyx_k_file, sizeof(__pyx_k_file), 0, 0, 1, 1},
-  {&__pyx_n_s_filemd5, __pyx_k_filemd5, sizeof(__pyx_k_filemd5), 0, 0, 1, 1},
-  {&__pyx_n_s_filemd5val, __pyx_k_filemd5val, sizeof(__pyx_k_filemd5val), 0, 0, 1, 1},
+  {&__pyx_n_s_filehandler, __pyx_k_filehandler, sizeof(__pyx_k_filehandler), 0, 0, 1, 1},
   {&__pyx_n_s_filename, __pyx_k_filename, sizeof(__pyx_k_filename), 0, 0, 1, 1},
   {&__pyx_n_s_filesize, __pyx_k_filesize, sizeof(__pyx_k_filesize), 0, 0, 1, 1},
   {&__pyx_n_s_format, __pyx_k_format, sizeof(__pyx_k_format), 0, 0, 1, 1},
+  {&__pyx_n_s_full, __pyx_k_full, sizeof(__pyx_k_full), 0, 0, 1, 1},
   {&__pyx_n_s_get_filetype, __pyx_k_get_filetype, sizeof(__pyx_k_get_filetype), 0, 0, 1, 1},
+  {&__pyx_n_s_get_updatefirmware_token, __pyx_k_get_updatefirmware_token, sizeof(__pyx_k_get_updatefirmware_token), 0, 0, 1, 1},
   {&__pyx_n_s_getlogger, __pyx_k_getlogger, sizeof(__pyx_k_getlogger), 0, 0, 1, 1},
   {&__pyx_n_s_getsize, __pyx_k_getsize, sizeof(__pyx_k_getsize), 0, 0, 1, 1},
-  {&__pyx_n_s_handler, __pyx_k_handler, sizeof(__pyx_k_handler), 0, 0, 1, 1},
   {&__pyx_n_s_hashlib, __pyx_k_hashlib, sizeof(__pyx_k_hashlib), 0, 0, 1, 1},
   {&__pyx_n_s_hexdigest, __pyx_k_hexdigest, sizeof(__pyx_k_hexdigest), 0, 0, 1, 1},
   {&__pyx_kp_s_https_timgsa_baidu_com_timg_imag, __pyx_k_https_timgsa_baidu_com_timg_imag, sizeof(__pyx_k_https_timgsa_baidu_com_timg_imag), 0, 0, 1, 0},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
-  {&__pyx_n_u_int, __pyx_k_int, sizeof(__pyx_k_int), 0, 1, 0, 1},
-  {&__pyx_n_s_line, __pyx_k_line, sizeof(__pyx_k_line), 0, 0, 1, 1},
+  {&__pyx_n_s_json, __pyx_k_json, sizeof(__pyx_k_json), 0, 0, 1, 1},
+  {&__pyx_n_s_loads, __pyx_k_loads, sizeof(__pyx_k_loads), 0, 0, 1, 1},
   {&__pyx_n_s_log, __pyx_k_log, sizeof(__pyx_k_log), 0, 0, 1, 1},
+  {&__pyx_n_s_m, __pyx_k_m, sizeof(__pyx_k_m), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_md5, __pyx_k_md5, sizeof(__pyx_k_md5), 0, 0, 1, 1},
+  {&__pyx_n_s_md5value, __pyx_k_md5value, sizeof(__pyx_k_md5value), 0, 0, 1, 1},
+  {&__pyx_n_s_message, __pyx_k_message, sizeof(__pyx_k_message), 0, 0, 1, 1},
+  {&__pyx_n_s_message_struct, __pyx_k_message_struct, sizeof(__pyx_k_message_struct), 0, 0, 1, 1},
+  {&__pyx_n_s_ms, __pyx_k_ms, sizeof(__pyx_k_ms), 0, 0, 1, 1},
+  {&__pyx_n_s_msg, __pyx_k_msg, sizeof(__pyx_k_msg), 0, 0, 1, 1},
+  {&__pyx_n_s_msgdict, __pyx_k_msgdict, sizeof(__pyx_k_msgdict), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_open, __pyx_k_open, sizeof(__pyx_k_open), 0, 0, 1, 1},
   {&__pyx_n_s_os, __pyx_k_os, sizeof(__pyx_k_os), 0, 0, 1, 1},
-  {&__pyx_n_s_packet_size, __pyx_k_packet_size, sizeof(__pyx_k_packet_size), 0, 0, 1, 1},
+  {&__pyx_n_s_page, __pyx_k_page, sizeof(__pyx_k_page), 0, 0, 1, 1},
+  {&__pyx_n_s_parse, __pyx_k_parse, sizeof(__pyx_k_parse), 0, 0, 1, 1},
+  {&__pyx_n_s_password, __pyx_k_password, sizeof(__pyx_k_password), 0, 0, 1, 1},
   {&__pyx_n_s_path, __pyx_k_path, sizeof(__pyx_k_path), 0, 0, 1, 1},
   {&__pyx_n_s_print, __pyx_k_print, sizeof(__pyx_k_print), 0, 0, 1, 1},
   {&__pyx_n_s_r, __pyx_k_r, sizeof(__pyx_k_r), 0, 0, 1, 1},
+  {&__pyx_n_s_rb, __pyx_k_rb, sizeof(__pyx_k_rb), 0, 0, 1, 1},
   {&__pyx_n_s_read, __pyx_k_read, sizeof(__pyx_k_read), 0, 0, 1, 1},
+  {&__pyx_n_s_req, __pyx_k_req, sizeof(__pyx_k_req), 0, 0, 1, 1},
   {&__pyx_n_s_request, __pyx_k_request, sizeof(__pyx_k_request), 0, 0, 1, 1},
+  {&__pyx_n_s_resp, __pyx_k_resp, sizeof(__pyx_k_resp), 0, 0, 1, 1},
   {&__pyx_n_s_return, __pyx_k_return, sizeof(__pyx_k_return), 0, 0, 1, 1},
   {&__pyx_n_s_size, __pyx_k_size, sizeof(__pyx_k_size), 0, 0, 1, 1},
+  {&__pyx_n_s_status, __pyx_k_status, sizeof(__pyx_k_status), 0, 0, 1, 1},
   {&__pyx_n_u_str, __pyx_k_str, sizeof(__pyx_k_str), 0, 1, 0, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_kp_s_test_jpg, __pyx_k_test_jpg, sizeof(__pyx_k_test_jpg), 0, 0, 1, 0},
+  {&__pyx_n_s_token, __pyx_k_token, sizeof(__pyx_k_token), 0, 0, 1, 1},
+  {&__pyx_kp_s_token_2, __pyx_k_token_2, sizeof(__pyx_k_token_2), 0, 0, 1, 0},
+  {&__pyx_n_s_token_url, __pyx_k_token_url, sizeof(__pyx_k_token_url), 0, 0, 1, 1},
   {&__pyx_n_s_update, __pyx_k_update, sizeof(__pyx_k_update), 0, 0, 1, 1},
   {&__pyx_n_s_url, __pyx_k_url, sizeof(__pyx_k_url), 0, 0, 1, 1},
+  {&__pyx_n_s_urlencode, __pyx_k_urlencode, sizeof(__pyx_k_urlencode), 0, 0, 1, 1},
   {&__pyx_n_s_urllib, __pyx_k_urllib, sizeof(__pyx_k_urllib), 0, 0, 1, 1},
+  {&__pyx_n_s_urllib_parse, __pyx_k_urllib_parse, sizeof(__pyx_k_urllib_parse), 0, 0, 1, 1},
   {&__pyx_n_s_urllib_request, __pyx_k_urllib_request, sizeof(__pyx_k_urllib_request), 0, 0, 1, 1},
+  {&__pyx_n_s_urlopen, __pyx_k_urlopen, sizeof(__pyx_k_urlopen), 0, 0, 1, 1},
   {&__pyx_n_s_urlretrieve, __pyx_k_urlretrieve, sizeof(__pyx_k_urlretrieve), 0, 0, 1, 1},
+  {&__pyx_n_s_user, __pyx_k_user, sizeof(__pyx_k_user), 0, 0, 1, 1},
   {&__pyx_kp_s_utf_8, __pyx_k_utf_8, sizeof(__pyx_k_utf_8), 0, 0, 1, 0},
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_open = __Pyx_GetBuiltinName(__pyx_n_s_open); if (!__pyx_builtin_open) __PYX_ERR(0, 50, __pyx_L1_error)
+  __pyx_builtin_open = __Pyx_GetBuiltinName(__pyx_n_s_open); if (!__pyx_builtin_open) __PYX_ERR(0, 81, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -3204,52 +3894,64 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "downloadfile.py":50
- * 			if size == packet_size:
- * 				filemd5 = hashlib.md5()
- * 				with open(filename, 'r') as handler:             # <<<<<<<<<<<<<<
- * 					line = handler.read(1024)
- * 					filemd5.update(line.encode('utf-8'))
+  /* "downloadfile.py":59
+ * 		req = urllib.request.Request(token_url, data=data)
+ * 
+ * 		with urllib.request.urlopen(req) as resp:             # <<<<<<<<<<<<<<
+ * 			page = resp.read()
+ * 			msgdict = json.loads(str(page, encoding="utf-8"))
  */
-  __pyx_tuple_ = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 50, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
-  /* "downloadfile.py":16
+  /* "downloadfile.py":19
  * filesize = 0
  * 
  * def callback(a, b, c):             # <<<<<<<<<<<<<<
  * 	global filesize
  * 	filesize = c
  */
-  __pyx_tuple__2 = PyTuple_Pack(3, __pyx_n_s_a, __pyx_n_s_b, __pyx_n_s_c); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 16, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__2);
-  __Pyx_GIVEREF(__pyx_tuple__2);
-  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_downloadfile_downloadfile_py, __pyx_n_s_callback, 16, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_tuple__3 = PyTuple_Pack(3, __pyx_n_s_a, __pyx_n_s_b, __pyx_n_s_c); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
+  __pyx_codeobj__4 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_downloadfile_downloadfile_py, __pyx_n_s_callback, 19, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__4)) __PYX_ERR(0, 19, __pyx_L1_error)
 
-  /* "downloadfile.py":20
+  /* "downloadfile.py":23
  * 	filesize = c
  * 
  * def download(url:str, filename:str)->bool:             # <<<<<<<<<<<<<<
  * 	try:
  * 		global log
  */
-  __pyx_tuple__4 = PyTuple_Pack(5, __pyx_n_s_url, __pyx_n_s_filename, __pyx_n_s_r, __pyx_n_s_size, __pyx_n_s_e); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 20, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__4);
-  __Pyx_GIVEREF(__pyx_tuple__4);
-  __pyx_codeobj__5 = (PyObject*)__Pyx_PyCode_New(2, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_downloadfile_downloadfile_py, __pyx_n_s_download, 20, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__5)) __PYX_ERR(0, 20, __pyx_L1_error)
+  __pyx_tuple__5 = PyTuple_Pack(5, __pyx_n_s_url, __pyx_n_s_filename, __pyx_n_s_r, __pyx_n_s_size, __pyx_n_s_e); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 23, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
+  __pyx_codeobj__6 = (PyObject*)__Pyx_PyCode_New(2, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__5, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_downloadfile_downloadfile_py, __pyx_n_s_download, 23, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__6)) __PYX_ERR(0, 23, __pyx_L1_error)
 
-  /* "downloadfile.py":42
+  /* "downloadfile.py":45
  * 		return False
  * 
- * def download_firmware(url:str, packet_size:int, md5:str, filename:str)->bool:             # <<<<<<<<<<<<<<
+ * def __get_updatefirmware_token():             # <<<<<<<<<<<<<<
+ * 	try:
+ * 		#post
+ */
+  __pyx_tuple__7 = PyTuple_Pack(8, __pyx_n_s_token_url, __pyx_n_s_message, __pyx_n_s_data, __pyx_n_s_req, __pyx_n_s_resp, __pyx_n_s_page, __pyx_n_s_msgdict, __pyx_n_s_e); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__7);
+  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_codeobj__8 = (PyObject*)__Pyx_PyCode_New(0, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__7, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_downloadfile_downloadfile_py, __pyx_n_s_get_updatefirmware_token, 45, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__8)) __PYX_ERR(0, 45, __pyx_L1_error)
+
+  /* "downloadfile.py":70
+ * 		return None
+ * 
+ * def download_firmware(url:str, md5:str, filename:str)->bool:             # <<<<<<<<<<<<<<
  * 	try:
  * 		global log
  */
-  __pyx_tuple__6 = PyTuple_Pack(11, __pyx_n_s_url, __pyx_n_s_packet_size, __pyx_n_s_md5, __pyx_n_s_filename, __pyx_n_s_r, __pyx_n_s_size, __pyx_n_s_filemd5, __pyx_n_s_handler, __pyx_n_s_line, __pyx_n_s_filemd5val, __pyx_n_s_e); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 42, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__6);
-  __Pyx_GIVEREF(__pyx_tuple__6);
-  __pyx_codeobj__7 = (PyObject*)__Pyx_PyCode_New(4, 0, 11, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__6, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_downloadfile_downloadfile_py, __pyx_n_s_download_firmware, 42, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__7)) __PYX_ERR(0, 42, __pyx_L1_error)
+  __pyx_tuple__9 = PyTuple_Pack(10, __pyx_n_s_url, __pyx_n_s_md5, __pyx_n_s_filename, __pyx_n_s_token, __pyx_n_s_full, __pyx_n_s_m, __pyx_n_s_filehandler, __pyx_n_s_msg, __pyx_n_s_md5value, __pyx_n_s_e); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 70, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
+  __pyx_codeobj__10 = (PyObject*)__Pyx_PyCode_New(3, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__9, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_downloadfile_downloadfile_py, __pyx_n_s_download_firmware, 70, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__10)) __PYX_ERR(0, 70, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -3539,8 +4241,8 @@ if (!__Pyx_RefNanny) {
  * #-*- coding:utf-8 -*-
  * 
  * import urllib.request             # <<<<<<<<<<<<<<
+ * import urllib.parse
  * import os
- * import hashlib
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_urllib_request, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -3550,169 +4252,216 @@ if (!__Pyx_RefNanny) {
   /* "downloadfile.py":5
  * 
  * import urllib.request
- * import os             # <<<<<<<<<<<<<<
+ * import urllib.parse             # <<<<<<<<<<<<<<
+ * import os
  * import hashlib
- * 
  */
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_os, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_urllib_parse, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_os, __pyx_t_1) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_urllib, __pyx_t_1) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "downloadfile.py":6
  * import urllib.request
+ * import urllib.parse
+ * import os             # <<<<<<<<<<<<<<
+ * import hashlib
+ * import json
+ */
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_os, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 6, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_os, __pyx_t_1) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "downloadfile.py":7
+ * import urllib.parse
  * import os
  * import hashlib             # <<<<<<<<<<<<<<
+ * import json
  * 
- * import LoggingQueue
  */
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_hashlib, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 6, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_hashlib, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_hashlib, __pyx_t_1) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_hashlib, __pyx_t_1) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "downloadfile.py":8
+ * import os
  * import hashlib
+ * import json             # <<<<<<<<<<<<<<
+ * 
+ * import LoggingQueue
+ */
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_json, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_json, __pyx_t_1) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "downloadfile.py":10
+ * import json
  * 
  * import LoggingQueue             # <<<<<<<<<<<<<<
+ * import message_struct as ms
+ * import checkfiletype as check
+ */
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_LoggingQueue, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_LoggingQueue, __pyx_t_1) < 0) __PYX_ERR(0, 10, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "downloadfile.py":11
+ * 
+ * import LoggingQueue
+ * import message_struct as ms             # <<<<<<<<<<<<<<
  * import checkfiletype as check
  * url = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591866200525&di=e880ae3dc16c07985a292a24f3842a1d&imgtype=0&src=http%3A%2F%2Ft9.baidu.com%2Fit%2Fu%3D770196171%2C1212335633%26fm%3D1931"
  */
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_LoggingQueue, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_message_struct, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 11, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_LoggingQueue, __pyx_t_1) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ms, __pyx_t_1) < 0) __PYX_ERR(0, 11, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "downloadfile.py":9
- * 
+  /* "downloadfile.py":12
  * import LoggingQueue
+ * import message_struct as ms
  * import checkfiletype as check             # <<<<<<<<<<<<<<
  * url = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591866200525&di=e880ae3dc16c07985a292a24f3842a1d&imgtype=0&src=http%3A%2F%2Ft9.baidu.com%2Fit%2Fu%3D770196171%2C1212335633%26fm%3D1931"
  * 
  */
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_checkfiletype, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 9, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_checkfiletype, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_check, __pyx_t_1) < 0) __PYX_ERR(0, 9, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_check, __pyx_t_1) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "downloadfile.py":10
- * import LoggingQueue
+  /* "downloadfile.py":13
+ * import message_struct as ms
  * import checkfiletype as check
  * url = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591866200525&di=e880ae3dc16c07985a292a24f3842a1d&imgtype=0&src=http%3A%2F%2Ft9.baidu.com%2Fit%2Fu%3D770196171%2C1212335633%26fm%3D1931"             # <<<<<<<<<<<<<<
  * 
  * log = LoggingQueue.LoggingProducer().getlogger()
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_url, __pyx_kp_s_https_timgsa_baidu_com_timg_imag) < 0) __PYX_ERR(0, 10, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_url, __pyx_kp_s_https_timgsa_baidu_com_timg_imag) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
 
-  /* "downloadfile.py":12
+  /* "downloadfile.py":15
  * url = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591866200525&di=e880ae3dc16c07985a292a24f3842a1d&imgtype=0&src=http%3A%2F%2Ft9.baidu.com%2Fit%2Fu%3D770196171%2C1212335633%26fm%3D1931"
  * 
  * log = LoggingQueue.LoggingProducer().getlogger()             # <<<<<<<<<<<<<<
  * 
  * filesize = 0
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_LoggingQueue); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_LoggingQueue); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_LoggingProducer); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_LoggingProducer); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_getlogger); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_getlogger); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_log, __pyx_t_1) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_log, __pyx_t_1) < 0) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "downloadfile.py":14
+  /* "downloadfile.py":17
  * log = LoggingQueue.LoggingProducer().getlogger()
  * 
  * filesize = 0             # <<<<<<<<<<<<<<
  * 
  * def callback(a, b, c):
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_filesize, __pyx_int_0) < 0) __PYX_ERR(0, 14, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_filesize, __pyx_int_0) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
 
-  /* "downloadfile.py":16
+  /* "downloadfile.py":19
  * filesize = 0
  * 
  * def callback(a, b, c):             # <<<<<<<<<<<<<<
  * 	global filesize
  * 	filesize = c
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_12downloadfile_1callback, 0, __pyx_n_s_callback, NULL, __pyx_n_s_downloadfile, __pyx_d, ((PyObject *)__pyx_codeobj__3)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_12downloadfile_1callback, 0, __pyx_n_s_callback, NULL, __pyx_n_s_downloadfile, __pyx_d, ((PyObject *)__pyx_codeobj__4)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 19, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_callback, __pyx_t_1) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_callback, __pyx_t_1) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "downloadfile.py":20
+  /* "downloadfile.py":23
  * 	filesize = c
  * 
  * def download(url:str, filename:str)->bool:             # <<<<<<<<<<<<<<
  * 	try:
  * 		global log
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 20, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 23, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_url, __pyx_n_u_str) < 0) __PYX_ERR(0, 20, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_filename, __pyx_n_u_str) < 0) __PYX_ERR(0, 20, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_return, ((PyObject*)&PyBool_Type)) < 0) __PYX_ERR(0, 20, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_12downloadfile_3download, 0, __pyx_n_s_download, NULL, __pyx_n_s_downloadfile, __pyx_d, ((PyObject *)__pyx_codeobj__5)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 20, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_url, __pyx_n_u_str) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_filename, __pyx_n_u_str) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_return, ((PyObject*)&PyBool_Type)) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_12downloadfile_3download, 0, __pyx_n_s_download, NULL, __pyx_n_s_downloadfile, __pyx_d, ((PyObject *)__pyx_codeobj__6)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 23, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_download, __pyx_t_2) < 0) __PYX_ERR(0, 20, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_download, __pyx_t_2) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "downloadfile.py":42
+  /* "downloadfile.py":45
  * 		return False
  * 
- * def download_firmware(url:str, packet_size:int, md5:str, filename:str)->bool:             # <<<<<<<<<<<<<<
+ * def __get_updatefirmware_token():             # <<<<<<<<<<<<<<
+ * 	try:
+ * 		#post
+ */
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_12downloadfile_5__get_updatefirmware_token, 0, __pyx_n_s_get_updatefirmware_token, NULL, __pyx_n_s_downloadfile, __pyx_d, ((PyObject *)__pyx_codeobj__8)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_updatefirmware_token, __pyx_t_2) < 0) __PYX_ERR(0, 45, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "downloadfile.py":70
+ * 		return None
+ * 
+ * def download_firmware(url:str, md5:str, filename:str)->bool:             # <<<<<<<<<<<<<<
  * 	try:
  * 		global log
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 42, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_url, __pyx_n_u_str) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_packet_size, __pyx_n_u_int) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_md5, __pyx_n_u_str) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_filename, __pyx_n_u_str) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, ((PyObject*)&PyBool_Type)) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_12downloadfile_5download_firmware, 0, __pyx_n_s_download_firmware, NULL, __pyx_n_s_downloadfile, __pyx_d, ((PyObject *)__pyx_codeobj__7)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 42, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_url, __pyx_n_u_str) < 0) __PYX_ERR(0, 70, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_md5, __pyx_n_u_str) < 0) __PYX_ERR(0, 70, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_filename, __pyx_n_u_str) < 0) __PYX_ERR(0, 70, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, ((PyObject*)&PyBool_Type)) < 0) __PYX_ERR(0, 70, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_12downloadfile_7download_firmware, 0, __pyx_n_s_download_firmware, NULL, __pyx_n_s_downloadfile, __pyx_d, ((PyObject *)__pyx_codeobj__10)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 70, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_1, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_download_firmware, __pyx_t_1) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_download_firmware, __pyx_t_1) < 0) __PYX_ERR(0, 70, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "downloadfile.py":65
+  /* "downloadfile.py":97
  * 		return False
  * 
  * if __name__ == "__main__":             # <<<<<<<<<<<<<<
  * 	r = download(url, "test.jpg")
  * 	print(r)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_name); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_name); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = (__Pyx_PyString_Equals(__pyx_t_1, __pyx_n_s_main, Py_EQ)); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PyString_Equals(__pyx_t_1, __pyx_n_s_main, Py_EQ)); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_3) {
 
-    /* "downloadfile.py":66
+    /* "downloadfile.py":98
  * 
  * if __name__ == "__main__":
  * 	r = download(url, "test.jpg")             # <<<<<<<<<<<<<<
  * 	print(r)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_download); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_download); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_url); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 66, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_url); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 66, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 98, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2);
@@ -3720,24 +4469,24 @@ if (!__Pyx_RefNanny) {
     __Pyx_GIVEREF(__pyx_kp_s_test_jpg);
     PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_kp_s_test_jpg);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_4, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 66, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_4, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (PyDict_SetItem(__pyx_d, __pyx_n_s_r, __pyx_t_2) < 0) __PYX_ERR(0, 66, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_d, __pyx_n_s_r, __pyx_t_2) < 0) __PYX_ERR(0, 98, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "downloadfile.py":67
+    /* "downloadfile.py":99
  * if __name__ == "__main__":
  * 	r = download(url, "test.jpg")
  * 	print(r)             # <<<<<<<<<<<<<<
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_r); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 67, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_r); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    if (__Pyx_PrintOne(0, __pyx_t_2) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
+    if (__Pyx_PrintOne(0, __pyx_t_2) < 0) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "downloadfile.py":65
+    /* "downloadfile.py":97
  * 		return False
  * 
  * if __name__ == "__main__":             # <<<<<<<<<<<<<<
@@ -4477,6 +5226,97 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
         }
     }
     return __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL);
+}
+#endif
+
+/* PyIntCompare */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_EqObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, CYTHON_UNUSED long inplace) {
+    if (op1 == op2) {
+        Py_RETURN_TRUE;
+    }
+    #if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_CheckExact(op1))) {
+        const long b = intval;
+        long a = PyInt_AS_LONG(op1);
+        if (a == b) Py_RETURN_TRUE; else Py_RETURN_FALSE;
+    }
+    #endif
+    #if CYTHON_USE_PYLONG_INTERNALS
+    if (likely(PyLong_CheckExact(op1))) {
+        int unequal;
+        unsigned long uintval;
+        Py_ssize_t size = Py_SIZE(op1);
+        const digit* digits = ((PyLongObject*)op1)->ob_digit;
+        if (intval == 0) {
+            if (size == 0) Py_RETURN_TRUE; else Py_RETURN_FALSE;
+        } else if (intval < 0) {
+            if (size >= 0)
+                Py_RETURN_FALSE;
+            intval = -intval;
+            size = -size;
+        } else {
+            if (size <= 0)
+                Py_RETURN_FALSE;
+        }
+        uintval = (unsigned long) intval;
+#if PyLong_SHIFT * 4 < SIZEOF_LONG*8
+        if (uintval >> (PyLong_SHIFT * 4)) {
+            unequal = (size != 5) || (digits[0] != (uintval & (unsigned long) PyLong_MASK))
+                 | (digits[1] != ((uintval >> (1 * PyLong_SHIFT)) & (unsigned long) PyLong_MASK)) | (digits[2] != ((uintval >> (2 * PyLong_SHIFT)) & (unsigned long) PyLong_MASK)) | (digits[3] != ((uintval >> (3 * PyLong_SHIFT)) & (unsigned long) PyLong_MASK)) | (digits[4] != ((uintval >> (4 * PyLong_SHIFT)) & (unsigned long) PyLong_MASK));
+        } else
+#endif
+#if PyLong_SHIFT * 3 < SIZEOF_LONG*8
+        if (uintval >> (PyLong_SHIFT * 3)) {
+            unequal = (size != 4) || (digits[0] != (uintval & (unsigned long) PyLong_MASK))
+                 | (digits[1] != ((uintval >> (1 * PyLong_SHIFT)) & (unsigned long) PyLong_MASK)) | (digits[2] != ((uintval >> (2 * PyLong_SHIFT)) & (unsigned long) PyLong_MASK)) | (digits[3] != ((uintval >> (3 * PyLong_SHIFT)) & (unsigned long) PyLong_MASK));
+        } else
+#endif
+#if PyLong_SHIFT * 2 < SIZEOF_LONG*8
+        if (uintval >> (PyLong_SHIFT * 2)) {
+            unequal = (size != 3) || (digits[0] != (uintval & (unsigned long) PyLong_MASK))
+                 | (digits[1] != ((uintval >> (1 * PyLong_SHIFT)) & (unsigned long) PyLong_MASK)) | (digits[2] != ((uintval >> (2 * PyLong_SHIFT)) & (unsigned long) PyLong_MASK));
+        } else
+#endif
+#if PyLong_SHIFT * 1 < SIZEOF_LONG*8
+        if (uintval >> (PyLong_SHIFT * 1)) {
+            unequal = (size != 2) || (digits[0] != (uintval & (unsigned long) PyLong_MASK))
+                 | (digits[1] != ((uintval >> (1 * PyLong_SHIFT)) & (unsigned long) PyLong_MASK));
+        } else
+#endif
+            unequal = (size != 1) || (((unsigned long) digits[0]) != (uintval & (unsigned long) PyLong_MASK));
+        if (unequal == 0) Py_RETURN_TRUE; else Py_RETURN_FALSE;
+    }
+    #endif
+    if (PyFloat_CheckExact(op1)) {
+        const long b = intval;
+        double a = PyFloat_AS_DOUBLE(op1);
+        if ((double)a == (double)b) Py_RETURN_TRUE; else Py_RETURN_FALSE;
+    }
+    return (
+        PyObject_RichCompare(op1, op2, Py_EQ));
+}
+
+/* DictGetItem */
+#if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
+static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key) {
+    PyObject *value;
+    value = PyDict_GetItemWithError(d, key);
+    if (unlikely(!value)) {
+        if (!PyErr_Occurred()) {
+            if (unlikely(PyTuple_Check(key))) {
+                PyObject* args = PyTuple_Pack(1, key);
+                if (likely(args)) {
+                    PyErr_SetObject(PyExc_KeyError, args);
+                    Py_DECREF(args);
+                }
+            } else {
+                PyErr_SetObject(PyExc_KeyError, key);
+            }
+        }
+        return NULL;
+    }
+    Py_INCREF(value);
+    return value;
 }
 #endif
 

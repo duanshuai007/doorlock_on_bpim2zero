@@ -205,16 +205,6 @@ SAY "\nGood bye !\n"
 
 在BPIM2-zero中有两个spi，其中spi0是默认提供的spi接口，linux还提供了一个通用驱动程序spidev.c，我们的设备接在了spi1上，无法直接使用Linux的spi驱动，所以选择使用字符设备驱动读写寄存器的方式来对spi进行控制。
 
-
-## 启动mqtt程序
-
-#### 生成spilcd python模块
-
-```
-cd hardware_ctrl/python/v1/
-python3 setup.py install
-```
-
 最后在/root目录下执行`pyhthon3 mqtt_client.py`启动客户端程序。
 
 * log信息输出在/root/log/server.log文件中
@@ -331,4 +321,38 @@ on message:/test/device_info_resp 0 b'{"current": "eth0", "doorlock": "success",
 
 ## 增加了在线升级功能
 
+升级topic:`/update`
+响应topic:`/update_resp`
+
+```
+"device_sn" : "",
+	"stime" : "",
+	"firmware" : {
+		"url" : "",
+		"version" : "",
+		"packetsize" : 0,
+		"enable" : "",
+		"md5" : "",
+	}
+```
+
 ## 增加了ssh内网穿透功能
+
+设置topic:`/ssh_enable`
+响应topic:`/ssh_enable_resp`
+
+```
+sendmsg = 
+{
+	"device_sn" : "", 
+	"stime" : "", 
+	"enable" : 0,
+	"opentime" : 0,
+}
+```
+填充`device_sn`以及`stime`，在python3脚本程序中`stime=int(time.time())`     
+enable = 1 表示打开ssh  
+enable = 0 表示关闭ssh  
+返回的信息中`status="open"` 表示打开成功，`status="close"` 表示关闭成功
+
+
