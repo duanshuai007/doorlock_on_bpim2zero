@@ -39,6 +39,8 @@ static int mem_fd = -1;
 #define RST_ENABLE  0
 #define RST_DISABLE 1
 
+#define FOR_DIFF_TEST 10290
+
 typedef struct gpio_t {
 	volatile uint32_t cfg[4];
 	volatile uint32_t dat;

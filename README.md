@@ -319,7 +319,7 @@ json.dumps(sendmsg)
 ```
 on message:/test/device_info_resp 0 b'{"current": "eth0", "doorlock": "success", "stime": 0, "device_sn": "024251720577", "thread status": "", "ip": "192.168.200.54"}'
 ```
-就获得了设备的ip地址，就可以通过ssh登陆了。
+就获得了设备的ip地址，就可以通过ssh登陆了(仅限于内网)。
 
 也可以通过该条信息来设置`doorlock`的时间。
 
@@ -328,3 +328,7 @@ on message:/test/device_info_resp 0 b'{"current": "eth0", "doorlock": "success",
 当doorlock 不等于 0 时，程序会将doorlock的值设置为本地的doorlock时间，成功返回success，失败返回failed
 设置的doorlock立即生效
 ```
+
+## 增加了在线升级功能
+
+## 增加了ssh内网穿透功能
