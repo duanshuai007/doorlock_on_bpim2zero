@@ -142,6 +142,16 @@ class mqtt_client(mqtt.Client):
 							sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
 							self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
 						else:
+							#topic format: recvtopic + "_resp"
+							resp_topic = "{}_resp".format(msg.topic)
+							resp_dict = {
+								"device_sn" : self.device_sn,
+								"rtime" : int(time.time()),
+								"status" : 1,
+								"error" : "timeout",
+							}
+							respmsg = json.dumps(resp_dict)
+							self.publish_queue.put({"topic":resp_topic, "payload":respmsg, 'qos':0, 'retain':False})
 							pass
 		except Exception as e:
 			self.logger.error("on message exception:{}".format(e))
