@@ -6,6 +6,7 @@ PPPD=$(which pppd)
 
 cat /dev/null > /var/log/zywllog
 LOG_FILE=/var/log/zywllog
+
 UPDATESTATUS="/home/ubuntu/update_status"
 NETFILE="/root/netstatus"
 MACFILE="/tmp/eth0macaddr"
@@ -27,6 +28,8 @@ cp /root/ntp.conf /etc/
 service frpc stop
 #insmod /root/hardware_ctrl/linux/char/lcd_driver_simulation_spi.ko 
 
+cat /dev/null > /tmp/network_timestamp
+
 flag=0
 feedcount=0
 
@@ -47,6 +50,8 @@ mqtt_stop() {
 	pid=$(ps -ef | grep "mqtt" | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
+		kill ${pid}
+		sleep 0.5
 		kill -9 ${pid}
 	fi
 }
@@ -56,7 +61,16 @@ mqtt_restart() {
 	mqtt_start
 }
 
+pppd_stop() {
+	pid=$(ps -ef | grep pppd | grep -v grep | awk -F" " '{print $2}')
+	if [ -n "${pid}" ]
+	then
+		kill -INT ${pid}
+	fi
+}
+
 timecount_for_systemctl=0
+timecount_for_pppd=0
 
 while true
 do
@@ -89,26 +103,38 @@ do
 	ps -ef | grep pppd | grep -v grep > /dev/null
 	if [ $? -ne 0 ]
 	then
-		python3 /root/check_tty.py
-		sleep 0.5
-
-		sta=$(cat /tmp/serial)
-
-		CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-		if [ "$sta" == "OK" ]
+		cat /dev/null > /var/log/ppplogfile
+		${PPPD} call myapp &
+		timecount_for_pppd=0
+#		echo "${CUR_TIME}:$0 serial not work" >> ${LOG_FILE}
+#		python3 ${WATCHDOGSCRIPT}
+#		feedcount=0
+#		/root/gpio_ctrl.sh 3 0
+#		sleep 0.2
+#		/root/gpio_ctrl.sh 3 1
+#		sleep 2
+#		/root/gpio_ctrl.sh 3 0
+#		/usr/bin/tput reset > /dev/ttyS2
+	else
+		timecount_for_pppd=$(expr ${timecount_for_pppd} + 1)
+		if [ ${timecount_for_pppd} -ge 5 ]
 		then
-			echo "${CUR_TIME}:$0 ppp0 will start" >> ${LOG_FILE}
-			${PPPD} call myapp &
-		else
-			echo "${CUR_TIME}:$0 serial not work" >> ${LOG_FILE}
-			python3 ${WATCHDOGSCRIPT}
-			feedcount=0
-			/root/gpio_ctrl.sh 3 0
-			sleep 0.2
-			/root/gpio_ctrl.sh 3 1
-			sleep 2
-			/root/gpio_ctrl.sh 3 0
-			/usr/bin/tput reset > /dev/ttyS2
+			timecount_for_pppd=0
+			cat /var/log/ppplogfile | grep "Connect script failed" > /dev/null
+			if [ $? -eq 0 ]
+			then
+				pppd_stop
+			fi
+			#检查ppp0是否获得IP地址
+			ifconfig -a | grep ppp0 > /dev/null
+			if [ $? -eq 0 ]
+			then
+				ifconfig ppp0 | grep "inet addr" > /dev/null
+				if [ $? -ne 0 ]
+				then
+					pppd_stop			
+				fi
+			fi
 		fi
 	fi
 
