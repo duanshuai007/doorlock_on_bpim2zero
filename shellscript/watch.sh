@@ -35,6 +35,24 @@ all_stop() {
 	then
 		kill -9 ${pid}
 	fi
+
+	pid=$(ps -ef | grep "zywl_moni_wlan" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
+	if [ -n "${pid}" ]
+	then
+		kill -9 ${pid}
+	fi
+		
+	pid=$(ps -ef | grep "zywl_moni_eth" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
+	if [ -n "${pid}" ]
+	then
+		kill -9 ${pid}
+	fi
+
+	pid=$(ps -ef | grep "zywl_moni_ppp" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
+	if [ -n "${pid}" ]
+	then
+		kill -9 ${pid}
+	fi
 }
 
 all_restart() {
@@ -64,6 +82,24 @@ monitor_network_kill() {
 	if [ -n "${pid}" ]
 	then
 		kill ${pid}
+	fi
+
+	pid=$(ps -ef | grep "zywl_moni_wlan" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
+	if [ -n "${pid}" ]
+	then
+		kill -9 ${pid}
+	fi
+		
+	pid=$(ps -ef | grep "zywl_moni_eth" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
+	if [ -n "${pid}" ]
+	then
+		kill -9 ${pid}
+	fi
+
+	pid=$(ps -ef | grep "zywl_moni_ppp" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
+	if [ -n "${pid}" ]
+	then
+		kill -9 ${pid}
 	fi
 }
 
