@@ -47,7 +47,7 @@ dump
 
 logfile /var/log/ppplogfile
 #停留在后台监视网络，一旦有需求就立即联网
-demand
+#demand
 #永久链接，自动重播
 persist
 nodetach
