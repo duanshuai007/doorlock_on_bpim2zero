@@ -4,14 +4,13 @@
 
 PPPD=$(which pppd)
 
-cat /dev/null > /var/log/zywllog
 LOG_FILE=/var/log/zywllog
-
 UPDATESTATUS="/home/ubuntu/update_status"
 NETFILE="/root/netstatus"
 MACFILE="/tmp/eth0macaddr"
-CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
 WATCHDOGSCRIPT="/home/watchdog/feed.py"
+
+CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
 echo "${CUR_TIME}:$0 start work!}" >> ${LOG_FILE}
 
 /bin/dmesg -n 1
@@ -29,6 +28,8 @@ service frpc stop
 #insmod /root/hardware_ctrl/linux/char/lcd_driver_simulation_spi.ko 
 
 cat /dev/null > /tmp/network_timestamp
+cat /dev/null > ${NETFILE}
+cat /dev/null > ${LOG_FILE}
 
 flag=0
 feedcount=0
@@ -87,7 +88,9 @@ do
 		echo "${CUR_TIME}:$0 wlan0 will start" >> ${LOG_FILE}
 		wpa_passphrase ${ssid} ${psk} > /etc/wpa.conf
 		echo "ctrl_interface=/var/run/wpa_supplicant" >> /etc/wpa.conf
+		sleep 0.2
 		wpa_supplicant -iwlan0 -c /etc/wpa.conf > /var/log/wpalog 2>&1 &
+		sleep 0.2
 		wpa_cli -iwlan0 add_n > /dev/null
 	else
 		if [ ${flag} -eq 0 ]

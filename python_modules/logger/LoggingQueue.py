@@ -8,6 +8,7 @@
 
 import logging.config, logging, os
 import time
+import os
 
 import config
 
@@ -16,6 +17,10 @@ DEBUG = True  # 标记是否在开发环境
 LOGGERNAME = "acs"
 
 LOGFILE = config.config("/root/config.ini").get("CONFIG", "LOGFILE")
+if not os.path.exists(LOGFILE):
+	r=os.path.split(LOGFILE)
+	if not os.path.exists(r[0]):
+		os.makedirs(r[0])
 
 # 给过滤器使用的判断
 class RequireDebugTrue(logging.Filter):

@@ -145,6 +145,7 @@ count=0
 net_state=0
 fail_count=0
 default_net_is_ok=0
+change_to_default=0
 
 while true
 do
@@ -169,6 +170,7 @@ do
 				then
 					CURRENT_NET=${DEFAULT_NET}
 					cat /dev/null > ${NETSTAT}
+					change_to_default=1
 				fi
 			fi
 		else
@@ -188,7 +190,11 @@ do
 			then
 				kill_mqtt_thread
 				setDefaultRoute ${CURRENT_NET}
-				python3 /root/showimage.py 3
+				if [ ${change_to_default} -eq 1 ]
+				then
+					python3 /root/showimage.py 3
+					change_to_default=0
+				fi
 				echo "OK" > ${NETSTAT}
 				echo ${CURRENT_NET} > ${CURRENTNET}
 				/root/update_time.sh &

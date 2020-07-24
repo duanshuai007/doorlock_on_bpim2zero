@@ -17,6 +17,7 @@ cycle_time=0
 connect_flag=0
 #用于错误缓冲，这样就不会因为偶尔的一次失败而认为整个网络是错误的
 error_count=0
+connect_count=0
 TESTDNSSERVER="114.114.114.114"
 
 dhclient_wlan0() {
@@ -35,23 +36,16 @@ do
 #curnet=$(cat ${CURRENT_NET})
 #	defnet=$(cat ${NETFILE} | grep choice | awk -F"=" '{print $2}')
 
-	if [ ${connect_wifi_time} -eq 0 ]
+	ifconfig -a | grep wlan0 > /dev/null
+	if [ $? -ne 0 ]
 	then
-		ssid=$(cat ${NETFILE} | grep -w ssid | awk -F"=" '{print $2}')
-		psk=$(cat ${NETFILE} | grep -w psk | awk -F"=" '{print $2}')
-		
-		/root/connect_wifi.sh ${ssid} ${psk}
-	fi
-
-	connect_wifi_time=$(expr ${connect_wifi_time} + 1)
-	if [ ${connect_wifi_time} -ge 10 ]
-	then
-		connect_wifi_time=0
+		continue
 	fi
 
 	sta=$(wpa_cli -iwlan0 status | grep wpa_state | awk -F"=" '{print $2}')
 	if [ "${sta}" == "COMPLETED" ]
 	then
+		connect_count=0
 		if [ -f /run/resolvconf/interface/wlan0.dhclient ]
 		then
 			cycle_time=$(expr ${cycle_time} + 1)
@@ -113,11 +107,13 @@ do
 				else
 					error_count=$(expr ${error_count} + 1)
 					connect_flag=0
+					echo "not get vaild dns server" >> ${LOGFILE}
 				fi #if [ -n "${iphead}" ]
 			fi #if [ ${cycle_time} -ge 10 -o ${connect_flag} -eq 0 ]
 		else #if [ -f /run/resolvconf/interface/wlan0.dhclient ]
 			connect_flag=0
 			cat /dev/null > ${STATUSFILE}
+			echo "not find dhcp file" >> ${LOGFILE}
 			if [ ${start_dhcp} -eq 0 ] 
 			then
 				start_dhcp=1
@@ -133,8 +129,21 @@ do
 			fi 
 		fi
 	else
-		error_count=$(expr ${error_count} + 1)
 		connect_flag=0
+		if [ ${connect_wifi_time} -eq 0 ]
+		then
+			ssid=$(cat ${NETFILE} | grep -w ssid | awk -F"=" '{print $2}')
+			psk=$(cat ${NETFILE} | grep -w psk | awk -F"=" '{print $2}')
+			
+			/root/connect_wifi.sh ${ssid} ${psk}
+			connect_count=$(expr ${connect_count} + 1)
+		fi
+
+		connect_wifi_time=$(expr ${connect_wifi_time} + 1)
+		if [ ${connect_wifi_time} -ge 10 ]
+		then
+			connect_wifi_time=0
+		fi
 	fi
 
 	if [ ${error_count} -ge 5 ]
@@ -142,4 +151,11 @@ do
 		error_count=0
 		cat /dev/null > ${STATUSFILE}
 	fi
+	if [ ${connect_count} -ge 5 ]
+	then
+		connect_count=0
+		echo "connect wlan allways failed" >> ${LOGFILE}
+		cat /dev/null > ${STATUSFILE}
+	fi
+
 done

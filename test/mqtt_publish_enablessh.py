@@ -124,7 +124,7 @@ class mqtt_client(mqtt.Client):
 		devid = self.device_sn
 		ms.OPENSSH_INFO["device_sn"] = devid
 		while True:
-			time.sleep(3)
+			time.sleep(1)
 			#print("test_publish")
 			if self.publish_queue is not None:
 				ms.OPENSSH_INFO["stime"] = int(time.time())

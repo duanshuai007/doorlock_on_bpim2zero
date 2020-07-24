@@ -5,6 +5,7 @@
 #
 STATEFILE="/tmp/ppp0status"
 PPPLOGFILE="/var/log/ppplogfile"
+TESTDNSSERVER="8.8.8.8"
 
 error_count=0
 
@@ -26,14 +27,14 @@ do
 		#not find this string，mean pppd run wrong
 		cat /dev/null > ${STATEFILE}
 	else
-		route -n | grep "8.8.8.8" | grep ppp0 > /dev/null
+		route -n | grep ${TESTDNSSERVER} | grep ppp0 > /dev/null
 		if [ $? -ne 0 ]
 		then
-			route add 8.8.8.8 ppp0
+			route add ${TESTDNSSERVER} ppp0
 			sleep 1
 		fi
 
-		ping 8.8.8.8 -I ppp0 -c 1 > /dev/null
+		ping ${TESTDNSSERVER} -I ppp0 -c 1 > /dev/null
 		if [ $? -eq 0 ]
 		then
 			error_count=0
