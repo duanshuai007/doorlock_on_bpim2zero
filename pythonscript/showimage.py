@@ -13,7 +13,7 @@ def initialization():
 	spilcd_api.on()
 	screen = sc.screen()
 	screen.show_logo()
-	spilcd_api.set_doorlock(1)
+	spilcd_api.set_doorlock(0)
 	wdtfile = "/home/watchdog/feed.py"
 	enablewdt = False
 	if os.path.exists(wdtfile):
@@ -28,6 +28,7 @@ def initialization():
 				shutil.copyfile("/root/watchdog/feed.py", wdtfile)
 	if enablewdt == True:	
 		watchdog.open()
+		
 #显示出错标志
 def show_error_icon():
 	screen = sc.screen()

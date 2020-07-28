@@ -19,22 +19,20 @@ ETHSTATUS="/tmp/eth0status"
 WLANSTATUS="/tmp/wlan0status"
 PPPSTATUS="/tmp/ppp0status"
 
-setDefaultRoute() {
+setCurrentRoute() {
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 	echo $1 > /tmp/current_network
+	echo "${GET_TIMESTAMP}:set $1 as current route" >> ${LOGFILE}
 	dhclient -r
 	case $1 in
 		"wlan0")
-			echo "${GET_TIMESTAMP}:set wlan0 as default route" >> ${LOGFILE}
 			route del default ppp0  > /dev/null 2>&1
 			dhclient wlan0
 			;;
 		"ppp0")
-			echo "${GET_TIMESTAMP}:set ppp0 as default route" >> ${LOGFILE}
 			route add default ppp0
 			;;
 		"eth0")
-			echo "${GET_TIMESTAMP}:set eth0 as default route" >> ${LOGFILE}
 			route del default ppp0  > /dev/null 2>&1
 			dhclient eth0
 			;;
@@ -48,12 +46,11 @@ setDefaultRoute() {
 
 kill_mqtt_thread() {
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-	echo "${GET_TIMESTAMP}:net is change, kill old thread and restart" >> ${LOGFILE}
+	#echo "${GET_TIMESTAMP}:net is change, kill old thread and restart" >> ${LOGFILE}
 	pid=$(ps -ef | grep "mqtt" | grep -v grep | awk -F" " '{print $2}')
-	echo "${GET_TIMESTAMP}:pid = ${pid}" >> ${LOGFILE}
+	echo "${GET_TIMESTAMP}:kill_mqtt_thread pid = ${pid}" >> ${LOGFILE}
 	if [ ! -z "${pid}" ]
 	then
-		echo "${GET_TIMESTAMP}:kill ${pid}" >> ${LOGFILE}
 		kill ${pid} > /dev/null
 		kill -9 ${pid} > /dev/null
 		sleep 1
@@ -116,17 +113,41 @@ time_sync() {
 read_netstatus() {
 	case $1 in
 		"wlan0")
-		net_state=$(cat ${WLANSTATUS})
+		netsta=$(cat ${WLANSTATUS})
 		;;
 		"eth0")
-		net_state=$(cat ${ETHSTATUS})
+		netsta=$(cat ${ETHSTATUS})
 		;;
 		"ppp0")
-		net_state=$(cat ${PPPSTATUS})
+		netsta=$(cat ${PPPSTATUS})
 		;;
 		*)
 		;;
 	esac
+	
+	echo "${netsta}"
+}
+
+#获取一个可用的网络
+get_vaild_network() {
+	sta=$(cat ${ETHSTATUS})
+	if [ "${sta}" == "OK" ]
+	then
+		echo "eth0"
+		return
+	fi
+	sta=$(cat ${WLANSTATUS})
+	if [ "${sta}" == "OK" ]
+	then
+		echo "wlan0"
+		return
+	fi
+	sta=$(cat ${PPPSTATUS})
+	if [ "${sta}" == "OK" ]
+	then
+		echo "ppp0"
+		return
+	fi
 }
 
 DEFAULT_NET=$(cat ${NETFILE} | grep choice |  awk -F"=" '{print $2}')
@@ -145,7 +166,10 @@ count=0
 net_state=0
 fail_count=0
 default_net_is_ok=0
-change_to_default=0
+network_is_bad=0
+
+GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+echo "${GET_TIMESTAMP}:zywlmonitor script start!" >> ${LOGFILE}
 
 while true
 do
@@ -159,7 +183,7 @@ do
 		
 		DEFAULT_NET=$(cat ${NETFILE} | grep choice |  awk -F"=" '{print $2}')
 	
-		read_netstatus ${DEFAULT_NET}
+		net_state=$(read_netstatus ${DEFAULT_NET})
 		if [ "${net_state}" == "OK" ]
 		then
 			default_net_is_ok=$(expr ${default_net_is_ok} + 1)
@@ -168,14 +192,15 @@ do
 				default_net_is_ok=0
 				if [ "${DEFAULT_NET}" != "${CURRENT_NET}" ]
 				then
+					GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+					echo "${GET_TIMESTAMP}: cur net not equl default net, from ${CURRENT_NET} change to ${DEFAULT_NET}" >> ${LOGFILE}
 					CURRENT_NET=${DEFAULT_NET}
 					cat /dev/null > ${NETSTAT}
-					change_to_default=1
 				fi
 			fi
 		else
 			default_net_is_ok=0
-			read_netstatus ${CURRENT_NET}
+			net_state=$(read_netstatus ${CURRENT_NET})
 		fi
 
 		GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
@@ -188,12 +213,12 @@ do
 			sta=$(cat ${NETSTAT})
 			if [ -z "${sta}" ]
 			then
-				kill_mqtt_thread
-				setDefaultRoute ${CURRENT_NET}
-				if [ ${change_to_default} -eq 1 ]
+				#kill_mqtt_thread
+				setCurrentRoute ${CURRENT_NET}
+				if [ ${network_is_bad} -eq 1 ]
 				then
 					python3 /root/showimage.py 3
-					change_to_default=0
+					network_is_bad=0
 				fi
 				echo "OK" > ${NETSTAT}
 				echo ${CURRENT_NET} > ${CURRENTNET}
@@ -205,29 +230,31 @@ do
 			then
 				fail_count=0
 				GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-				echo "${GET_TIMESTAMP}:network[${CURRENT_NET}] is bad, now change network" >> ${LOGFILE}
-				python3 /root/showimage.py 2
-				if [ "${CURRENT_NET}" == "eth0" ]
+				echo "${GET_TIMESTAMP}:network[${CURRENT_NET}] is bad" >> ${LOGFILE}
+				vail_net=$(get_vaild_network)
+				kill_mqtt_thread
+				if [ -n "${vail_net}" ]
 				then
-					CURRENT_NET="wlan0"
-				elif [ "${CURRENT_NET}" == "wlan0" ]
-				then
-					CURRENT_NET="ppp0"
-				elif [ "${CURRENT_NET}" == "ppp0" ]
-				then
-					CURRENT_NET="eth0"
-				fi
-				#delete default route
-				net=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $8}')	
-				if [ -n "${net}" ]
-				then
-					if [ "${net}" == "ppp0" ]
+					#发现其他可用的网络，切换到可用网络
+					echo "${GET_TIMESTAMP}:find vaild network[${vail_net}], switch" >> ${LOGFILE}
+					CURRENT_NET=${vail_net}
+					#delete default route
+					net=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $8}')	
+					if [ -n "${net}" ]
 					then
-						route del default ppp0
-					else
-						gw=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $2}')
-						route del default gw ${gw} ${net}
+						if [ "${net}" == "ppp0" ]
+						then
+							route del default ppp0
+						else
+							gw=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $2}')
+							route del default gw ${gw} ${net}
+						fi
+						cat /dev/null > ${NETSTAT}
 					fi
+				else
+					network_is_bad=1
+					echo "${GET_TIMESTAMP}:not find vaild network" >> ${LOGFILE}
+					python3 /root/showimage.py 2
 					cat /dev/null > ${NETSTAT}
 				fi
 			fi

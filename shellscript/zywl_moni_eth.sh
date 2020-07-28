@@ -26,13 +26,31 @@ dhclient_eth0() {
 	dhclient eth0
 }
 
-cat /dev/null > ${STATUSFILE}
+touch ${STATUSFILE}
 
 while true
 do
 	sleep 1
 
+	ifconfig eth0 | grep RUNNING > /dev/null
+	if [ $? -ne 0 ]
+	then
+		sta=$(cat ${STATUSFILE})
+		if [ -n "${sta}" ]
+		then
+			cycle_time=0
+			start_dhcp_time=0
+			connect_flag=0
+			error_count=0
+			cat /dev/null > ${STATUSFILE}
+			GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+			echo "${GET_TIMESTAMP}:find eth0 is not running" >> ${LOGFILE}
+		fi
+		continue
+	fi
+	
 	cycle_time=$(expr ${cycle_time} + 1)
+
 	if [ -f /run/resolvconf/interface/eth0.dhclient ]
 	then
 		if [ ${cycle_time} -ge 10 -o ${connect_flag} -eq 0 ]
@@ -72,17 +90,20 @@ do
 						error_count=0
 						echo "OK" > ${STATUSFILE}
 					else
-						echo "eth0 ping failed" >> ${LOGFILE}
+						GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+						echo "${GET_TIMESTAMP}:eth0 ping failed" >> ${LOGFILE}
 						connect_flag=0
 						error_count=$(expr ${error_count} + 1)
 					fi
 				else
-					echo "eth0 not find vaild gateway" >> ${LOGFILE}
+					GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+					echo "${GET_TIMESTAMP}:eth0 not find vaild gateway" >> ${LOGFILE}
 					connect_flag=0
 					error_count=$(expr ${error_count} + 1)
 				fi
 			else
-				echo "eth0 not find vaild ipaddress" >> ${LOGFILE}
+				GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+				echo "${GET_TIMESTAMP}:eth0 not find vaild ipaddress" >> ${LOGFILE}
 				connect_flag=0
 				error_count=$(expr ${error_count} + 1)
 			fi

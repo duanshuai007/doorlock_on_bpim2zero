@@ -17,9 +17,31 @@ pppd_stop() {
 	fi  
 }
 
+touch ${STATEFILE}
+
 while true
 do
 	sleep 5
+
+	ifconfig -a | grep ppp0 > /dev/null
+	if [ $? -ne 0 ]
+	then
+		continue
+	fi
+
+	ifconfig ppp0 | grep RUNNING > /dev/null
+	if [ $? -ne 0 ]
+	then
+		sta=$(cat ${STATEFILE})
+		if [ -n "${sta}" ]
+		then
+			error_count=0
+			GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+			echo "${GET_TIMESTAMP}:find ppp0 is not running" >> ${LOGFILE}
+			cat /dev/null > ${STATEFILE}
+		fi
+		continue
+	fi
 
 	cat ${PPPLOGFILE} | grep "Serial connection established" > /dev/null
 	if [ $? -ne 0 ]

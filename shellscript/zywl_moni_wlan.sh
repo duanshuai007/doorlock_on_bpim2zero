@@ -30,6 +30,8 @@ dhclient_wlan0() {
 	dhclient wlan0
 }
 
+touch ${STATUSFILE}
+
 while true
 do
 	sleep 1
@@ -39,6 +41,26 @@ do
 	ifconfig -a | grep wlan0 > /dev/null
 	if [ $? -ne 0 ]
 	then
+		continue
+	fi
+
+	ifconfig wlan0 | grep RUNNING > /dev/null
+	if [ $? -ne 0 ]
+	then
+		sta=$(cat ${STATUSFILE})
+		if [ -n "${sta}" ]
+		then
+			connect_count=0
+			connect_wifi_time=0
+			start_dhcp=0
+			start_dhcp_time=0
+			cycle_time=0
+			connect_flag=0
+			error_count=0
+			cat /dev/null > ${STATUSFILE}
+			GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+			echo "${GET_TIMESTAMP}:find wlan0 is not running" >> ${LOGFILE}
+		fi
 		continue
 	fi
 
@@ -94,26 +116,34 @@ do
 								echo "OK" > ${STATUSFILE}
 							fi
 						else
-							echo "wlan0 ping failed" >> ${LOGFILE}
+							GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+							echo "${GET_TIMESTAMP}:wlan0 ping failed" >> ${LOGFILE}
 							connect_flag=0
 							error_count=$(expr ${error_count} + 1)
 						fi
 						#route del 114.114.114.114 gw ${gateway} wlan0
 					else
-						echo "wlan0 not find vaild gateway" >> ${LOGFILE}
+						GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+						echo "${GET_TIMESTAMP}:wlan0 not find vaild gateway" >> ${LOGFILE}
 						connect_flag=0
 						error_count=$(expr ${error_count} + 1)
 					fi #if [ -n "${gateway}" ]
 				else
 					error_count=$(expr ${error_count} + 1)
 					connect_flag=0
-					echo "not get vaild dns server" >> ${LOGFILE}
+					GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+					echo "${GET_TIMESTAMP}:not get vaild dns server" >> ${LOGFILE}
 				fi #if [ -n "${iphead}" ]
 			fi #if [ ${cycle_time} -ge 10 -o ${connect_flag} -eq 0 ]
 		else #if [ -f /run/resolvconf/interface/wlan0.dhclient ]
 			connect_flag=0
+			sta=$(cat ${STATUSFILE})
+			if [ -n "${sta}" ]
+			then
+				GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+				echo "${GET_TIMESTAMP}:wlan0 not find dhcp file" >> ${LOGFILE}
+			fi
 			cat /dev/null > ${STATUSFILE}
-			echo "not find dhcp file" >> ${LOGFILE}
 			if [ ${start_dhcp} -eq 0 ] 
 			then
 				start_dhcp=1
@@ -151,10 +181,16 @@ do
 		error_count=0
 		cat /dev/null > ${STATUSFILE}
 	fi
-	if [ ${connect_count} -ge 5 ]
+	if [ ${connect_count} -ge 3 ]
 	then
 		connect_count=0
-		echo "connect wlan allways failed" >> ${LOGFILE}
+		error_count=0
+		sta=$(cat ${STATUSFILE})
+		if [ -n "${sta}" ]
+		then
+			GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+			echo "${GET_TIMESTAMP}:connect wlan allways failed" >> ${LOGFILE}
+		fi
 		cat /dev/null > ${STATUSFILE}
 	fi
 

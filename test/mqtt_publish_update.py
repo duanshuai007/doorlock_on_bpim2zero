@@ -12,7 +12,6 @@ import threading
 import time
 import config
 import json
-import message_struct as ms
 
 class mqtt_client(mqtt.Client):
 
@@ -43,7 +42,22 @@ class mqtt_client(mqtt.Client):
 		print("Connection returned result: " + mqtt.connack_string(rc))
 		if rc == 0:
 			print("connect success")
-
+		devid = self.device_sn
+		updateinfo = {
+			"device_sn" : self.device_sn,
+			"firmware" : {
+				"url" : "https://acstest.iotwonderful.cn/api/upgrade/download?file_name=upgrade/74b23364.gz",
+				"version" : int(self.version),
+				"packetsize" : 1024,
+				"enable" : 1,
+				"md5" : "74b23364eabfaa9e9ce1146f5a773ccf",
+			},
+			"stime" : int(time.time()),
+		}
+		if self.publish_queue is not None:
+			sendmsg = json.dumps(updateinfo)
+			self.publish_queue.put({"topic":"/update", "payload":sendmsg, 'qos':2, 'retain':False})
+	
 	#执行mqttc.disconnect()主动断开连接会触发该函数
 	#当因为什么原因导致客户端断开连接时也会触发该函数,ctrl-c停止程序不会触发该函数
 	def on_disconnect(self, mqttc, obj, rc):
@@ -104,15 +118,6 @@ class mqtt_client(mqtt.Client):
 						#self.delete_list.append({"mid":info.mid, "msg":msg})
 						info.wait_for_publish()
 				time.sleep(0.1)
-				'''
-				for wait in self.delete_list:
-					msg = wait["msg"]
-					#print("resend mesage from delete list")
-					info = self.publish(topic = msg["topic"], payload = msg["payload"], qos = msg["qos"], retain = msg["retain"])
-					if info.rc == mqtt.MQTT_ERR_SUCCESS:
-						print("resend success, remove {}".format(wait))
-						self.delete_list.remove(wait)
-				'''
 			except Exception as e:
 				print("select error:{}".format(e))	
 	
@@ -120,34 +125,12 @@ class mqtt_client(mqtt.Client):
 		self.device_sn = device_sn
 		self.version = version
 
-	def test_publish(self):
-		devid = self.device_sn
-		ms.UPDATE_INFO["device_sn"] = devid
-		ms.UPDATE_INFO["firmware"]["url"] = "https://acstest.iotwonderful.cn/api/upgrade/download?file_name=upgrade/953b4cd3.gz"
-		ms.UPDATE_INFO["firmware"]["version"] = int(self.version)
-		ms.UPDATE_INFO["firmware"]["packetsize"] = 1024
-		ms.UPDATE_INFO["firmware"]["enable"] = 1
-		ms.UPDATE_INFO["firmware"]["md5"] = "953b4cd36a0ea8f3f6f65a4a541922a2"
-		while True:
-			time.sleep(1)
-			#print("test_publish")
-			if self.publish_queue is not None:
-				ms.UPDATE_INFO["stime"] = int(time.time())
-				sendmsg = json.dumps(ms.UPDATE_INFO)
-				self.publish_queue.put({"topic":ms.UPDATE_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
-				time.sleep(10)
-				break
-				
 	def start_publish_thread(self):		
 		publish_thread = threading.Thread(target = self.do_select)
 		publish_thread.setDaemon(False)
 		publish_thread.start()
-		test_pub = threading.Thread(target = self.test_publish)
-		test_pub.setDaemon(False)
-		test_pub.start()
 			
 	def run(self, host=None, port=1883, keepalive=60):
-		#self.will_set(topic=ms.DEVICE_ONLINE_TOPIC, payload=respjson, qos=2, retain=False)
 		self.reconnect_delay_set(min_delay=10, max_delay=120)
 
 		self.username_pw_set(self.username, self.password)
@@ -175,12 +158,41 @@ if __name__ == "__main__":
 	device_id = sys.argv[1]
 	version = sys.argv[2]
 
-	c = config.config("/home/swann/workgit/acs/test/config.ini")
-	host = c.get("MQTT", "HOST")
-	port = int(c.get("MQTT", "PORT"))
-	user = c.get("MQTT", "USER")
-	passwd = c.get("MQTT", "PASSWD")
-	cafile = c.get("MQTT", "CAFILE")
+	host = "mqtt.iotwonderful.cn"
+	port = 8883
+	user = "test_001"
+	passwd = "NjBlNjY3ZWRlZ"
+	cafile = "./.mqtt.iotwonderful.cn.crt"
+	crtfile= ''' 
+-----BEGIN CERTIFICATE-----
+MIIEATCCAumgAwIBAgIJAJueN6AjXSA0MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYD
+VQQGEwJDTjEQMA4GA1UECAwHQmVpamluZzEQMA4GA1UEBwwHQmVpamluZzEVMBMG
+A1UECgwMSW90V29uZGVyZnVsMQwwCgYDVQQLDANQcmQxFTATBgNVBAMMDGlvdHdv
+bmRlcmZ1bDEnMCUGCSqGSIb3DQEJARYYd3VzaHVhaUBpb3R3b25kZXJmdWwuY29t
+MB4XDTIwMDYwOTA3MDcwNVoXDTMwMDYwNzA3MDcwNVowgZYxCzAJBgNVBAYTAkNO
+MRAwDgYDVQQIDAdCZWlqaW5nMRAwDgYDVQQHDAdCZWlqaW5nMRUwEwYDVQQKDAxJ
+b3RXb25kZXJmdWwxDDAKBgNVBAsMA1ByZDEVMBMGA1UEAwwMaW90d29uZGVyZnVs
+MScwJQYJKoZIhvcNAQkBFhh3dXNodWFpQGlvdHdvbmRlcmZ1bC5jb20wggEiMA0G
+CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC4Wjj7eziKCl1bESQUumO0Er00a9YW
+vMC4zR3v63esqbthjN5mqP0zd30Z5uVyn0dzum0a1Un7WlIdsaEQUW5HcixfmUDc
+sBVep0XmmWxtuVzMUpPVRVWUtIbagL8RJjx2cpb33w2t2lDxh5Gj7phZTPDDlyI6
+OSSjauUlv1mOpkHcDBi0iU/wqUXUEo7hsBUft/6uMQK27HXlGn8TvgRT1oXFEVZo
+HvPf9sDRjDxV39iNEhUKRHX2dxxsgLbA6IqI1W2k0h+WVnafp7hjy9QCbjRkBGWK
+1HJ/HqICNBv+UTURsn7DFDioEcuFELGFf0m9Z5nVT7O7Pek10Q7BVBivAgMBAAGj
+UDBOMB0GA1UdDgQWBBS7sWlXl0ZdB5LXA9/TCmk9mdVwRzAfBgNVHSMEGDAWgBS7
+sWlXl0ZdB5LXA9/TCmk9mdVwRzAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUA
+A4IBAQBKw3odroL+BPLewpskJ228+PqqvSQvC3MwMfRA9r6rvIGqQmlW8Utj0Gux
+x7MiDo9wgj61DnndbrSac/oJ5icT8gI7suKeCSh23eLQ58MxZuJzYCekT2s4qVAi
+VLbeb7b4iQadlt3TeIjzvvj60qEHq4Md0SOf1gc01tGc6fMW7Ql29P4RdD682Xad
+KaSWcB3N/NRGZ0zW9321tUgN6VKOEOWqt4vt9G2mPViLeUH7ZVB1gor+pR4N6ljG
+C0FvxTyyS61Jgy/zDfPidUOGCUGukl67T5xQjlewckKnyrTORLDIvMgvLdyD3y2U
+tXfw8qEIFXkmqPXch2AyF5Jq6iTE
+-----END CERTIFICATE-----
+	'''
+
+	if not os.path.exists(cafile):
+		with open(cafile, "w") as w:
+			w.write(crtfile)
 
 	print("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
 	mc = mqtt_client(	client_id = "id_shenyang_test_updatefirmware", 
@@ -188,7 +200,7 @@ if __name__ == "__main__":
 						userdata = None,
 						protocol = mqtt.MQTTv31,
 						transport = 'tcp')
-	mc.setsubscribe(topic=ms.UPDATE_RESP_TOPIC, qos=2)
+	mc.setsubscribe(topic="/update_resp", qos=2)
 	mc.set_user_and_password(user, passwd)
 	mc.set_cafile(cafile)
 	mc.set_devicesn_and_version(device_id, version)

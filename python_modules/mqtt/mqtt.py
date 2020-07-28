@@ -214,12 +214,14 @@ class mqtt_client(mqtt.Client):
 					#self.logger.info("topic={}, msg={}".format(topic, json_msg))
 					if topic == ms.OPENDOOR_TOPIC:
 						#执行开锁动作,返回动作响应信息
-						if json_msg["action"] == 1:
-							gpio_val = 0
+						if json_msg["action"] == 1 or json_msg["action"] == "1":
+							#高电平门锁断电，能够打开
+							gpio_val = 1
 							doorlock_open_flag = True
 							doorlock_open_time = int(time.time() * 1000)
 						else:
-							gpio_val = 1
+							#低电平门锁给电，不能打开
+							gpio_val = 0
 						
 						spilcd_api.set_doorlock(gpio_val)
 						ms.OPENDOOR_RESP_MSG["device_sn"]	= self.device_sn
@@ -364,7 +366,7 @@ class mqtt_client(mqtt.Client):
 				if doorlock_open_flag == True:
 					curtime = int(time.time() * 1000)
 					if curtime - doorlock_open_time > doorlock_continue_time:	#1000ms
-						spilcd_api.set_doorlock(1)
+						spilcd_api.set_doorlock(0)
 						doorlock_open_flag = False
 				'''
 				if image_show_flag == True:

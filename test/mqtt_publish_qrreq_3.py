@@ -10,7 +10,6 @@ import paho.mqtt.client as mqtt
 import queue
 import threading
 import time
-import config
 import json
 
 class mqtt_client(mqtt.Client):
@@ -42,16 +41,20 @@ class mqtt_client(mqtt.Client):
 		print("Connection returned result: " + mqtt.connack_string(rc))
 		if rc == 0:
 			print("connect success")
-
-		openssh = {
-			"device_sn" : self.device_sn,
-			"stime" : int(time.time()),
-			"enable" : int(self.enable_ssh),
-			"opentime" : 300,
+		
+		qr_generate2vcode = {
+			"device_sn" : self.devid,
+			"type" : 3,
+			"identify" : 123456789,
+			"message" : {
+				"data" : "this is a test message!",
+			},
+			"stime" : int(time.time())
 		}
+
 		if self.publish_queue is not None:
-			sendmsg = json.dumps(openssh)
-			self.publish_queue.put({"topic":"/ssh_enable", "payload":sendmsg, 'qos':2, 'retain':False})
+			sendmsg = json.dumps(qr_generate2vcode)
+			self.publish_queue.put({"topic":"/qr_ctrl", "payload":sendmsg, 'qos':1, 'retain':False})
 
 	#执行mqttc.disconnect()主动断开连接会触发该函数
 	#当因为什么原因导致客户端断开连接时也会触发该函数,ctrl-c停止程序不会触发该函数
@@ -100,12 +103,14 @@ class mqtt_client(mqtt.Client):
 	def setsubscribe(self, topic=None, qos=0):
 		self.sub_topic_list.append((topic, qos))
 
+	def set_deviceid(self, devid):
+		self.devid = devid
+
 	def do_select(self):
 		self.publish_queue = queue.Queue(8)
 		while True:
 			try:
 				if not self.publish_queue.empty():
-					#print("get publish message")
 					msg = self.publish_queue.get()
 					print("{}:i publish: {}".format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), msg))
 					info = self.publish(topic = msg["topic"], payload = msg["payload"], qos = msg["qos"], retain = msg["retain"])
@@ -114,19 +119,14 @@ class mqtt_client(mqtt.Client):
 						info.wait_for_publish()
 				time.sleep(0.1)
 			except Exception as e:
-				print("select error:{}".format(e))	
-	
-	def set_devicesn_and_enable(self, device_sn, enable):
-		self.device_sn = device_sn
-		self.enable_ssh = enable
+				print("select error:{}".format(e))  
 
-	def start_publish_thread(self):		
+	def start_publish_thread(self):    
 		publish_thread = threading.Thread(target = self.do_select)
 		publish_thread.setDaemon(False)
 		publish_thread.start()
 
 	def run(self, host=None, port=1883, keepalive=60):
-		#self.will_set(topic=ms.DEVICE_ONLINE_TOPIC, payload=respjson, qos=2, retain=False)
 		self.reconnect_delay_set(min_delay=10, max_delay=120)
 
 		self.username_pw_set(self.username, self.password)
@@ -146,13 +146,13 @@ if __name__ == "__main__":
 	protocol=MQTTv311 or MQTTv31
 	transport="tcp" or "websockets"
 	'''
-	if len(sys.argv) < 3:
-		print("please input device sn")
-		print("like this:")
-		print("python3 xxx.py 0242fe007c52 1/0")
+
+	if len(sys.argv) < 1:
+		print("run like this:")
+		print("python3 script.py deviceid ledenable[1/0]")
 		exit(1)
-	device_id = sys.argv[1]
-	enable = sys.argv[2]
+
+	devid = sys.argv[1]
 
 	host = "mqtt.iotwonderful.cn"
 	port = 8883
@@ -191,15 +191,15 @@ tXfw8qEIFXkmqPXch2AyF5Jq6iTE
 			w.write(crtfile)
 
 	print("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
-	mc = mqtt_client(	client_id = "id_shenyang_test_enable_ssh", 
+	mc = mqtt_client(	client_id = "id_shenyang_test_qrreq_type3",
 						clean_session = False,
 						userdata = None,
 						protocol = mqtt.MQTTv31,
 						transport = 'tcp')
-	mc.setsubscribe(topic="/ssh_enable_resp", qos=2)
+	mc.setsubscribe(topic="/qr_response", qos=2)
 	mc.set_user_and_password(user, passwd)
 	mc.set_cafile(cafile)
-	mc.set_devicesn_and_enable(device_id, enable)
+	mc.set_deviceid(devid)
 	mc.start_publish_thread()
 	mc.run(host=host, port=port, keepalive=60)
 

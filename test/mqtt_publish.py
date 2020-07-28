@@ -276,7 +276,7 @@ if __name__ == "__main__":
 	cafile = c.get("MQTT", "CAFILE")
 
 	print("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
-	mc = mqtt_client(	client_id = "id_shenyang_test_duanshuai_9789797", 
+	mc = mqtt_client(	client_id = "id_shenyang_test_all_subscribe111", 
 						clean_session = False,
 						userdata = None,
 						protocol = mqtt.MQTTv31,

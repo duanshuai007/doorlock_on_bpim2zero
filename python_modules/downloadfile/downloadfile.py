@@ -75,6 +75,11 @@ def download_firmware(url:str, md5:str, filename:str)->bool:
 			if token is not None:
 				full = "{}&token={}".format(url, token)
 				
+				if not os.path.exists(filename):
+					r = os.path.split(filename)
+					if not os.path.exists(r[0]):
+						os.makedirs(r[0])
+
 				urllib.request.urlretrieve(full, filename)
 				
 				m = hashlib.md5()
