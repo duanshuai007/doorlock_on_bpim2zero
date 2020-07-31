@@ -115,6 +115,9 @@ move() {
 		#rsync image file to /root
 		rsync -r ${DOWNLOADDIR}/target/image /root/
 		
+		#rsync image file to /root
+		rsync -r ${DOWNLOADDIR}/target/ppp/ /etc/ppp
+
 		#config file rsync
 		if [ ! -f "/root/net.conf" ]
 		then
@@ -140,6 +143,7 @@ move() {
 		#install frpc service
 		rsync -r ${DOWNLOADDIR}/target/frp/systemd/* /lib/systemd/system/
 		rsync -r ${DOWNLOADDIR}/target/frp/frpc /usr/bin/
+		rsync -r ${DOWNLOADDIR}/target/frp/frpc.ini /etc/frp/
 		systemctl enable frpc
 
 		#ver=${FIRMWARE#*_}
