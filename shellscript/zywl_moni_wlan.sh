@@ -19,6 +19,7 @@ connect_flag=0
 error_count=0
 connect_count=0
 TESTDNSSERVER="114.114.114.114"
+WLAN0_RULE=2
 
 dhclient_wlan0() {
 	pid=$(ps -ef | grep "dhclient wlan0" | grep -v grep | awk -F" " '{print $2}')
@@ -30,13 +31,28 @@ dhclient_wlan0() {
 	dhclient wlan0
 }
 
+get_net_ipaddr() {
+	net=$1
+	ipaddr=$(ifconfig ${net} | grep "inet addr" | awk -F" " '{print $2}' | awk -F":" '{print $2}')
+	echo ${ipaddr}
+}
+
+delete_iprule() {
+	while true
+	do
+		ip rule delete lookup $1 > /dev/null
+		if [ $? -ne 0 ]
+		then
+			break
+		fi
+	done
+}
+
 touch ${STATUSFILE}
 
 while true
 do
 	sleep 1
-#curnet=$(cat ${CURRENT_NET})
-#	defnet=$(cat ${NETFILE} | grep choice | awk -F"=" '{print $2}')
 
 	ifconfig -a | grep wlan0 > /dev/null
 	if [ $? -ne 0 ]
@@ -103,6 +119,21 @@ do
 								sleep 1
 							fi
 						fi
+
+						ip=$(get_net_ipaddr wlan0)
+						ip rule | grep "${ip}" > /dev/null
+						if [ $? -ne 0 ] 
+						then
+							delete_iprule ${WLAN0_RULE}
+							ip rule add from ${ip} table ${WLAN0_RULE}
+						fi  
+
+						ip route show table ${WLAN0_RULE} | grep "${ip}" > /dev/null
+						if [ $? -ne 0 ] 
+						then
+							ip route flush table ${WLAN0_RULE}
+							ip route add default via ${gateway} dev wlan0 src ${ip} table ${WLAN0_RULE}
+						fi  
 
 						ping ${TESTDNSSERVER} -I wlan0 -c 1 > /dev/null
 						#ping成功则切换网络，否则放弃

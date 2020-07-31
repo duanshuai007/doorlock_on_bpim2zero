@@ -19,28 +19,53 @@ ETHSTATUS="/tmp/eth0status"
 WLANSTATUS="/tmp/wlan0status"
 PPPSTATUS="/tmp/ppp0status"
 
+get_gateway() {
+	net=$1
+	if [ -f /run/resolvconf/interface/${net}.dhclient ]
+	then	
+		iphead=$(ifconfig ${net} | grep "inet addr" | awk -F" " '{print $2}' | awk -F":" '{print $2}' | awk -F"." '{print $1"\."$2"\."$3"\."}')
+		if [ -n "iphead" ]
+		then 
+			gateway=$(cat /run/resolvconf/interface/${net}.dhclient | grep -w nameserver | grep "${iphead}" | awk -F" " '{print $2}')
+			echo ${gateway}
+			return
+		fi
+	fi
+	echo ""
+}
+
 setCurrentRoute() {
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 	echo $1 > /tmp/current_network
 	echo "${GET_TIMESTAMP}:set $1 as current route" >> ${LOGFILE}
-	dhclient -r
-	case $1 in
-		"wlan0")
-			route del default ppp0  > /dev/null 2>&1
-			dhclient wlan0
-			;;
-		"ppp0")
-			route add default ppp0
-			;;
-		"eth0")
-			route del default ppp0  > /dev/null 2>&1
-			dhclient eth0
-			;;
-		*)
-			echo "${GET_TIMESTAMP}:error paramters" >> ${LOGFILE}
-			;;
-	esac
-	
+	while true
+	do
+		route del default
+		case $1 in
+			"wlan0")
+				gw=$(get_gateway wlan0)
+				route add default gw ${gw} wlan0
+				;;
+			"ppp0")
+				route add default ppp0
+				;;
+			"eth0")
+				#only_one_dhclient eth0
+				#delete_iprule ${ETH0_RULE}	#save this because i can't sure the default route 是否需要删除iprule
+				gw=$(get_gateway eth0)
+				route add default gw ${gw} eth0
+				;;
+			*)
+				echo "${GET_TIMESTAMP}:error paramters" >> ${LOGFILE}
+				;;
+		esac
+		cur_default_route=$(route -n | awk '{if($1=="0.0.0.0") print($8)}')
+		if [ "${cur_default_route}" == "$1" ]
+		then
+			break
+		fi
+		sleep 0.2
+	done
 	echo "nameserver 114.114.114.114" > /etc/resolv.conf
 }
 

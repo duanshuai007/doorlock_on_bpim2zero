@@ -15,6 +15,7 @@ connect_flag=0
 #用于错误缓冲，这样就不会因为偶尔的一次失败而认为整个网络是错误的
 error_count=0
 TESTDNSSERVER="119.29.29.29"
+ETH0_RULE=1
 
 dhclient_eth0() {
 	pid=$(ps -ef | grep "dhclient eth0" | grep -v grep | awk -F" " '{print $2}')
@@ -24,6 +25,23 @@ dhclient_eth0() {
 		kill -9 ${pid} > /dev/null
 	fi
 	dhclient eth0
+}
+
+get_net_ipaddr() {
+	net=$1
+	ipaddr=$(ifconfig ${net} | grep "inet addr" | awk -F" " '{print $2}' | awk -F":" '{print $2}')
+	echo ${ipaddr}
+}
+
+delete_iprule() {
+	while true
+	do
+		ip rule delete lookup $1 > /dev/null
+		if [ $? -ne 0 ] 
+		then
+			break
+		fi  
+	done
 }
 
 touch ${STATUSFILE}
@@ -83,6 +101,21 @@ do
 						fi      
 					fi  
 				
+					ip=$(get_net_ipaddr eth0)
+					ip rule | grep "${ip}" > /dev/null
+					if [ $? -ne 0 ]
+					then
+						delete_iprule ${ETH0_RULE}
+						ip rule add from ${ip} table ${ETH0_RULE}
+					fi
+
+					ip route show table ${ETH0_RULE} | grep "${ip}" > /dev/null
+					if [ $? -ne 0 ]
+					then
+						ip route flush table ${ETH0_RULE}
+						ip route add default via ${gateway} dev eth0 src ${ip} table ${ETH0_RULE}
+					fi
+
 					ping ${TESTDNSSERVER} -I eth0 -c 1 > /dev/null
 					if [ $? -eq 0 ]
 					then

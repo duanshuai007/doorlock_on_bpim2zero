@@ -25,13 +25,18 @@ echo "${CUR_TIME}:$0 start work!}" >> ${LOG_FILE}
 cp /root/ntp.conf /etc/
 
 service frpc stop
+#timedatectl set-ntp no
+#timedatectl
+systemctl stop systemd-timesyncd
+systemctl disable systemd-timesyncd
+
 #insmod /root/hardware_ctrl/linux/char/lcd_driver_simulation_spi.ko 
 
 cat /dev/null > /tmp/network_timestamp
 cat /dev/null > ${NETFILE}
 cat /dev/null > ${LOG_FILE}
 
-flag=0
+wpa_connect_flag=0
 feedcount=0
 
 mqtt_start() {
@@ -72,43 +77,69 @@ pppd_stop() {
 
 timecount_for_systemctl=0
 timecount_for_pppd=0
+wpa_start_error=0
+check_pppd_count=0
+check_wpa_count=0
 
 while true
 do
 	sleep 1
 
 	#echo "ssid=${ssid} psk=${psk}"
-	ps -ef | grep wpa_supplicant | grep -v grep > /dev/null
-	if [ $? -ne 0 ] 
-	then 
-		#equl 1 mean wpa thread not exists
-		ssid=$(cat /root/net.conf | grep -w ssid | awk -F"=" '{print $2}')
-		psk=$(cat /root/net.conf | grep -w psk | awk -F"=" '{print $2}')
-		CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-		echo "${CUR_TIME}:$0 wlan0 will start" >> ${LOG_FILE}
-		wpa_passphrase ${ssid} ${psk} > /etc/wpa.conf
-		echo "ctrl_interface=/var/run/wpa_supplicant" >> /etc/wpa.conf
-		sleep 0.2
-		wpa_supplicant -iwlan0 -c /etc/wpa.conf > /var/log/wpalog 2>&1 &
-		sleep 0.2
-		wpa_cli -iwlan0 add_n > /dev/null
-	else
-		if [ ${flag} -eq 0 ]
-		then
-			flag=1
+	check_wpa_count=$(expr ${check_wpa_count} + 1)
+	if [ ${check_wpa_count} -ge 10 ]
+	then
+		check_wpa_count=0
+		ps -ef | grep wpa_supplicant | grep -v grep > /dev/null
+		if [ $? -ne 0 ] 
+		then 
+			#equl 1 mean wpa thread not exists
 			ssid=$(cat /root/net.conf | grep -w ssid | awk -F"=" '{print $2}')
 			psk=$(cat /root/net.conf | grep -w psk | awk -F"=" '{print $2}')
-			wpa_cli -iwlan0 add_n
-			/root/connect_wifi.sh ${ssid} ${psk}
+			CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+			echo "${CUR_TIME}:$0 wlan0 will start" >> ${LOG_FILE}
+			wpa_passphrase ${ssid} ${psk} > /etc/wpa.conf
+			echo "ctrl_interface=/var/run/wpa_supplicant" >> /etc/wpa.conf
+			sleep 0.2
+			wpa_supplicant -iwlan0 -c /etc/wpa.conf > /var/log/wpalog 2>&1 &
+			sleep 0.2
+			wpa_cli -iwlan0 add_n > /dev/null
+			wpa_start_error=$(expr ${wpa_start_error} + 1)
+		else
+			wpa_start_error=0
+			if [ ${wpa_connect_flag} -eq 0 ]
+			then
+				wpa_connect_flag=1
+				ssid=$(cat /root/net.conf | grep -w ssid | awk -F"=" '{print $2}')
+				psk=$(cat /root/net.conf | grep -w psk | awk -F"=" '{print $2}')
+				wpa_cli -iwlan0 add_n
+				/root/connect_wifi.sh ${ssid} ${psk}
+			fi
+		fi
+		if [ ${wpa_start_error} -ge 3 ]
+		then
+			reboot	
+			sleep 5
 		fi
 	fi
 
-	ps -ef | grep pppd | grep -v grep > /dev/null
-	if [ $? -ne 0 ]
+	check_pppd_count=$(expr ${check_pppd_count} + 1)
+	if [ ${check_pppd_count} -ge 10 ]
 	then
-		cat /dev/null > /var/log/ppplogfile
-		${PPPD} call myapp &
-		timecount_for_pppd=0
+		check_pppd_count=0
+		ps -ef | grep pppd | grep -v grep > /dev/null
+		if [ $? -ne 0 ]
+		then
+			timecount_for_pppd=0
+			python3 ${WATCHDOGSCRIPT}
+			python3 /root/check_tty.py
+			sleep 0.2
+			sta=$(cat /tmp/serial)
+			if [ "${sta}" == "OK" ]
+			then
+				cat /dev/null > /var/log/ppplogfile
+				${PPPD} call myapp &
+			fi
 #		echo "${CUR_TIME}:$0 serial not work" >> ${LOG_FILE}
 #		python3 ${WATCHDOGSCRIPT}
 #		feedcount=0
@@ -118,24 +149,25 @@ do
 #		sleep 2
 #		/root/gpio_ctrl.sh 3 0
 #		/usr/bin/tput reset > /dev/ttyS2
-	else
-		timecount_for_pppd=$(expr ${timecount_for_pppd} + 1)
-		if [ ${timecount_for_pppd} -ge 5 ]
-		then
-			timecount_for_pppd=0
-			cat /var/log/ppplogfile | grep "Connect script failed" > /dev/null
-			if [ $? -eq 0 ]
+		else
+			timecount_for_pppd=$(expr ${timecount_for_pppd} + 1)
+			if [ ${timecount_for_pppd} -ge 5 ]
 			then
-				pppd_stop
-			fi
-			#检查ppp0是否获得IP地址
-			ifconfig -a | grep ppp0 > /dev/null
-			if [ $? -eq 0 ]
-			then
-				ifconfig ppp0 | grep "inet addr" > /dev/null
-				if [ $? -ne 0 ]
+				timecount_for_pppd=0
+				cat /var/log/ppplogfile | grep "Connect script failed" > /dev/null
+				if [ $? -eq 0 ]
 				then
-					pppd_stop			
+					pppd_stop
+				fi
+				#检查ppp0是否获得IP地址
+				ifconfig -a | grep ppp0 > /dev/null
+				if [ $? -eq 0 ]
+				then
+					ifconfig ppp0 | grep "inet addr" > /dev/null
+					if [ $? -ne 0 ]
+					then
+						pppd_stop			
+					fi
 				fi
 			fi
 		fi
@@ -178,26 +210,26 @@ do
 				fi
 			fi
 		fi
-	else
-		timecount_for_systemctl=$(expr ${timecount_for_systemctl} + 1)
-		if [ ${timecount_for_systemctl} -ge 60 ]
-		then
-			timecount_for_systemctl=0
-			feedcount=0
-			python3 ${WATCHDOGSCRIPT}
-			for var in $(systemctl list-unit-files | grep \.service | awk '{print $1}')
-			do  
-				ret=$(systemctl status $var 2>&1 | grep "changed on disk")
-				if [ -n "${ret}" ]
-				then
-					cmd=$(echo ${ret} | awk -F"Run" '{print $2}' | awk -F"'" '{print $2}' | awk -F"'" '{print $1}')
-					#echo "cmd : ${cmd}"
-					${cmd}
-					python3 ${WATCHDOGSCRIPT}
-				fi  
-			done
-			python3 ${WATCHDOGSCRIPT}
-		fi
+#	else
+#		timecount_for_systemctl=$(expr ${timecount_for_systemctl} + 1)
+#		if [ ${timecount_for_systemctl} -ge 60 ]
+#		then
+#			timecount_for_systemctl=0
+#			feedcount=0
+#			python3 ${WATCHDOGSCRIPT}
+#			for var in $(systemctl list-unit-files | grep \.service | awk '{print $1}')
+#			do  
+#				ret=$(systemctl status $var 2>&1 | grep "changed on disk")
+#				if [ -n "${ret}" ]
+#				then
+#					cmd=$(echo ${ret} | awk -F"Run" '{print $2}' | awk -F"'" '{print $2}' | awk -F"'" '{print $1}')
+#					#echo "cmd : ${cmd}"
+#					${cmd}
+#					python3 ${WATCHDOGSCRIPT}
+#				fi  
+#			done
+#			python3 ${WATCHDOGSCRIPT}
+#		fi
 	fi
 
 	if [ -f ${NETFILE} ]

@@ -6,8 +6,11 @@
 STATEFILE="/tmp/ppp0status"
 PPPLOGFILE="/var/log/ppplogfile"
 TESTDNSSERVER="8.8.8.8"
+LOGFILE="/var/log/monitor.log"
+PPP0_RULE=3
 
 error_count=0
+ping_count=0
 
 pppd_stop() {
 	pid=$(ps -ef | grep pppd | grep -v grep | awk -F" " '{print $2}')
@@ -16,6 +19,24 @@ pppd_stop() {
 		kill -INT ${pid}
 	fi  
 }
+
+get_net_ipaddr() {
+	net=$1
+	ipaddr=$(ifconfig ${net} | grep "inet addr" | awk -F" " '{print $2}' | awk -F":" '{print $2}')
+	echo ${ipaddr}
+}
+
+delete_iprule() {
+	while true
+	do
+		ip rule delete lookup $1 > /dev/null
+		if [ $? -ne 0 ]
+		then
+			break
+		fi
+	done
+}
+
 
 touch ${STATEFILE}
 
@@ -55,7 +76,36 @@ do
 			route add ${TESTDNSSERVER} ppp0
 			sleep 1
 		fi
+		
+		sta=$(cat ${STATEFILE})
+		if [ -n "${sta}" ]
+		then
+			ping_count=$(expr ${ping_count} + 1)
+			if [ ${ping_count} -lt 12 ]
+			then
+				continue
+			fi
+		fi
 
+
+		ip=$(get_net_ipaddr ppp0)
+		ip rule | grep "${ip}" > /dev/null
+		if [ $? -ne 0 ] 
+		then
+			delete_iprule ${PPP0_RULE}
+			ip rule add from ${ip} table ${PPP0_RULE}
+		fi  
+
+		ip route show table ${PPP0_RULE} | grep "${ip}" > /dev/null
+		if [ $? -ne 0 ] 
+		then
+			ip route flush table ${PPP0_RULE}
+			ip route add default via 0.0.0.0 dev ppp0 src ${ip} table ${PPP0_RULE}
+		fi
+		
+		ping_count=0
+		GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+		echo "${GET_TIMESTAMP}:ppp ping test" >> ${LOGFILE}
 		ping ${TESTDNSSERVER} -I ppp0 -c 1 > /dev/null
 		if [ $? -eq 0 ]
 		then
