@@ -61,7 +61,8 @@ all_restart() {
 	all_start
 }
 
-mqtt_kill() {
+mqtt_stop() {
+	cat /dev/null > /tmp/netstatus
 	pid=$(ps -ef | grep "mqtt" |  grep -v watch | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
@@ -69,7 +70,17 @@ mqtt_kill() {
 	fi
 }
 
-start_network_kill() {
+mqtt_start() {
+	echo "OK" > /tmp/netstatus
+}
+
+mqtt_restart() {
+	mqtt_stop
+	sleep 1
+	mqtt_start
+}
+
+start_network_stop() {
 	pid=$(ps -ef | grep "zywlstart" | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
@@ -77,7 +88,7 @@ start_network_kill() {
 	fi
 }
 
-monitor_network_kill() {
+monitor_network_stop() {
 	pid=$(ps -ef | grep "zywlmonitor" | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
@@ -123,23 +134,23 @@ case $1 in
 	"mqtt")
 		case $2 in
 			"stop")
-				cat /dev/null > /tmp/netstatus
-				mqtt_kill
+				mqtt_stop
 			;;
 			"start")
-				echo "OK" > /tmp/netstatus
+				mqtt_start
 			;;
 			"restart")
+				mqtt_restart
 			;;
 		esac
 	;;
 	"zywlstart.sh")
 		case $2 in
 			"stop")
-				start_network_kill
+				start_network_stop
 			;;
 			"restart")
-				start_network_kill
+				start_network_stop
 				/root/zywlstart.sh &
 			;;
 		esac
@@ -147,10 +158,10 @@ case $1 in
 	"zywlmonitor.sh")
 		case $2 in
 			"stop")
-				monitor_network_kill
+				monitor_network_stop
 			;;
 			"restart")
-				monitor_network_kill
+				monitor_network_stop
 				/root/zywlmonitor.sh &
 			;;
 		esac
