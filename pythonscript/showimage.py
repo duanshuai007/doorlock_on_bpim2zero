@@ -8,27 +8,30 @@ import shutil
 import spilcd_api
 import generate_pillow_buffer as sc
 import watchdog
+import config
 
 def initialization():
 	spilcd_api.on()
 	screen = sc.screen()
 	screen.show_logo()
 	spilcd_api.set_doorlock(0)
-	wdtfile = "/home/watchdog/feed.py"
-	enablewdt = False
-	if os.path.exists(wdtfile):
-		s = os.path.getsize(wdtfile)
-		if s > 80:
-			enablewdt = True
-	if enablewdt == False:
-		if os.path.exists("/root/watchdog/feed.py"):
-			s = os.path.getsize("/root/watchdog/feed.py")
+	wdten = config.config("/root/config.ini").get("WATCHDOG", "ENABLE")
+	if wdten == "true":
+		wdtfile = "/home/watchdog/feed.py"
+		enablewdt = False
+		if os.path.exists(wdtfile):
+			s = os.path.getsize(wdtfile)
 			if s > 80:
 				enablewdt = True
-				shutil.copyfile("/root/watchdog/feed.py", wdtfile)
-	if enablewdt == True:	
-		watchdog.open()
-		
+		if enablewdt == False:
+			if os.path.exists("/root/watchdog/feed.py"):
+				s = os.path.getsize("/root/watchdog/feed.py")
+				if s > 80:
+					enablewdt = True
+					shutil.copyfile("/root/watchdog/feed.py", wdtfile)
+		if enablewdt == True:	
+			watchdog.open()
+
 #显示出错标志
 def show_error_icon():
 	screen = sc.screen()
