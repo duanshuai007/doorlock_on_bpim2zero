@@ -66,7 +66,26 @@ cp shellscript/* ${target}/shell/
 cp rc.local		${target}
 cp config.ini	${target}
 cp crtfile/*	${target}
-cp -r frp		${target}
+
+frpc_server_addr=$(cat frp/frpc.ini | grep server_addr | awk -F" = " '{print $2}')
+frpc_server_port=$(cat frp/frpc.ini | grep server_port | awk -F" = " '{print $2}')
+frpc_remote_addr=$(cat frp/frpc.ini | grep remote_port | awk -F" = " '{print $2}')
+
+read -p "echo do you sure frpc_server_addr=${frpc_server_addr} frpc_server_port=${frpc_server_port} frpc_remote_addr=${frpc_remote_addr}?[Yy/Nn]: " yes 
+
+if [ -n "${yes}" ]
+then
+	if [ "${yes}" == "N" -o "${yes}" == "n" ]
+	then
+		echo "please modify frp/frpc.ini"
+		exit
+	fi  
+else
+	echo "you must make your choice!"
+	exit
+fi
+
+cp -r frp	${target}
 cp net.conf ${target}
 cp ntp.conf ${target}
 
@@ -74,7 +93,7 @@ cp image/error_160x160.png	${target}/image
 cp image/logo_160x160.png	${target}/image
 cp image/update_160x160.jpg ${target}/image
 
-#cp -r ppp ${target}
+cp -r ppp ${target}
 cp pythonscript/* ${target}/run
 cp -r watchdog ${target}
 
