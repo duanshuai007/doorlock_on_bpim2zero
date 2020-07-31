@@ -22,6 +22,7 @@
 #echo 0 >   /sys/class/gpio/gpio16/value
 #echo 16 >  /sys/class/gpio/unexport
 
+echo "system restart done!!!" >> /var/log/monitor.log
 python3 /root/showimage.py 1
 
 /root/zywlstart.sh &
