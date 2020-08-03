@@ -48,7 +48,7 @@ mkdir -p ${target}/shell
 mkdir -p ${target}/python
 mkdir -p ${target}/image
 mkdir -p ${target}/run
-
+mkdir -p ${target}/systemd
 
 cd ./python_modules
 ./make.sh build
@@ -85,6 +85,7 @@ else
 	exit
 fi
 
+cp zywldl.service ${target}/systemd
 cp -r frp	${target}
 cp net.conf ${target}
 cp ntp.conf ${target}

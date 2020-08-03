@@ -289,6 +289,16 @@ if __name__ == "__main__":
 	mc.setsubscribe(topic=ms.DEVICE_INFO_RESP_TOPIC, qos=0)
 	mc.setsubscribe(topic=ms.UPDATE_RESP_TOPIC, qos=2)
 	mc.setsubscribe(topic=ms.OPENSSH_RESP_TOPIC, qos=0)
+	with open("./device_sn.table", "r") as f:
+		while True:
+			linemsg = f.readline().split('\n')[0]
+			if len(linemsg) == 0:
+				break
+			print(linemsg)
+			device_status_topic = "{}/{}".format(ms.DEVICE_STATUS_TOPIC, linemsg)
+			mc.setsubscribe(topic=device_status_topic, qos=0)
+		
+
 	mc.set_user_and_password(user, passwd)
 	mc.set_cafile(cafile)
 	if publish_flag == True:

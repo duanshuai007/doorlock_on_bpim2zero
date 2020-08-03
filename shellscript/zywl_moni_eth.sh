@@ -160,6 +160,7 @@ do
 	if [ ${error_count} -ge 5 ]
 	then
 		error_count=0
+		dhclient eth0 -r
 		cat /dev/null > ${STATUSFILE}
 	fi   
 done

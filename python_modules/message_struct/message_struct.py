@@ -74,7 +74,6 @@ QR_RESPONSE = {
 }
 
 DEVICE_STATUS = {
-	"device_sn" : "",
 	"rtime" : 0,
 	"status" : 0,
 }

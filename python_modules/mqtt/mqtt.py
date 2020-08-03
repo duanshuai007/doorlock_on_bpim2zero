@@ -35,6 +35,7 @@ class mqtt_client(mqtt.Client):
 
 	def set_device_sn(self, sn):
 		self.device_sn = sn	
+		self.status_topic = "{}/{}".format(ms.DEVICE_STATUS_TOPIC, sn)
 		self.work_queue = queue.Queue(32)
 		self.publish_queue = queue.Queue(32)
 
@@ -68,11 +69,10 @@ class mqtt_client(mqtt.Client):
 			self.logger.info("connect success")
 			self.subscribe(self.sub_topic_list)
 			
-			ms.DEVICE_STATUS["device_sn"] = self.device_sn
 			ms.DEVICE_STATUS["status"] = 1
 			ms.DEVICE_STATUS["rtime"] = int(time.time())
 			respjson = json.dumps(ms.DEVICE_STATUS)
-			self.publish_queue.put({"topic":ms.DEVICE_STATUS_TOPIC, "payload":respjson, 'qos':0, 'retain':True})
+			self.publish_queue.put({"topic":self.status_topic, "payload":respjson, 'qos':0, 'retain':True})
 
 			if os.path.exists(self.update_status_file):
 				with open(self.update_status_file, 'r') as f:
@@ -393,11 +393,10 @@ class mqtt_client(mqtt.Client):
 
 	def run_mqtt(self, host=None, port=1883, keepalive=60):
 		try:
-			ms.DEVICE_STATUS["device_sn"] = self.device_sn
 			ms.DEVICE_STATUS["status"] = 0
 			ms.DEVICE_STATUS["rtime"] = int(time.time())
 			respjson = json.dumps(ms.DEVICE_STATUS)
-			self.will_set(topic=ms.DEVICE_STATUS_TOPIC, payload=respjson, qos=0, retain=True)
+			self.will_set(topic=self.status_topic, payload=respjson, qos=0, retain=True)
 			self.reconnect_delay_set(min_delay=10, max_delay=60)
 			#logging.basicConfig(level=logging.INFO)
 			#self.logger = logging.getLogger(__name__)

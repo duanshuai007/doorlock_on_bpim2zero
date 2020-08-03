@@ -258,6 +258,7 @@ do
 				echo "${GET_TIMESTAMP}:network[${CURRENT_NET}] is bad" >> ${LOGFILE}
 				vail_net=$(get_vaild_network)
 				kill_mqtt_thread
+				cat /dev/null > ${NETSTAT}
 				if [ -n "${vail_net}" ]
 				then
 					#发现其他可用的网络，切换到可用网络
@@ -267,20 +268,12 @@ do
 					net=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $8}')	
 					if [ -n "${net}" ]
 					then
-						if [ "${net}" == "ppp0" ]
-						then
-							route del default ppp0
-						else
-							gw=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $2}')
-							route del default gw ${gw} ${net}
-						fi
-						cat /dev/null > ${NETSTAT}
+						route del default
 					fi
 				else
 					network_is_bad=1
 					echo "${GET_TIMESTAMP}:not find vaild network" >> ${LOGFILE}
 					python3 /root/showimage.py 2
-					cat /dev/null > ${NETSTAT}
 				fi
 			fi
 		fi

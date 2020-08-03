@@ -60,26 +60,6 @@ do
 		continue
 	fi
 
-	ifconfig wlan0 | grep RUNNING > /dev/null
-	if [ $? -ne 0 ]
-	then
-		sta=$(cat ${STATUSFILE})
-		if [ -n "${sta}" ]
-		then
-			connect_count=0
-			connect_wifi_time=0
-			start_dhcp=0
-			start_dhcp_time=0
-			cycle_time=0
-			connect_flag=0
-			error_count=0
-			cat /dev/null > ${STATUSFILE}
-			GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-			echo "${GET_TIMESTAMP}:find wlan0 is not running" >> ${LOGFILE}
-		fi
-		continue
-	fi
-
 	sta=$(wpa_cli -iwlan0 status | grep wpa_state | awk -F"=" '{print $2}')
 	if [ "${sta}" == "COMPLETED" ]
 	then
@@ -198,6 +178,20 @@ do
 			
 			/root/connect_wifi.sh ${ssid} ${psk}
 			connect_count=$(expr ${connect_count} + 1)
+
+			if [ ${connect_count} -ge 3 ]
+			then
+				connect_count=0
+				error_count=0
+				sta=$(cat ${STATUSFILE})
+				if [ -n "${sta}" ]
+				then
+					GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+					echo "${GET_TIMESTAMP}:connect wlan allways failed" >> ${LOGFILE}
+				fi
+				dhclient wlan0 -r
+				cat /dev/null > ${STATUSFILE}
+			fi
 		fi
 
 		connect_wifi_time=$(expr ${connect_wifi_time} + 1)
@@ -210,18 +204,7 @@ do
 	if [ ${error_count} -ge 5 ]
 	then
 		error_count=0
-		cat /dev/null > ${STATUSFILE}
-	fi
-	if [ ${connect_count} -ge 3 ]
-	then
-		connect_count=0
-		error_count=0
-		sta=$(cat ${STATUSFILE})
-		if [ -n "${sta}" ]
-		then
-			GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-			echo "${GET_TIMESTAMP}:connect wlan allways failed" >> ${LOGFILE}
-		fi
+		dhclient wlan0 -r
 		cat /dev/null > ${STATUSFILE}
 	fi
 

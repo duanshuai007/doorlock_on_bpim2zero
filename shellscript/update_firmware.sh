@@ -40,8 +40,9 @@ update_start() {
 	#1.close monitor script and mqtt client process
 	#  start_network.sh must keep running,beacuse feed watchdog in this process
 	echo "start update"
-	/root/watch.sh zywlmonitor.sh stop
-	/root/watch.sh mqtt stop
+	#/root/watch.sh zywlmonitor.sh stop
+	#/root/watch.sh mqtt stop
+	systemctl stop zywldl
 	#2.show update image
 	python3 /root/showimage.py 4
 	echo "tarfile:${version}:0" > ${UPDATESTATUS}
@@ -99,7 +100,8 @@ move() {
 		echo "error:${version}:3" > ${UPDATESTATUS}
 	else
 		#删除只存在于/root中，不存在于更新包中的文件
-		/root/watch.sh stop
+		#/root/watch.sh stop
+		systemctl stop zywldl
 		sleep 1
 		/home/watchdog/little_feed.sh &
 		
@@ -134,7 +136,7 @@ move() {
 		#crtfile rsync
 		mkdir -p /root/crtfile
 		rsync -r ${DOWNLOADDIR}/target/*.crt /root/crtfile/
-		
+
 		if [ ! -d "/root/log" ]
 		then
 			mkdir -p /root/log
@@ -165,7 +167,8 @@ update_clear() {
 	sync
 	kill_little_watchdog
 	sleep 1
-	/root/watch.sh restart
+	#/root/watch.sh restart
+	systemctl restart zywldl
 }
 
 if [ -n "${sta}" ]
