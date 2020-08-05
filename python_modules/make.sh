@@ -1,5 +1,3 @@
-tar=$1
-
 export CROSS_COMPILE=arm-linux-gnueabihf-
 export CC="${CROSS_COMPILE}gcc -pthread" 
 export LDSHARED="${CC} -shared"

@@ -9,7 +9,6 @@ import configparser
 class config():
 	rootdir = ''
 	config = None
-
 	filepath = ''
 
 	def __init__(self, configfilename:str):
