@@ -15,7 +15,7 @@ def gzip_uncompress_with_password(gzfile:str, tardir:str)->None:
 		return
 
 	salt = ms.DOORSTONE
-	cmd = "dd if={} | openssl des3 -d -k {}{}{} | tar zxvf - > /dev/null".format(gzfile, "\\\"", salt, "\\\"")
+	cmd = "dd if={} | openssl des3 -d -k {}{}{} | tar zxvf - -C{} > /dev/null".format(gzfile, "\\\"", salt, "\\\"", tardir)
 	os.system(cmd)
 
 if __name__ == '__main__':

@@ -24,7 +24,7 @@ class uopload_firmware():
 		req = requests.post(self.url, files=files)
 		text = json.loads(req.text)
 		print(text["status"])
-		print(text["message"].encode("utf-8"))
+		#print(text["message"].encode("utf-8"))
 		print(text["data"])
 
 if __name__ == "__main__":

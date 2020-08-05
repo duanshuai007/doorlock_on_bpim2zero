@@ -46,11 +46,11 @@ class mqtt_client(mqtt.Client):
 		updateinfo = {
 			"device_sn" : self.device_sn,
 			"firmware" : {
-				"url" : "https://acstest.iotwonderful.cn/api/upgrade/download?file_name=upgrade/e3afb61e.",
+				"url" : "https://acstest.iotwonderful.cn/api/upgrade/download?file_name={}".format(self.download),
 				"version" : int(self.version),
 				"packetsize" : 1024,
 				"enable" : 1,
-				"md5" : "e3afb61e634846481c361e9371ea096e",
+				"md5" : self.md5,
 			},
 			"stime" : int(time.time()),
 		}
@@ -121,8 +121,10 @@ class mqtt_client(mqtt.Client):
 			except Exception as e:
 				print("select error:{}".format(e))	
 	
-	def set_devicesn_and_version(self, device_sn, version):
+	def set_devicesn_and_all(self, device_sn, downloadurl, md5, version):
 		self.device_sn = device_sn
+		self.download = downloadurl
+		self.md5 = md5
 		self.version = version
 
 	def start_publish_thread(self):		
@@ -150,13 +152,15 @@ if __name__ == "__main__":
 	protocol=MQTTv311 or MQTTv31
 	transport="tcp" or "websockets"
 	'''
-	if len(sys.argv) < 3:
+	if len(sys.argv) < 5:
 		print("please input device_sn and version message")
 		print("like this:")
-		print("python3 xxx.py 0242fe007c52 version")
+		print("python3 xxx.py [device sn] [download] [md5] [version]")
 		exit(1)
 	device_id = sys.argv[1]
-	version = sys.argv[2]
+	downloadurl = sys.argv[2]
+	md5 = sys.argv[3]
+	version = sys.argv[4]
 
 	host = "mqtt.iotwonderful.cn"
 	port = 8883
@@ -203,7 +207,7 @@ tXfw8qEIFXkmqPXch2AyF5Jq6iTE
 	mc.setsubscribe(topic="/update_resp", qos=2)
 	mc.set_user_and_password(user, passwd)
 	mc.set_cafile(cafile)
-	mc.set_devicesn_and_version(device_id, version)
+	mc.set_devicesn_and_all(device_id, downloadurl, md5, version)
 	mc.start_publish_thread()
 	mc.run(host=host, port=port, keepalive=60)
 

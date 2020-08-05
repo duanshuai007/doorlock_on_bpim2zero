@@ -78,20 +78,23 @@ class mqtt_client(mqtt.Client):
 
 			if os.path.exists(self.update_status_file):
 				with open(self.update_status_file, 'r') as f:
-					line = f.read(32).split('\n')[0]
-					result = line.split(':')[0]
-					version = line.split(':')[1]
-					reason = line.split(':')[2]
-					ms.UPDATE_RESP_INFO["device_sn"] = self.device_sn
-					ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
-					ms.UPDATE_RESP_INFO["firmware"]["version"] = version
-					if result == "success":
-						#send firmware update success message
-						ms.UPDATE_RESP_INFO["firmware"]["status"] = "success"
-					else:
-						ms.UPDATE_RESP_INFO["firmware"]["status"] = "{}:{}".format(result, reason)
-					sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
-					self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
+					try:
+						line = f.read(32).split('\n')[0]
+						result = line.split(':')[0]
+						version = line.split(':')[1]
+						reason = line.split(':')[2]
+						ms.UPDATE_RESP_INFO["device_sn"] = self.device_sn
+						ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
+						ms.UPDATE_RESP_INFO["firmware"]["version"] = version
+						if result == "success":
+							#send firmware update success message
+							ms.UPDATE_RESP_INFO["firmware"]["status"] = "success"
+						else:
+							ms.UPDATE_RESP_INFO["firmware"]["status"] = "{}:{}".format(result, reason)
+						sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
+						self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
+					except Exception as e:
+						self.logger.error("read update status file error:{}".format(e))
 				os.remove(self.update_status_file)
 
 	#执行mqttc.disconnect()主动断开连接会触发该函数
@@ -178,7 +181,15 @@ class mqtt_client(mqtt.Client):
 	def setsubscribe(self, topic=None, qos=0):
 		self.sub_topic_list.append((topic, qos))
 
-	def do_select(self):
+	def do_hardware_work(self):
+		doorlock_open_flag = False
+		doorlock_open_time = 0
+		doorlock_time = int(config.config("/root/config.ini").get("DOORLOCK", "OPEN_TIME"))
+		doorlock_continue_time = doorlock_time * 1000
+		image_show_flag = False
+		image_show_time = 0
+		image_continue_time = int(config.config("/root/config.ini").get("DOORLOCK", "2VCODE_TIME")) * 1000
+		spilcd_api.on()
 		while True:
 			try:
 				if not self.publish_queue.empty():
@@ -192,30 +203,6 @@ class mqtt_client(mqtt.Client):
 					with open("/root/mqtt_connect_status", "w") as f:
 						f.write(connect_status)
 					self.status = None
-				time.sleep(0.01)
-				'''
-				for wait in self.delete_list:
-					msg = wait["msg"]
-					self.logger.info("resend mesage from delete list")
-					info = self.publish(topic = msg["topic"], payload = msg["payload"], qos = msg["qos"], retain = msg["retain"])
-					if info.rc == mqtt.MQTT_ERR_SUCCESS:
-						self.logger.info("resend success, remove {}".format(wait))
-						self.delete_list.remove(wait)
-				'''
-			except Exception as e:
-				self.logger.info("select error:{}".format(e))	
-	
-	def do_hardware_work(self):
-		doorlock_open_flag = False
-		doorlock_open_time = 0
-		doorlock_time = int(config.config("/root/config.ini").get("DOORLOCK", "OPEN_TIME"))
-		doorlock_continue_time = doorlock_time * 1000
-		image_show_flag = False
-		image_show_time = 0
-		image_continue_time = int(config.config("/root/config.ini").get("DOORLOCK", "2VCODE_TIME")) * 1000
-		spilcd_api.on()
-		while True:
-			try:
 				if not self.work_queue.empty():
 					[topic, json_msg] = self.work_queue.get()
 					#json_msg = json.loads(str(msg.payload, encoding="utf-8"))
@@ -310,7 +297,7 @@ class mqtt_client(mqtt.Client):
 										sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
 										self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
 										time.sleep(0.5)
-										with open("/home/ubuntu/update_status", "w") as f:
+										with open(self.update_status_file, "w") as f:
 											update_message="{}:{}:0".format("start", update_version)
 											f.write(update_message)
 									else:
@@ -407,10 +394,6 @@ class mqtt_client(mqtt.Client):
 				self.logger.info("do hardware work except:{}".format(e))
 
 	def start_other_thread(self):
-		publish_thread = threading.Thread(target = self.do_select)
-		publish_thread.setDaemon(False)
-		publish_thread.start()
-		
 		work_thread = threading.Thread(target = self.do_hardware_work)
 		work_thread.setDaemon(False)
 		work_thread.start()

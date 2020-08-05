@@ -1259,7 +1259,7 @@ static const char __pyx_k_not_find_tardir[] = "not find tardir";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_uncompressfirmware[] = "uncompressfirmware";
 static const char __pyx_k_gzip_uncompress_with_password[] = "gzip_uncompress_with_password";
-static const char __pyx_k_dd_if_openssl_des3_d_k_tar_zxvf[] = "dd if={} | openssl des3 -d -k {}{}{} | tar zxvf - > /dev/null";
+static const char __pyx_k_dd_if_openssl_des3_d_k_tar_zxvf[] = "dd if={} | openssl des3 -d -k {}{}{} | tar zxvf - -C{} > /dev/null";
 static const char __pyx_k_must_have_gzfile_and_tardir_para[] = "must have gzfile and tardir paramters";
 static const char __pyx_k_uncompressfirmware_uncompressfir[] = "uncompressfirmware/uncompressfirmware.py";
 static PyObject *__pyx_kp_s_;
@@ -1530,7 +1530,7 @@ static PyObject *__pyx_pf_18uncompressfirmware_gzip_uncompress_with_password(CYT
  * 		return
  * 
  * 	salt = ms.DOORSTONE             # <<<<<<<<<<<<<<
- * 	cmd = "dd if={} | openssl des3 -d -k {}{}{} | tar zxvf - > /dev/null".format(gzfile, "\\\"", salt, "\\\"")
+ * 	cmd = "dd if={} | openssl des3 -d -k {}{}{} | tar zxvf - -C{} > /dev/null".format(gzfile, "\\\"", salt, "\\\"", tardir)
  * 	os.system(cmd)
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_ms); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 17, __pyx_L1_error)
@@ -1544,7 +1544,7 @@ static PyObject *__pyx_pf_18uncompressfirmware_gzip_uncompress_with_password(CYT
   /* "uncompressfirmware.py":18
  * 
  * 	salt = ms.DOORSTONE
- * 	cmd = "dd if={} | openssl des3 -d -k {}{}{} | tar zxvf - > /dev/null".format(gzfile, "\\\"", salt, "\\\"")             # <<<<<<<<<<<<<<
+ * 	cmd = "dd if={} | openssl des3 -d -k {}{}{} | tar zxvf - -C{} > /dev/null".format(gzfile, "\\\"", salt, "\\\"", tardir)             # <<<<<<<<<<<<<<
  * 	os.system(cmd)
  * 
  */
@@ -1564,22 +1564,22 @@ static PyObject *__pyx_pf_18uncompressfirmware_gzip_uncompress_with_password(CYT
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_1)) {
-    PyObject *__pyx_temp[5] = {__pyx_t_3, __pyx_v_gzfile, __pyx_kp_s_, __pyx_v_salt, __pyx_kp_s_};
-    __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_6, 4+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 18, __pyx_L1_error)
+    PyObject *__pyx_temp[6] = {__pyx_t_3, __pyx_v_gzfile, __pyx_kp_s_, __pyx_v_salt, __pyx_kp_s_, __pyx_v_tardir};
+    __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_6, 5+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 18, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_2);
   } else
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_1)) {
-    PyObject *__pyx_temp[5] = {__pyx_t_3, __pyx_v_gzfile, __pyx_kp_s_, __pyx_v_salt, __pyx_kp_s_};
-    __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_6, 4+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 18, __pyx_L1_error)
+    PyObject *__pyx_temp[6] = {__pyx_t_3, __pyx_v_gzfile, __pyx_kp_s_, __pyx_v_salt, __pyx_kp_s_, __pyx_v_tardir};
+    __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_6, 5+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 18, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_2);
   } else
   #endif
   {
-    __pyx_t_7 = PyTuple_New(4+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 18, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(5+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 18, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     if (__pyx_t_3) {
       __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_3); __pyx_t_3 = NULL;
@@ -1596,6 +1596,9 @@ static PyObject *__pyx_pf_18uncompressfirmware_gzip_uncompress_with_password(CYT
     __Pyx_INCREF(__pyx_kp_s_);
     __Pyx_GIVEREF(__pyx_kp_s_);
     PyTuple_SET_ITEM(__pyx_t_7, 3+__pyx_t_6, __pyx_kp_s_);
+    __Pyx_INCREF(__pyx_v_tardir);
+    __Pyx_GIVEREF(__pyx_v_tardir);
+    PyTuple_SET_ITEM(__pyx_t_7, 4+__pyx_t_6, __pyx_v_tardir);
     __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 18, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -1606,7 +1609,7 @@ static PyObject *__pyx_pf_18uncompressfirmware_gzip_uncompress_with_password(CYT
 
   /* "uncompressfirmware.py":19
  * 	salt = ms.DOORSTONE
- * 	cmd = "dd if={} | openssl des3 -d -k {}{}{} | tar zxvf - > /dev/null".format(gzfile, "\\\"", salt, "\\\"")
+ * 	cmd = "dd if={} | openssl des3 -d -k {}{}{} | tar zxvf - -C{} > /dev/null".format(gzfile, "\\\"", salt, "\\\"", tardir)
  * 	os.system(cmd)             # <<<<<<<<<<<<<<
  * 
  * if __name__ == '__main__':

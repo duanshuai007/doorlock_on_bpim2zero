@@ -161,6 +161,7 @@ update_clear() {
 	cd /root
 	rm /home/download/*
 	echo "done:${version}:0" > ${UPDATESTATUS}
+	sleep 1
 	systemctl restart zywldl
 }
 

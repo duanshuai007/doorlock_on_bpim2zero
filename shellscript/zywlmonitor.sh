@@ -228,8 +228,8 @@ do
 	sta=$(cat ${MQTTSTATUS})
 	if [ "${sta}" == "success" ]
 	then
-		sleep 5
 		donot_monitor_network
+		sleep 5
 		continue
 	fi
 

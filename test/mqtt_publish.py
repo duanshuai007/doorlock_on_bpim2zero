@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-
-
 import sys
 import os
 import logging
@@ -12,7 +10,6 @@ import threading
 import time
 import config
 import json
-import message_struct as ms
 
 class mqtt_client(mqtt.Client):
 
@@ -73,174 +70,15 @@ class mqtt_client(mqtt.Client):
 
 	def on_publish(self, mqttc, obj, mid):
 		#重要，用来确认publish的消息发送出去了。有时即使publish返回成功，但消息却没有发送。
-		#print("on public,mid:{}".format(mid))
-		'''
-		for item in self.delete_list:
-			if mid == item["mid"]:
-				#print("on publish remove msg, mid={}".format(mid))
-				self.delete_list.remove(item)
-		'''
 		pass
 
 	def on_subscribe(self, mqttc, obj, mid, granted_qos):
 		print("Subscribed: " + str(mid) + " " + str(granted_qos))
-	'''
-	def on_log(self, mqttc, obj, level, string):
-		print(string)
-	'''
+	
 	def setsubscribe(self, topic=None, qos=0):
 		self.sub_topic_list.append((topic, qos))
 
-	def do_select(self):
-		self.publish_queue = queue.Queue(8)
-		while True:
-			try:
-				if not self.publish_queue.empty():
-					#print("get publish message")
-					msg = self.publish_queue.get()
-					print("{}:i publish: {}".format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), msg))
-					info = self.publish(topic = msg["topic"], payload = msg["payload"], qos = msg["qos"], retain = msg["retain"])
-					if info.rc == mqtt.MQTT_ERR_SUCCESS:
-						#self.delete_list.append({"mid":info.mid, "msg":msg})
-						info.wait_for_publish()
-				time.sleep(0.1)
-				'''
-				for wait in self.delete_list:
-					msg = wait["msg"]
-					#print("resend mesage from delete list")
-					info = self.publish(topic = msg["topic"], payload = msg["payload"], qos = msg["qos"], retain = msg["retain"])
-					if info.rc == mqtt.MQTT_ERR_SUCCESS:
-						print("resend success, remove {}".format(wait))
-						self.delete_list.remove(wait)
-				'''
-			except Exception as e:
-				print("select error:{}".format(e))	
-	
-
-	def test_publish(self):
-		#devid = "0a2c1867f161"
-		#devid = "d66fabdd3dce"
-		#devid = "02420877c9cc"
-#devid = "02421a71c57b"
-		#devid = "024251720577"
-		devid = "0242fe007c52"
-		#devid = "ffffffffffff"
-		message_delay = 10
-		ms.OPENDOOR_MSG["device_sn"] = devid
-		ms.OPENDOOR_MSG["action"] = 1
-		ms.OPENDOOR_MSG["identify"] = 123456678765432
-		
-		ms.QR_GETWX2VCODE["device_sn"] = devid
-		ms.QR_GETWX2VCODE["type"] = 1
-		ms.QR_GETWX2VCODE["identify"] = 32198321892319
-		ms.QR_GETWX2VCODE["message"]["page"] = ""
-		ms.QR_GETWX2VCODE["message"]["scene"] = "h=2"
-
-		ms.QR_DOWN2VCODE["device_sn"] = devid
-		ms.QR_DOWN2VCODE["type"] = 2
-		ms.QR_DOWN2VCODE["identify"] = 3321321321986
-		ms.QR_DOWN2VCODE["message"]["download"] = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591866200525&di=e880ae3dc16c07985a292a24f3842a1d&imgtype=0&src=http%3A%2F%2Ft9.baidu.com%2Fit%2Fu%3D770196171%2C1212335633%26fm%3D193"
-
-		ms.QR_GENERATE2VCODE["device_sn"] = devid
-		ms.QR_GENERATE2VCODE["type"] = 3
-		ms.QR_GENERATE2VCODE["identify"] = 39389043910329
-		ms.QR_GENERATE2VCODE["message"]["data"] = "this is a test message, this will create a 2vcode and display on 160x160 matrix screen"
-		
-		ms.DEVICE_INFO["device_sn"] = "ffffffffffff"
-
-		ms.UPDATE_INFO["device_sn"] = devid
-		ms.UPDATE_INFO["firmware"]["url"] = "http://wwww.baidu.com"
-		ms.UPDATE_INFO["firmware"]["version"] = 4
-		ms.UPDATE_INFO["firmware"]["packetsize"] = 1024
-		ms.UPDATE_INFO["firmware"]["enable"] = 1
-		ms.UPDATE_INFO["firmware"]["md5"] = 3829183210838201
-
-		ms.OPENSSH_INFO["device_sn"] = devid
-	
-		while True:
-			#time.sleep(3)
-			#print("test_publish")
-			if self.publish_queue is not None:
-				#print("test puiblish send message")
-				#self.publish_queue.put({"topic":"/acs_open", "payload":"{\"device_sn\":\"00001\"},\"action\":1,\"identify\":\"1234567\"", 'qos':2, 'retain':False})
-				'''	
-				ms.OPENDOOR_MSG["action"] = 0
-				ms.OPENDOOR_MSG["stime"] = int(time.time())
-				sendmsg = json.dumps(ms.OPENDOOR_MSG)
-				self.publish_queue.put({"topic":ms.OPENDOOR_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
-				time.sleep(10)
-				'''
-				'''	
-				ms.OPENDOOR_MSG["action"] = 1
-				ms.OPENDOOR_MSG["stime"] = int(time.time())
-				sendmsg = json.dumps(ms.OPENDOOR_MSG)
-				self.publish_queue.put({"topic":ms.OPENDOOR_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
-				time.sleep(message_delay)
-				
-				ms.QR_GETWX2VCODE["stime"] = int(time.time())
-				sendmsg = json.dumps(ms.QR_GETWX2VCODE)
-				self.publish_queue.put({"topic":ms.QR_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
-				time.sleep(message_delay)
-
-				ms.QR_DOWN2VCODE["stime"] = int(time.time())
-				sendmsg = json.dumps(ms.QR_DOWN2VCODE)
-				self.publish_queue.put({"topic":ms.QR_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
-				time.sleep(message_delay)
-
-				ms.QR_GENERATE2VCODE["stime"] = int(time.time())
-				sendmsg = json.dumps(ms.QR_GENERATE2VCODE)
-				self.publish_queue.put({"topic":ms.QR_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
-				time.sleep(message_delay)
-				'''	
-	
-				
-				ms.DEVICE_INFO["device_sn"] = "ffffffffffff"			
-				ms.DEVICE_INFO["stime"] = int(time.time())
-				ms.DEVICE_INFO["doorlock"] = 20
-				sendmsg = json.dumps(ms.DEVICE_INFO)
-				self.publish_queue.put({"topic":ms.DEVICE_INFO_TOPIC, "payload":sendmsg, 'qos':1, 'retain':False})
-				time.sleep(5)
-				
-
-				'''
-				ms.UPDATE_INFO["stime"] = int(time.time())
-				sendmsg = json.dumps(ms.UPDATE_INFO)
-				self.publish_queue.put({"topic":ms.UPDATE_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
-				time.sleep(10)
-				'''
-
-				'''
-				ms.OPENSSH_INFO["stime"] = int(time.time())
-				ms.OPENSSH_INFO["enable"] = 0
-				ms.OPENSSH_INFO["opentime"] = 300
-				sendmsg = json.dumps(ms.OPENSSH_INFO)
-				self.publish_queue.put({"topic":ms.OPENSSH_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
-				time.sleep(20)
-				'''
-
-				'''
-				ms.OPENSSH_INFO["stime"] = int(time.time())
-				ms.OPENSSH_INFO["enable"] = 0
-				ms.OPENSSH_INFO["opentime"] = 300
-				sendmsg = json.dumps(ms.OPENSSH_INFO)
-				self.publish_queue.put({"topic":ms.OPENSSH_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
-				time.sleep(20)
-				'''
-
-				time.sleep(0.01)
-				pass
-				
-				
-	def start_publish_thread(self):		
-		publish_thread = threading.Thread(target = self.do_select)
-		publish_thread.setDaemon(False)
-		publish_thread.start()
-		test_pub = threading.Thread(target = self.test_publish)
-		test_pub.setDaemon(False)
-		test_pub.start()
-			
 	def run(self, host=None, port=1883, keepalive=60):
-		#self.will_set(topic=ms.DEVICE_ONLINE_TOPIC, payload=respjson, qos=2, retain=False)
 		self.reconnect_delay_set(min_delay=10, max_delay=120)
 
 		self.username_pw_set(self.username, self.password)
@@ -260,48 +98,67 @@ if __name__ == "__main__":
 	protocol=MQTTv311 or MQTTv31
 	transport="tcp" or "websockets"
 	'''
-	publish_flag = False
-	if sys.argv[1] == "p":
-		publish_flag = True
-	elif sys.argv[1] == "s":
-		publish_flag = False
-	elif sys.argv[1] == "ps":
-		publish_flag = True
 
-	c = config.config("/home/swann/workgit/acs/test/config.ini")
-	host = c.get("MQTT", "HOST")
-	port = int(c.get("MQTT", "PORT"))
-	user = c.get("MQTT", "USER")
-	passwd = c.get("MQTT", "PASSWD")
-	cafile = c.get("MQTT", "CAFILE")
+	host = "mqtt.iotwonderful.cn"
+	port = 8883
+	user = "test_001"
+	passwd = "NjBlNjY3ZWRlZ"
+	cafile = "./.mqtt.iotwonderful.cn.crt"
+	crtfile= ''' 
+-----BEGIN CERTIFICATE-----
+MIIEATCCAumgAwIBAgIJAJueN6AjXSA0MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYD
+VQQGEwJDTjEQMA4GA1UECAwHQmVpamluZzEQMA4GA1UEBwwHQmVpamluZzEVMBMG
+A1UECgwMSW90V29uZGVyZnVsMQwwCgYDVQQLDANQcmQxFTATBgNVBAMMDGlvdHdv
+bmRlcmZ1bDEnMCUGCSqGSIb3DQEJARYYd3VzaHVhaUBpb3R3b25kZXJmdWwuY29t
+MB4XDTIwMDYwOTA3MDcwNVoXDTMwMDYwNzA3MDcwNVowgZYxCzAJBgNVBAYTAkNO
+MRAwDgYDVQQIDAdCZWlqaW5nMRAwDgYDVQQHDAdCZWlqaW5nMRUwEwYDVQQKDAxJ
+b3RXb25kZXJmdWwxDDAKBgNVBAsMA1ByZDEVMBMGA1UEAwwMaW90d29uZGVyZnVs
+MScwJQYJKoZIhvcNAQkBFhh3dXNodWFpQGlvdHdvbmRlcmZ1bC5jb20wggEiMA0G
+CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC4Wjj7eziKCl1bESQUumO0Er00a9YW
+vMC4zR3v63esqbthjN5mqP0zd30Z5uVyn0dzum0a1Un7WlIdsaEQUW5HcixfmUDc
+sBVep0XmmWxtuVzMUpPVRVWUtIbagL8RJjx2cpb33w2t2lDxh5Gj7phZTPDDlyI6
+OSSjauUlv1mOpkHcDBi0iU/wqUXUEo7hsBUft/6uMQK27HXlGn8TvgRT1oXFEVZo
+HvPf9sDRjDxV39iNEhUKRHX2dxxsgLbA6IqI1W2k0h+WVnafp7hjy9QCbjRkBGWK
+1HJ/HqICNBv+UTURsn7DFDioEcuFELGFf0m9Z5nVT7O7Pek10Q7BVBivAgMBAAGj
+UDBOMB0GA1UdDgQWBBS7sWlXl0ZdB5LXA9/TCmk9mdVwRzAfBgNVHSMEGDAWgBS7
+sWlXl0ZdB5LXA9/TCmk9mdVwRzAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUA
+A4IBAQBKw3odroL+BPLewpskJ228+PqqvSQvC3MwMfRA9r6rvIGqQmlW8Utj0Gux
+x7MiDo9wgj61DnndbrSac/oJ5icT8gI7suKeCSh23eLQ58MxZuJzYCekT2s4qVAi
+VLbeb7b4iQadlt3TeIjzvvj60qEHq4Md0SOf1gc01tGc6fMW7Ql29P4RdD682Xad
+KaSWcB3N/NRGZ0zW9321tUgN6VKOEOWqt4vt9G2mPViLeUH7ZVB1gor+pR4N6ljG
+C0FvxTyyS61Jgy/zDfPidUOGCUGukl67T5xQjlewckKnyrTORLDIvMgvLdyD3y2U
+tXfw8qEIFXkmqPXch2AyF5Jq6iTE
+-----END CERTIFICATE-----
+	'''
 
+	if not os.path.exists(cafile):
+		with open(cafile, "w") as w:
+			w.write(crtfile)
+	
 	print("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
 	mc = mqtt_client(	client_id = "id_shenyang_test_all_subscribe111", 
 						clean_session = False,
 						userdata = None,
 						protocol = mqtt.MQTTv31,
 						transport = 'tcp')
-	mc.setsubscribe(topic='/acs_open', qos=1)
-	mc.setsubscribe(topic='/qr_code', qos=1)
-	mc.setsubscribe(topic=ms.OPENDOOR_RESP_TOPIC, qos=2)
-	mc.setsubscribe(topic=ms.QR_RESP_TOPIC, qos=2)
-	mc.setsubscribe(topic=ms.DEVICE_STATUS_TOPIC, qos=2)
-	mc.setsubscribe(topic=ms.DEVICE_INFO_RESP_TOPIC, qos=0)
-	mc.setsubscribe(topic=ms.UPDATE_RESP_TOPIC, qos=2)
-	mc.setsubscribe(topic=ms.OPENSSH_RESP_TOPIC, qos=0)
+	mc.setsubscribe(topic='/acs_open', qos=0)
+	mc.setsubscribe(topic='/qr_code', qos=0)
+	mc.setsubscribe(topic='/door_response', qos=0)
+	mc.setsubscribe(topic='/qr_response', qos=0)
+	mc.setsubscribe(topic="/status", qos=0)
+	mc.setsubscribe(topic="/test/device_info_resp", qos=0)
+	mc.setsubscribe(topic="/update_resp", qos=0)
+	mc.setsubscribe(topic="/ssh_enable_resp", qos=0)
 	with open("./device_sn.table", "r") as f:
 		while True:
 			linemsg = f.readline().split('\n')[0]
 			if len(linemsg) == 0:
 				break
 			print(linemsg)
-			device_status_topic = "{}/{}".format(ms.DEVICE_STATUS_TOPIC, linemsg)
+			device_status_topic = "{}/{}".format("/status", linemsg)
 			mc.setsubscribe(topic=device_status_topic, qos=0)
 		
-
 	mc.set_user_and_password(user, passwd)
 	mc.set_cafile(cafile)
-	if publish_flag == True:
-		mc.start_publish_thread()
 	mc.run(host=host, port=port, keepalive=60)
 

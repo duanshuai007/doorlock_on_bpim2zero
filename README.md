@@ -11,29 +11,41 @@
 
 ### 1.配置文件方式启动
 	
-通过`wpa_passphrase ssid psk > /etc/wpa.conf `将wifi配置信息生成输出到配置文件中。在`/etc/rc.local`文件中加入开机启动程序，`wpa_supplicant -iwlan0 -c /etc/wpa.conf`。
+通过`wpa_passphrase ssid psk > /etc/wpa.conf `将wifi配置信息生成输出到配置文件中。  
+在`/etc/rc.local`文件中加入开机启动程序，`wpa_supplicant -iwlan0 -c /etc/wpa.conf`。
 
 ### 2.通过wpa_cli命令行设置
 
-首先将配置`wifi`的脚本放在`/root/`目录下，脚本`start_wifi.sh`内容如下。
+首先将配置`wifi`的脚本放在`/root/`目录下，脚本`connect_wifi.sh`内容如下。
 
 ```
-wpa_cli -iwlan0 add_n
-该指令会根据网络列表中的个数自动递增，因为没有配置wpa.con文件，所以默认是0
+#!/bin/bash
 
-该指令设置Wifi名
-wpa_cli -iwlan0 set_n 0 ssid \"Frog\"
+SSID=$1
+PASSWORD=$2
 
-设置Wifi密码
-wpa_cli -iwlan0 set_n 0 psk \"password\"
+if [ -z "${SSID}" -o -z "${PASSWORD}" ]
+then
+        echo "parameters error"
+        echo "please run script like this:"
+        echo "./script.sh ssid password"
+        exit
+fi
 
-启动wifi
-wpa_cli -iwlan0 select_n 0
-wpa_cli -iwlan0 enable_n 0
+#np=$(wpa_cli -iwlan0 add_n)
+np=0
+#?该?指?令?会?根?据?网?络?列?表?中?的?个?数?自?动?递?增?，??帺?没?有?配?置wpa.con?文?件?，?所?以?默?认?是0
+wpa_cli -iwlan0 disable_n ${np} > /dev/null 2>&1
+#?该?指?令?设?置Wifi?名
+wpa_cli -iwlan0 set_n ${np} ssid \"${SSID}\" > /dev/null 2>&1
+
+#?设?置Wifi?密?码
+wpa_cli -iwlan0 set_n ${np} psk \"${PASSWORD}\" > /dev/null 2>&1
+
+#?启?动wifi
+wpa_cli -iwlan0 select_n ${np} > /dev/null 2>&1
+wpa_cli -iwlan0 enable_n ${np} > /dev/null 2>&1
 ```
-
-然后设置开机启动脚本,在/etc/rc.local文件中加入
-`/root/start_wifi.sh`
 
 ## 2G网络设置
 
@@ -60,136 +72,6 @@ make install
 安装完成后还需要编写`pppd`控制脚本。
 首先在`/etc/`目录下新建文件夹`ppp`然后在`ppp`文件中新建文件夹`peers`,然后在`peers`目录中分别创建`myapp, myppp-chat-connect, myppp-chat-disconnect`三个脚本。
 
-myapp脚本
-
-```
-#/etc/ppp/peers/file_name
-
-# Usage: root> pppd call file_name
-
-# 调试时隐藏密码
-hide-password
-
-# 该手机不需要身份验证
-noauth
-
-#############################################
-# 注意: 这里要知道chat安装的位置, 如果不在环境变量
-# 里面, 则要指定位置(如 /usr/sbin/chat -s -v -f)
-#############################################
-# 用于呼叫控制脚本
-connect 'chat -s -v -f /etc/ppp/peers/myppp-chat-connect'
-
-# 断开连接脚本
-disconnect 'chat -s -v -f /etc/ppp/peers/myppp-chat-disconnect'
-
-# 调试信息
-debug
-
-# 模块串口设备
-/dev/ttyS2
-
-# 串口波特率
-115200
-
-# 使用默认路由
-defaultroute 
-
-# 不能指定默认IP
-noipdefault 
-
-# No ppp compression 
-novj 
-novjccomp 
-noccp 
-ipcp-accept-local 
-ipcp-accept-remote 
-local 
-
-# 最好锁定串行总线
-lock
-dump
-
-logfile /var/log/ppplogfile
-#停留在后台监视网络，一旦有需求就立即联网
-demand
-#永久链接，自动重播
-persist
-nodetach
-# Keep pppd attached to the terminal 
-
-# 用户名 密码
-# user root
-# password
-
-# 硬件控制流
-crtscts
-remotename 3gppp
-ipparam 3gppp
-
-# 向对方请求最多2个DNS服务器地址
-usepeerdns
-
-```
-
-myppp-chat-connect
-
-```
-TIMEOUT 15
-# 连续15秒, 收到以下字符, 退出执行
-ABORT   "BUSY" 
-ABORT   "NO CARRIER" 
-ABORT   "NO DIALTONE" 
-ABORT   "ERROR" 
-ABORT   "NO ANSWER" 
-
-TIMEOUT 20
-# 40秒内没有收到指定字符, 退出
-# 如: OK \rATZ, 发送 ATZ, 希望收到的是 OK.
-'' AT  
-SAY "\nCheck SIM80)\n" 
-OK \rATZ
-SAY "\nCheck SIM800 active\n" 
-OK ATE1
-
-#cmnet 是移动的接入点 3gnet是联通3g接入点。
-OK \rAT+COPS?
-'CHINA MOBILE' \rAT+CGDCONT=1,"IP","cmnet",,0,0
-
-OK AT+CGQREQ=1,0,0,0,0,0
-OK AT+CGQMIN=1,0,0,0,0,0
-
-# 拨号
-OK \rAT+COPS?
-'CHINA MOBILE' ATDT*99***1#  
-SAY "\nWaiting for connect...\n"
-CONNECT ""  
-SAY "\nConnected!"
-```
-
-
-myppp-chat-disconnect
-
-```
-ABORT "ERROR" 
-ABORT "NO DIALTONE" 
-SAY "\NSending break to the modem\n"
-""\k"
-""+++ATH" 
-SAY "\nGood bye !\n"
-```
-
-## 开机启动网络管理脚本
-
-将pppd和wifi网络的启动放在一个脚本文件中进行统一管理，通过设置为后台守护进程一直监视进程保证进程执行。  
-去掉`/etc/rc.local`中关于`pppd`和`wpa`的语句，然后加入
-
-```
-/root/start_network.sh &
-/root/monitor_network.sh &
-```
-
-
 ## 硬件控制
 
 #### 控制GPIO
@@ -198,27 +80,47 @@ SAY "\nGood bye !\n"
 
 * 1 使用python的mmap库对内存进行映射，然后直接对寄存器就可以进行读写控制。通过这种方式实现了对PA3引脚的读写。
 
-* 2 编写驱动程序引脚进行控制，使用gpio_request，gpio_set_value,gpio_get_value等内核函数对gpio进行读写操作，并传递到用户空间。
+* 2 编写驱动程序引脚进行控制，使用`gpio_request，gpio_set_value,gpio_get_value`等内核函数对gpio进行读写操作，并传递到用户空间。
 
 
 #### 控制SPI
 
 在BPIM2-zero中有两个spi，其中spi0是默认提供的spi接口，linux还提供了一个通用驱动程序spidev.c，我们的设备接在了spi1上，无法直接使用Linux的spi驱动，所以选择使用字符设备驱动读写寄存器的方式来对spi进行控制。
 
-最后在/root目录下执行`pyhthon3 mqtt_client.py`启动客户端程序。
 
-* log信息输出在/root/log/server.log文件中
+## 启动MQTT
+最后在/root目录下执行`pyhthon3 mqtt_client.py {device sn}`启动客户端程序。
+
+* log信息输出在`/root/log/server.log`文件中
 
 
-## 修改/etc/rc.local
+## 设置开机启动
 
-使用eth0的mac地址作为设备的id.
+通过`/etc/rc.local`的方式设置开机启动已经逐渐被弃用，本文中使用`systemctl`的方式来设置开机启动。  
+通过编写一个`service`来把我们的程序加入到开机启动，并可以通过`systemctl`进行`start,stop,restart`等操作
+
+#### zywldl.service
+
 ```
-python3 /root/showimage.py 1
-/root/start_network.sh &
-/root/get_eth0_mac.sh
-/root/monitor_network.sh &
+[Unit]
+Description=zywl doorlock Service
+After=network.target
+
+[Service]
+Type=forking
+RestartSec=5
+ExecStart=/usr/bin/zywldl start
+ExecStop=/usr/bin/zywldl stop
+ExecReload=/usr/bin/zywldl restart
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target
 ```
+
+然后通过`ln -s /root/watch.sh /usr/bin/zywldl`生成连接。  
+把`zywldl.service`放到`/lib/systemd/system/`目录下，执行`systemctl start zywldl`就可以启动程序了，执行`systemctl enable zywldl`就把程序设置为开机启动。
+
 
 ## 烧写镜像的方法
 
@@ -234,6 +136,7 @@ sudo bpi-copy ubuntu.img /dev/sdb 7296
 
 ## 修改镜像大小的方法
 
+```
 1.首先sd卡插入读卡器，连接到电脑上。  
 执行mount命令，会发现/dev/sdx1 /dev/sdx2的挂载点。  
 
@@ -273,86 +176,69 @@ fdisk -l test.img
 	Device     Boot  Start      End Sectors  Size Id Type
 	test.img1        49152   253951  204800  100M 83 Linux
 	test.img2       253952 10113023 9859072  4.7G 83 Linux
-最后执行以下命令，镜像就会变成修改的大小了。
+最后执行以下命令，镜像就会变成修改的大小了。  
 sudo truncate --size=$[(10113023+1)*512] test.img
+```
+
+## 监视所有设备
+代码参考`test/mqtt_publish.py`文件  
+`python3 mqtt_publish.py`
 
 ## 获取已知设备sn的设备ip
+代码参考`test/mqtt_publish_deviceinfo.py`文件。  
+`python3 mqtt_publish_deviceinfo.py [device sn] [doorlock]`    
 
-在没有串口线的情况下通过mqtt来获取设备ip
+- `device sn`: all表示获取所有在线设备的信息, 若填入具体的设备sn则表示只查询或设置该单独设备。
+- doorlock: 0表示读取doorlock time， 其他大于0的值表示将设备的doorlock time设置为该值
 
-订阅topic:`/test/device_info_resp`
-
-生成数据
-
-```
-sendmsg = 
-{
-	"device_sn" : "", 
-	"stime" : 0,
-	# 0  = get doorlock time
-	# !0 = set doorlock time
-	"doorlock" : 0,
-	"ip" : "", 
-	"current" : "", 
-	"thread status" : ""
-}
-```
-
-填充`device_sn`以及`stime`，在python3脚本程序中`stime=int(time.time())`  
-如果不想修改`doorlock`时间，则该项一定要设置为0  
-然后将数据转换为bytes  
-json.dumps(sendmsg)  
-然后通过mqtt 将该信息publish 到 `/test/device_info` 该主题上。
-
-通过订阅信息就能接收到返回的信息
+## 上传代码压缩包到服务器
+代码参考`test/firmware_upload.py`文件  
+`python3 firmware_upload.py  [firmware path]`   
+执行后会返回
 
 ```
-on message:/test/device_info_resp 0 b'{"current": "eth0", "doorlock": "success", "stime": 0, "device_sn": "024251720577", "thread status": "", "ip": "192.168.200.54"}'
+swann@ubuntu:~/workgit/acs/test$ python3 firmware_upload.py ../firmware_10.des3.tar.gz 
+0
+upgrade/0c17816d.
 ```
-就获得了设备的ip地址，就可以通过ssh登陆了(仅限于内网)。
-
-也可以通过该条信息来设置`doorlock`的时间。
-
-```
-当doorlock = 0 时，程序查询设备上的doorlock时间，并通过信息返回。
-当doorlock 不等于 0 时，程序会将doorlock的值设置为本地的doorlock时间，成功返回success，失败返回failed
-设置的doorlock立即生效
-```
+其中0表示升级成功，最下面的则是对应该文件的链接。
 
 ## 增加了在线升级功能
+代码参考`test/mqtt_publish_update.py`文件。
+`python3 mqtt_publish_update.py [device sn] [download] [md5] [version]`  
 
-升级topic:`/update`
-响应topic:`/update_resp`
-
-```
-"device_sn" : "",
-	"stime" : "",
-	"firmware" : {
-		"url" : "",
-		"version" : "",
-		"packetsize" : 0,
-		"enable" : "",
-		"md5" : "",
-	}
-```
+- download:程序代码的下载地址，该地址只需要填入上一步中获取的文件链接地址`upgrade/0c17816d.`即可。
+- md5:程序代码压缩包的md5校验值，通过shell命令md5sum firmware来获取。 
+- version:程序代码的版本信息，如果目标板的版本信息大于等于version，则不进行升级操作。  
 
 ## 增加了ssh内网穿透功能
 
-设置topic:`/ssh_enable`
-响应topic:`/ssh_enable_resp`
+代码参考`test/mqtt_publish_enablessh.py`文件。
+`python3 mqtt_publish_enablessh.py [device sn] [enable]`
 
-```
-sendmsg = 
-{
-	"device_sn" : "", 
-	"stime" : "", 
-	"enable" : 0,
-	"opentime" : 0,
-}
-```
-填充`device_sn`以及`stime`，在python3脚本程序中`stime=int(time.time())`     
-enable = 1 表示打开ssh  
-enable = 0 表示关闭ssh  
-返回的信息中`status="open"` 表示打开成功，`status="close"` 表示关闭成功
+- enable = 1 表示打开ssh  enable = 0 表示关闭ssh  
+- 返回的信息中`status="open"` 表示打开成功，`status="close"` 表示关闭成功
 
+## 控制门锁开关
+
+代码参考`test/mqtt_publish_ctrlled.py`文件  
+`python3 mqtt_publish_ctrlled.py [device sn] [switch]`  
+
+- switch: 1表示开启门锁， 0表示关闭门锁。
+- 开启门锁后，门锁会在[doorlock time]时间后自动关闭
+
+
+## 设置板子上的wlan
+
+代码参考`/test/mqtt_publish_wlan.py`文件  
+`python3 mqtt_publish_wlan.py [device sn] [ssid] [psk]`  
+
+- ssid:设置wifi的名
+- psk:设置wifi的密码
+- 设置wifi后，如果目标板子只能通过wifi上网，则一定要谨慎执行该指令，否则可能导致无法连接到板子上。
+
+
+## 测试生成二维码
+代码参考`/test/mqtt_publish_qrreq_3.py`文件   
+`python3 mqtt_publish_qrreq_3.py [device sn] [qr message]`   
 

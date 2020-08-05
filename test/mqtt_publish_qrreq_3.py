@@ -47,7 +47,7 @@ class mqtt_client(mqtt.Client):
 			"type" : 3,
 			"identify" : 123456789,
 			"message" : {
-				"data" : "this is a test message!",
+				"data" : self.qrmessage,
 			},
 			"stime" : int(time.time())
 		}
@@ -103,8 +103,9 @@ class mqtt_client(mqtt.Client):
 	def setsubscribe(self, topic=None, qos=0):
 		self.sub_topic_list.append((topic, qos))
 
-	def set_deviceid(self, devid):
+	def set_deviceid(self, devid, msg):
 		self.devid = devid
+		self.qrmessage = msg
 
 	def do_select(self):
 		self.publish_queue = queue.Queue(8)
@@ -147,12 +148,13 @@ if __name__ == "__main__":
 	transport="tcp" or "websockets"
 	'''
 
-	if len(sys.argv) < 1:
+	if len(sys.argv) < 3:
 		print("run like this:")
-		print("python3 script.py deviceid ledenable[1/0]")
+		print("python3 script.py [device sn] [qr message]")
 		exit(1)
 
 	devid = sys.argv[1]
+	qrmessage = sys.argv[2]
 
 	host = "mqtt.iotwonderful.cn"
 	port = 8883
@@ -199,7 +201,7 @@ tXfw8qEIFXkmqPXch2AyF5Jq6iTE
 	mc.setsubscribe(topic="/qr_response", qos=2)
 	mc.set_user_and_password(user, passwd)
 	mc.set_cafile(cafile)
-	mc.set_deviceid(devid)
+	mc.set_deviceid(devid, qrmessage)
 	mc.start_publish_thread()
 	mc.run(host=host, port=port, keepalive=60)
 
