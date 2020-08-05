@@ -1,7 +1,9 @@
 #!/bin/bash
 
 all_start() {
-	echo "start all"
+	#echo "start all"
+	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+	echo "${GET_TIMESTAMP}:zywldl service start!" >> /var/log/monitor.log
 	ps -ef | grep "zywlstart" | grep -v grep > /dev/null
 	if [ $? -ne 0 ]
 	then
@@ -16,7 +18,9 @@ all_start() {
 }
 
 all_stop() {
-	echo "stop all"
+	#echo "stop all"
+	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+	echo "${GET_TIMESTAMP}:zywldl service stop!" >> /var/log/monitor.log
 	python3 /home/watchdog/feed.py
 	pid=$(ps -ef | grep "zywlstart" | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]

@@ -37,12 +37,23 @@ delete_iprule() {
 	done
 }
 
+exit_flag=0
+get_kill() {
+	exit_flag=1
+}
 
-touch ${STATEFILE}
+
+cat /dev/null > ${STATEFILE}
+
+trap "get_kill" 15
 
 while true
 do
 	sleep 5
+	if [ ${exit_flag} -eq 1 ]
+	then
+		exit
+	fi
 
 	ifconfig -a | grep ppp0 > /dev/null
 	if [ $? -ne 0 ]

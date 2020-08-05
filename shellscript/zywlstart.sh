@@ -21,7 +21,7 @@ echo "${CUR_TIME}:$0 start work!}" >> ${LOG_FILE}
 #echo "*/10 * * * * /usr/sbin/ntpdate cn.pool.ntp.org > /dev/null" >> /var/spool/cron/crontabs/root
 #echo "*/10 * * * * /bin/bash /root/update_time.sh" >> /var/spool/cron/crontabs/root
 #service cron start
-#test
+
 cp /root/ntp.conf /etc/
 
 service frpc stop
@@ -80,6 +80,9 @@ timecount_for_pppd=0
 wpa_start_error=0
 check_pppd_count=0
 check_wpa_count=0
+
+#set /tmp/eth0macaddr and set hostname
+/root/get_eth0_mac.sh
 
 while true
 do
@@ -140,15 +143,6 @@ do
 				cat /dev/null > /var/log/ppplogfile
 				${PPPD} call myapp &
 			fi
-#		echo "${CUR_TIME}:$0 serial not work" >> ${LOG_FILE}
-#		python3 ${WATCHDOGSCRIPT}
-#		feedcount=0
-#		/root/gpio_ctrl.sh 3 0
-#		sleep 0.2
-#		/root/gpio_ctrl.sh 3 1
-#		sleep 2
-#		/root/gpio_ctrl.sh 3 0
-#		/usr/bin/tput reset > /dev/ttyS2
 		else
 			timecount_for_pppd=$(expr ${timecount_for_pppd} + 1)
 			if [ ${timecount_for_pppd} -ge 5 ]
@@ -190,10 +184,9 @@ do
 				ver=$(cat ${UPDATESTATUS} | awk -F":" '{print $2}')
 				no=$(cat ${UPDATESTATUS} | awk -F":" '{print $3}')
 				echo "success:${ver}:${no}" > ${UPDATESTATUS}
-				#/root/reset_all.sh &
 			elif [ "${sta}" == "success" -o "${sta}" == "error" ]
 			then
-				echo "update firmware done!" > /dev/null
+				#echo "update firmware done!" > /dev/null
 				sta=$(cat ${NETFILE}) 
 				if [ -z "${sta}" ]
 				then
@@ -201,6 +194,7 @@ do
 				fi
 			else
 				cat /dev/null > ${NETFILE}
+				mqtt_stop
 				ps -ef | grep update_firmware | grep -v grep > /dev/null
 				if [ $? -ne 0 ]
 				then

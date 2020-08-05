@@ -44,11 +44,23 @@ delete_iprule() {
 	done
 }
 
-touch ${STATUSFILE}
+exit_flag=0
+
+get_kill() {
+	exit_flag=1
+}
+
+cat /dev/null > ${STATUSFILE}
+
+trap "get_kill" 15
 
 while true
 do
 	sleep 1
+	if [ ${exit_flag} -eq 1 ]
+	then
+		exit
+	fi
 
 	ifconfig eth0 | grep RUNNING > /dev/null
 	if [ $? -ne 0 ]
@@ -121,7 +133,11 @@ do
 					then
 						connect_flag=1
 						error_count=0
-						echo "OK" > ${STATUSFILE}
+						sta=$(cat ${STATUSFILE})
+						if [ -z "${sta}" ]
+						then
+							echo "OK" > ${STATUSFILE}
+						fi
 					else
 						GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 						echo "${GET_TIMESTAMP}:eth0 ping failed" >> ${LOGFILE}

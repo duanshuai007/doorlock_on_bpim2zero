@@ -12,8 +12,10 @@ LOGFILE="/var/log/monitor.log"
 NETSTAT="/root/netstatus"
 CURRENTNET="/tmp/current_network"
 NETTIMESTAMP="/tmp/network_timestamp"
+MQTTSTATUS="/root/mqtt_connect_status"
 
 cat /dev/null > ${NETSTAT}
+cat /dev/null > ${MQTTSTATUS}
 
 ETHSTATUS="/tmp/eth0status"
 WLANSTATUS="/tmp/wlan0status"
@@ -83,43 +85,67 @@ kill_mqtt_thread() {
 }
 
 monitor_network() {
-	pid=$(ps -ef | grep zywl_moni_eth | grep -v grep | wc -l)
-	if [ -n "${pid}" ]
-		then
-		if [ ${pid} -ge 3 ]
-		then
-			kill ${pid} > /dev/null
-			kill -9 ${pid} > /dev/null
-		elif [ ${pid} -eq 0 ]
-		then
-			/root/zywl_moni_eth.sh &
-		fi
+	pidnum=$(ps -ef | grep zywl_moni_eth | grep -v grep | wc -l)
+	if [ ${pidnum} -eq 0 ]
+	then
+		/root/zywl_moni_eth.sh &
+	elif [ ${pidnum} -ge 3 ]
+	then
+		pid=$(ps -ef | grep zywl_moni_eth | grep -v grep | awk '{print $2}')
+		kill ${pid} > /dev/null
+		kill -9 ${pid} > /dev/null
+	fi
+#	if [ -n "${pid}" ]
+#		then
+#		if [ ${pid} -ge 3 ]
+#		then
+#			kill ${pid} > /dev/null
+#			kill -9 ${pid} > /dev/null
+#		elif [ ${pid} -eq 0 ]
+#		then
+#			/root/zywl_moni_eth.sh &
+#		fi
+#	fi
+
+	pidnum=$(ps -ef | grep zywl_moni_wlan | grep -v grep | wc -l)
+	if [ ${pidnum} -eq 0 ]
+	then
+		/root/zywl_moni_wlan.sh &
+	elif [ ${pidnum} -ge 3 ]
+	then
+		pid=$(ps -ef | grep zywl_moni_wlan | grep -v grep | awk '{print $2}')
+		kill ${pid} > /dev/null
+		kill -9 ${pid} > /dev/null
 	fi
 
-	pid=$(ps -ef | grep zywl_moni_wlan | grep -v grep | wc -l)
+	pidnum=$(ps -ef | grep zywl_moni_ppp | grep -v grep | wc -l)
+	if [ ${pidnum} -eq 0 ]
+	then
+		/root/zywl_moni_ppp.sh &
+	elif [ ${pidnum} -ge 2 ]
+	then
+		pid=$(ps -ef | grep zywl_moni_ppp | grep -v grep | awk '{print $2}')
+		kill -INT ${pid} > /dev/null
+	fi
+}
+
+donot_monitor_network() {
+	pid=$(ps -ef | grep zywl_moni_eth | grep -v grep | awk '{print $2}')
 	if [ -n "${pid}" ]
 	then
-		if [ ${pid} -ge 3 ]
-		then
-			kill ${pid} > /dev/null
-			kill -9 ${pid} > /dev/null
-		elif [ ${pid} -eq 0 ]
-		then
-			/root/zywl_moni_wlan.sh &
-		fi
+		kill -15 ${pid}  > /dev/null
 	fi
 
-	pid=$(ps -ef | grep zywl_moni_ppp | grep -v grep | wc -l)
+	pid=$(ps -ef | grep zywl_moni_wlan | grep -v grep | awk '{print $2}')
 	if [ -n "${pid}" ]
 	then
-		if [ ${pid} -ge 3 ]
-		then
-			kill ${pid} > /dev/null
-			kill -9 ${pid} > /dev/null
-		elif [ ${pid} -eq 0 ]
-		then
-			/root/zywl_moni_ppp.sh &
-		fi
+		kill -15 ${pid}  > /dev/null
+	fi
+
+	pid=$(ps -ef | grep zywl_moni_ppp | grep -v grep | awk '{print $2}')
+	if [ -n "${pid}" ]
+	then
+		kill -15 ${pid}  > /dev/null
 	fi
 }
 
@@ -198,8 +224,16 @@ echo "${GET_TIMESTAMP}:zywlmonitor script start!" >> ${LOGFILE}
 
 while true
 do
-	monitor_network
 	time_sync
+	sta=$(cat ${MQTTSTATUS})
+	if [ "${sta}" == "success" ]
+	then
+		sleep 5
+		donot_monitor_network
+		continue
+	fi
+
+	monitor_network
 
 	#系统启动时会从配置文件net.conf中读取默认配置的网络并进行连接
 	if [ ${count} -ge 5 ]
@@ -228,8 +262,6 @@ do
 			net_state=$(read_netstatus ${CURRENT_NET})
 		fi
 
-		GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-		#echo "${GET_TIMESTAMP}:network[${CURRENT_NET}] status=${net_state}" >> ${LOGFILE}
 		if [ "${net_state}" == "OK" ]
 		then
 			#equl 0 mean network is fine
@@ -248,6 +280,14 @@ do
 				echo "OK" > ${NETSTAT}
 				echo ${CURRENT_NET} > ${CURRENTNET}
 				/root/update_time.sh &
+			else
+				#用来处理默认路由因为某种情况被错误的删除
+				net=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $8}')
+				if [ -z "${net}" ]
+				then
+					#如果没能发现默认的路由信息，则添加默认路由
+					setCurrentRoute ${CURRENT_NET}
+				fi
 			fi
 		else
 			fail_count=$(expr ${fail_count} + 1)

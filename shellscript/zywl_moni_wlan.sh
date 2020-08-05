@@ -48,11 +48,24 @@ delete_iprule() {
 	done
 }
 
-touch ${STATUSFILE}
+exit_flag=0
+
+get_kill() {
+	exit_flag=1
+}
+
+cat /dev/null > ${STATUSFILE}
+
+trap "get_kill" 15
 
 while true
 do
 	sleep 1
+
+	if [ ${exit_flag} -eq 1 ]
+	then
+		exit
+	fi	
 
 	ifconfig -a | grep wlan0 > /dev/null
 	if [ $? -ne 0 ]
