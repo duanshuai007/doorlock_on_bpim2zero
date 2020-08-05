@@ -46,11 +46,11 @@ class mqtt_client(mqtt.Client):
 		updateinfo = {
 			"device_sn" : self.device_sn,
 			"firmware" : {
-				"url" : "https://acstest.iotwonderful.cn/api/upgrade/download?file_name=upgrade/74b23364.gz",
+				"url" : "https://acstest.iotwonderful.cn/api/upgrade/download?file_name=upgrade/e3afb61e.",
 				"version" : int(self.version),
 				"packetsize" : 1024,
 				"enable" : 1,
-				"md5" : "74b23364eabfaa9e9ce1146f5a773ccf",
+				"md5" : "e3afb61e634846481c361e9371ea096e",
 			},
 			"stime" : int(time.time()),
 		}

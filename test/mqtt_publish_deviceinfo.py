@@ -43,6 +43,8 @@ class mqtt_client(mqtt.Client):
 		if rc == 0:
 			print("connect success")
 
+		if self.device_sn == "all":
+			self.device_sn = "ffffffffffff"
 		deviceinfo = {
 			"device_sn" : self.device_sn, 
 			"stime" : int(time.time()),

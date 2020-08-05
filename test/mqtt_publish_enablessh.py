@@ -51,7 +51,7 @@ class mqtt_client(mqtt.Client):
 		}
 		if self.publish_queue is not None:
 			sendmsg = json.dumps(openssh)
-			self.publish_queue.put({"topic":"/ssh_enable", "payload":sendmsg, 'qos':2, 'retain':False})
+			self.publish_queue.put({"topic":"/ssh_enable", "payload":sendmsg, 'qos':0, 'retain':False})
 
 	#执行mqttc.disconnect()主动断开连接会触发该函数
 	#当因为什么原因导致客户端断开连接时也会触发该函数,ctrl-c停止程序不会触发该函数
@@ -126,7 +126,6 @@ class mqtt_client(mqtt.Client):
 		publish_thread.start()
 
 	def run(self, host=None, port=1883, keepalive=60):
-		#self.will_set(topic=ms.DEVICE_ONLINE_TOPIC, payload=respjson, qos=2, retain=False)
 		self.reconnect_delay_set(min_delay=10, max_delay=120)
 
 		self.username_pw_set(self.username, self.password)
@@ -196,7 +195,7 @@ tXfw8qEIFXkmqPXch2AyF5Jq6iTE
 						userdata = None,
 						protocol = mqtt.MQTTv31,
 						transport = 'tcp')
-	mc.setsubscribe(topic="/ssh_enable_resp", qos=2)
+	mc.setsubscribe(topic="/ssh_enable_resp", qos=0)
 	mc.set_user_and_password(user, passwd)
 	mc.set_cafile(cafile)
 	mc.set_devicesn_and_enable(device_id, enable)
