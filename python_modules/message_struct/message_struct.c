@@ -1027,13 +1027,16 @@ int __pyx_module_is_main_message_struct = 0;
 static const char __pyx_k_[] = "";
 static const char __pyx_k_ip[] = "ip";
 static const char __pyx_k_md5[] = "md5";
+static const char __pyx_k_psk[] = "psk";
 static const char __pyx_k_url[] = "url";
 static const char __pyx_k_data[] = "data";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_name[] = "__name__";
 static const char __pyx_k_page[] = "page";
+static const char __pyx_k_ssid[] = "ssid";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_type[] = "type";
+static const char __pyx_k_wlan[] = "wlan";
 static const char __pyx_k_rtime[] = "rtime";
 static const char __pyx_k_scene[] = "scene";
 static const char __pyx_k_stime[] = "stime";
@@ -1064,6 +1067,7 @@ static const char __pyx_k_QR_RESPONSE[] = "QR_RESPONSE";
 static const char __pyx_k_UPDATE_INFO[] = "UPDATE_INFO";
 static const char __pyx_k_qr_response[] = "/qr_response";
 static const char __pyx_k_update_resp[] = "/update_resp";
+static const char __pyx_k_wlan_config[] = "/wlan_config";
 static const char __pyx_k_OPENDOOR_MSG[] = "OPENDOOR_MSG";
 static const char __pyx_k_OPENSSH_INFO[] = "OPENSSH_INFO";
 static const char __pyx_k_UPDATE_TOPIC[] = "UPDATE_TOPIC";
@@ -1082,19 +1086,24 @@ static const char __pyx_k_ssh_enable_resp[] = "/ssh_enable_resp";
 static const char __pyx_k_UPDATE_RESP_INFO[] = "UPDATE_RESP_INFO";
 static const char __pyx_k_UPGRADE_PASSWORD[] = "UPGRADE_PASSWORD";
 static const char __pyx_k_UPGRADE_USERNAME[] = "UPGRADE_USERNAME";
+static const char __pyx_k_WLAN_CONFIG_INFO[] = "WLAN_CONFIG_INFO";
 static const char __pyx_k_test_device_info[] = "/test/device_info";
+static const char __pyx_k_wlan_config_resp[] = "/wlan_config_resp";
 static const char __pyx_k_DEVICE_INFO_TOPIC[] = "DEVICE_INFO_TOPIC";
 static const char __pyx_k_OPENDOOR_RESP_MSG[] = "OPENDOOR_RESP_MSG";
 static const char __pyx_k_OPENSSH_RESP_INFO[] = "OPENSSH_RESP_INFO";
 static const char __pyx_k_QR_GENERATE2VCODE[] = "QR_GENERATE2VCODE";
 static const char __pyx_k_UPDATE_RESP_TOPIC[] = "UPDATE_RESP_TOPIC";
 static const char __pyx_k_UPGRADE_TOKEN_URL[] = "UPGRADE_TOKEN_URL";
+static const char __pyx_k_WLAN_CONFIG_TOPIC[] = "WLAN_CONFIG_TOPIC";
 static const char __pyx_k_OPENSSH_RESP_TOPIC[] = "OPENSSH_RESP_TOPIC";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_DEVICE_STATUS_TOPIC[] = "DEVICE_STATUS_TOPIC";
 static const char __pyx_k_OPENDOOR_RESP_TOPIC[] = "OPENDOOR_RESP_TOPIC";
+static const char __pyx_k_WLAN_CONFIG_RESP_INFO[] = "WLAN_CONFIG_RESP_INFO";
 static const char __pyx_k_test_device_info_resp[] = "/test/device_info_resp";
 static const char __pyx_k_DEVICE_INFO_RESP_TOPIC[] = "DEVICE_INFO_RESP_TOPIC";
+static const char __pyx_k_WLAN_CONFIG_RESP_TOPIC[] = "WLAN_CONFIG_RESP_TOPIC";
 static const char __pyx_k_xinchao_iotwonderful_com[] = "xinchao@iotwonderful.com";
 static const char __pyx_k_https_acstest_iotwonderful_cn_ap[] = "https://acstest.iotwonderful.cn/api/upgrade/login";
 static PyObject *__pyx_kp_s_;
@@ -1127,6 +1136,10 @@ static PyObject *__pyx_n_s_UPDATE_TOPIC;
 static PyObject *__pyx_n_s_UPGRADE_PASSWORD;
 static PyObject *__pyx_n_s_UPGRADE_TOKEN_URL;
 static PyObject *__pyx_n_s_UPGRADE_USERNAME;
+static PyObject *__pyx_n_s_WLAN_CONFIG_INFO;
+static PyObject *__pyx_n_s_WLAN_CONFIG_RESP_INFO;
+static PyObject *__pyx_n_s_WLAN_CONFIG_RESP_TOPIC;
+static PyObject *__pyx_n_s_WLAN_CONFIG_TOPIC;
 static PyObject *__pyx_n_s_action;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_current;
@@ -1150,6 +1163,7 @@ static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_opentime;
 static PyObject *__pyx_n_s_packetsize;
 static PyObject *__pyx_n_s_page;
+static PyObject *__pyx_n_s_psk;
 static PyObject *__pyx_kp_s_qr_ctrl;
 static PyObject *__pyx_kp_s_qr_response;
 static PyObject *__pyx_n_s_result;
@@ -1157,6 +1171,7 @@ static PyObject *__pyx_n_s_rtime;
 static PyObject *__pyx_n_s_scene;
 static PyObject *__pyx_kp_s_ssh_enable;
 static PyObject *__pyx_kp_s_ssh_enable_resp;
+static PyObject *__pyx_n_s_ssid;
 static PyObject *__pyx_kp_s_status;
 static PyObject *__pyx_n_s_status_2;
 static PyObject *__pyx_n_s_stime;
@@ -1169,6 +1184,9 @@ static PyObject *__pyx_kp_s_update;
 static PyObject *__pyx_kp_s_update_resp;
 static PyObject *__pyx_n_s_url;
 static PyObject *__pyx_n_s_version;
+static PyObject *__pyx_n_s_wlan;
+static PyObject *__pyx_kp_s_wlan_config;
+static PyObject *__pyx_kp_s_wlan_config_resp;
 static PyObject *__pyx_kp_s_xinchao_iotwonderful_com;
 static PyObject *__pyx_int_0;
 /* Late includes */
@@ -1249,6 +1267,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_UPGRADE_PASSWORD, __pyx_k_UPGRADE_PASSWORD, sizeof(__pyx_k_UPGRADE_PASSWORD), 0, 0, 1, 1},
   {&__pyx_n_s_UPGRADE_TOKEN_URL, __pyx_k_UPGRADE_TOKEN_URL, sizeof(__pyx_k_UPGRADE_TOKEN_URL), 0, 0, 1, 1},
   {&__pyx_n_s_UPGRADE_USERNAME, __pyx_k_UPGRADE_USERNAME, sizeof(__pyx_k_UPGRADE_USERNAME), 0, 0, 1, 1},
+  {&__pyx_n_s_WLAN_CONFIG_INFO, __pyx_k_WLAN_CONFIG_INFO, sizeof(__pyx_k_WLAN_CONFIG_INFO), 0, 0, 1, 1},
+  {&__pyx_n_s_WLAN_CONFIG_RESP_INFO, __pyx_k_WLAN_CONFIG_RESP_INFO, sizeof(__pyx_k_WLAN_CONFIG_RESP_INFO), 0, 0, 1, 1},
+  {&__pyx_n_s_WLAN_CONFIG_RESP_TOPIC, __pyx_k_WLAN_CONFIG_RESP_TOPIC, sizeof(__pyx_k_WLAN_CONFIG_RESP_TOPIC), 0, 0, 1, 1},
+  {&__pyx_n_s_WLAN_CONFIG_TOPIC, __pyx_k_WLAN_CONFIG_TOPIC, sizeof(__pyx_k_WLAN_CONFIG_TOPIC), 0, 0, 1, 1},
   {&__pyx_n_s_action, __pyx_k_action, sizeof(__pyx_k_action), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_current, __pyx_k_current, sizeof(__pyx_k_current), 0, 0, 1, 1},
@@ -1272,6 +1294,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_opentime, __pyx_k_opentime, sizeof(__pyx_k_opentime), 0, 0, 1, 1},
   {&__pyx_n_s_packetsize, __pyx_k_packetsize, sizeof(__pyx_k_packetsize), 0, 0, 1, 1},
   {&__pyx_n_s_page, __pyx_k_page, sizeof(__pyx_k_page), 0, 0, 1, 1},
+  {&__pyx_n_s_psk, __pyx_k_psk, sizeof(__pyx_k_psk), 0, 0, 1, 1},
   {&__pyx_kp_s_qr_ctrl, __pyx_k_qr_ctrl, sizeof(__pyx_k_qr_ctrl), 0, 0, 1, 0},
   {&__pyx_kp_s_qr_response, __pyx_k_qr_response, sizeof(__pyx_k_qr_response), 0, 0, 1, 0},
   {&__pyx_n_s_result, __pyx_k_result, sizeof(__pyx_k_result), 0, 0, 1, 1},
@@ -1279,6 +1302,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_scene, __pyx_k_scene, sizeof(__pyx_k_scene), 0, 0, 1, 1},
   {&__pyx_kp_s_ssh_enable, __pyx_k_ssh_enable, sizeof(__pyx_k_ssh_enable), 0, 0, 1, 0},
   {&__pyx_kp_s_ssh_enable_resp, __pyx_k_ssh_enable_resp, sizeof(__pyx_k_ssh_enable_resp), 0, 0, 1, 0},
+  {&__pyx_n_s_ssid, __pyx_k_ssid, sizeof(__pyx_k_ssid), 0, 0, 1, 1},
   {&__pyx_kp_s_status, __pyx_k_status, sizeof(__pyx_k_status), 0, 0, 1, 0},
   {&__pyx_n_s_status_2, __pyx_k_status_2, sizeof(__pyx_k_status_2), 0, 0, 1, 1},
   {&__pyx_n_s_stime, __pyx_k_stime, sizeof(__pyx_k_stime), 0, 0, 1, 1},
@@ -1291,6 +1315,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_update_resp, __pyx_k_update_resp, sizeof(__pyx_k_update_resp), 0, 0, 1, 0},
   {&__pyx_n_s_url, __pyx_k_url, sizeof(__pyx_k_url), 0, 0, 1, 1},
   {&__pyx_n_s_version, __pyx_k_version, sizeof(__pyx_k_version), 0, 0, 1, 1},
+  {&__pyx_n_s_wlan, __pyx_k_wlan, sizeof(__pyx_k_wlan), 0, 0, 1, 1},
+  {&__pyx_kp_s_wlan_config, __pyx_k_wlan_config, sizeof(__pyx_k_wlan_config), 0, 0, 1, 0},
+  {&__pyx_kp_s_wlan_config_resp, __pyx_k_wlan_config_resp, sizeof(__pyx_k_wlan_config_resp), 0, 0, 1, 0},
   {&__pyx_kp_s_xinchao_iotwonderful_com, __pyx_k_xinchao_iotwonderful_com, sizeof(__pyx_k_xinchao_iotwonderful_com), 0, 0, 1, 0},
   {0, 0, 0, 0, 0, 0, 0}
 };
@@ -1666,321 +1693,382 @@ if (!__Pyx_RefNanny) {
  * OPENSSH_TOPIC = "/ssh_enable"
  * OPENSSH_RESP_TOPIC = "/ssh_enable_resp"             # <<<<<<<<<<<<<<
  * 
- * DEVICE_INFO_TOPIC = "/test/device_info"
+ * WLAN_CONFIG_TOPIC = "/wlan_config"
  */
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_OPENSSH_RESP_TOPIC, __pyx_kp_s_ssh_enable_resp) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
 
   /* "message_struct.py":15
  * OPENSSH_RESP_TOPIC = "/ssh_enable_resp"
  * 
+ * WLAN_CONFIG_TOPIC = "/wlan_config"             # <<<<<<<<<<<<<<
+ * WLAN_CONFIG_RESP_TOPIC = "/wlan_config_resp"
+ * 
+ */
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_WLAN_CONFIG_TOPIC, __pyx_kp_s_wlan_config) < 0) __PYX_ERR(0, 15, __pyx_L1_error)
+
+  /* "message_struct.py":16
+ * 
+ * WLAN_CONFIG_TOPIC = "/wlan_config"
+ * WLAN_CONFIG_RESP_TOPIC = "/wlan_config_resp"             # <<<<<<<<<<<<<<
+ * 
+ * DEVICE_INFO_TOPIC = "/test/device_info"
+ */
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_WLAN_CONFIG_RESP_TOPIC, __pyx_kp_s_wlan_config_resp) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+
+  /* "message_struct.py":18
+ * WLAN_CONFIG_RESP_TOPIC = "/wlan_config_resp"
+ * 
  * DEVICE_INFO_TOPIC = "/test/device_info"             # <<<<<<<<<<<<<<
  * DEVICE_INFO_RESP_TOPIC = "/test/device_info_resp"
  * 
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DEVICE_INFO_TOPIC, __pyx_kp_s_test_device_info) < 0) __PYX_ERR(0, 15, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DEVICE_INFO_TOPIC, __pyx_kp_s_test_device_info) < 0) __PYX_ERR(0, 18, __pyx_L1_error)
 
-  /* "message_struct.py":16
+  /* "message_struct.py":19
  * 
  * DEVICE_INFO_TOPIC = "/test/device_info"
  * DEVICE_INFO_RESP_TOPIC = "/test/device_info_resp"             # <<<<<<<<<<<<<<
  * 
  * DOORSTONE="iotwonderful"
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DEVICE_INFO_RESP_TOPIC, __pyx_kp_s_test_device_info_resp) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DEVICE_INFO_RESP_TOPIC, __pyx_kp_s_test_device_info_resp) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
 
-  /* "message_struct.py":18
+  /* "message_struct.py":21
  * DEVICE_INFO_RESP_TOPIC = "/test/device_info_resp"
  * 
  * DOORSTONE="iotwonderful"             # <<<<<<<<<<<<<<
  * UPGRADE_TOKEN_URL="https://acstest.iotwonderful.cn/api/upgrade/login"
  * UPGRADE_USERNAME="xinchao@iotwonderful.com"
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DOORSTONE, __pyx_n_s_iotwonderful) < 0) __PYX_ERR(0, 18, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DOORSTONE, __pyx_n_s_iotwonderful) < 0) __PYX_ERR(0, 21, __pyx_L1_error)
 
-  /* "message_struct.py":19
+  /* "message_struct.py":22
  * 
  * DOORSTONE="iotwonderful"
  * UPGRADE_TOKEN_URL="https://acstest.iotwonderful.cn/api/upgrade/login"             # <<<<<<<<<<<<<<
  * UPGRADE_USERNAME="xinchao@iotwonderful.com"
  * UPGRADE_PASSWORD="123456"
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_UPGRADE_TOKEN_URL, __pyx_kp_s_https_acstest_iotwonderful_cn_ap) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_UPGRADE_TOKEN_URL, __pyx_kp_s_https_acstest_iotwonderful_cn_ap) < 0) __PYX_ERR(0, 22, __pyx_L1_error)
 
-  /* "message_struct.py":20
+  /* "message_struct.py":23
  * DOORSTONE="iotwonderful"
  * UPGRADE_TOKEN_URL="https://acstest.iotwonderful.cn/api/upgrade/login"
  * UPGRADE_USERNAME="xinchao@iotwonderful.com"             # <<<<<<<<<<<<<<
  * UPGRADE_PASSWORD="123456"
  * 
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_UPGRADE_USERNAME, __pyx_kp_s_xinchao_iotwonderful_com) < 0) __PYX_ERR(0, 20, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_UPGRADE_USERNAME, __pyx_kp_s_xinchao_iotwonderful_com) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
 
-  /* "message_struct.py":21
+  /* "message_struct.py":24
  * UPGRADE_TOKEN_URL="https://acstest.iotwonderful.cn/api/upgrade/login"
  * UPGRADE_USERNAME="xinchao@iotwonderful.com"
  * UPGRADE_PASSWORD="123456"             # <<<<<<<<<<<<<<
  * 
  * OPENDOOR_MSG = {
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_UPGRADE_PASSWORD, __pyx_kp_s_123456) < 0) __PYX_ERR(0, 21, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_UPGRADE_PASSWORD, __pyx_kp_s_123456) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
 
-  /* "message_struct.py":24
+  /* "message_struct.py":27
  * 
  * OPENDOOR_MSG = {
  * 	"device_sn" : "",             # <<<<<<<<<<<<<<
  * 	"stime" : 0,
  * 	"action" : 0,
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 24, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_int_0) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_action, __pyx_int_0) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_identify, __pyx_int_0) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_OPENDOOR_MSG, __pyx_t_1) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 27, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_int_0) < 0) __PYX_ERR(0, 27, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_action, __pyx_int_0) < 0) __PYX_ERR(0, 27, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_identify, __pyx_int_0) < 0) __PYX_ERR(0, 27, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_OPENDOOR_MSG, __pyx_t_1) < 0) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "message_struct.py":31
+  /* "message_struct.py":34
  * 
  * OPENDOOR_RESP_MSG = {
  * 	"device_sn" : "",             # <<<<<<<<<<<<<<
  * 	"rtime" : 0,
  * 	"result" : 0,
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 34, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_rtime, __pyx_int_0) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_result, __pyx_int_0) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_identify, __pyx_int_0) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_OPENDOOR_RESP_MSG, __pyx_t_1) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_rtime, __pyx_int_0) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_result, __pyx_int_0) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_identify, __pyx_int_0) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_OPENDOOR_RESP_MSG, __pyx_t_1) < 0) __PYX_ERR(0, 33, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "message_struct.py":38
+  /* "message_struct.py":41
  * 
  * QR_GETWX2VCODE = {
  * 	"device_sn" : "",             # <<<<<<<<<<<<<<
  * 	"stime" : 0,
  * 	"type" : 0,
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 38, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_int_0) < 0) __PYX_ERR(0, 38, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_type, __pyx_int_0) < 0) __PYX_ERR(0, 38, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_identify, __pyx_int_0) < 0) __PYX_ERR(0, 38, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_int_0) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_type, __pyx_int_0) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_identify, __pyx_int_0) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
 
-  /* "message_struct.py":43
+  /* "message_struct.py":46
  * 	"identify" : 0,
  * 	"message" : {
  * 		"page" : "",             # <<<<<<<<<<<<<<
  * 		"scene" : "",
  * 	},
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_page, __pyx_kp_s_) < 0) __PYX_ERR(0, 43, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_scene, __pyx_kp_s_) < 0) __PYX_ERR(0, 43, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_message, __pyx_t_2) < 0) __PYX_ERR(0, 38, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_page, __pyx_kp_s_) < 0) __PYX_ERR(0, 46, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_scene, __pyx_kp_s_) < 0) __PYX_ERR(0, 46, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_message, __pyx_t_2) < 0) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_QR_GETWX2VCODE, __pyx_t_1) < 0) __PYX_ERR(0, 37, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_QR_GETWX2VCODE, __pyx_t_1) < 0) __PYX_ERR(0, 40, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "message_struct.py":49
+  /* "message_struct.py":52
  * 
  * QR_DOWN2VCODE = {
  * 	"device_sn" : "",             # <<<<<<<<<<<<<<
  * 	"stime" : 0,
  * 	"type" : 0,
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 49, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_int_0) < 0) __PYX_ERR(0, 49, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_type, __pyx_int_0) < 0) __PYX_ERR(0, 49, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_identify, __pyx_int_0) < 0) __PYX_ERR(0, 49, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 52, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_int_0) < 0) __PYX_ERR(0, 52, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_type, __pyx_int_0) < 0) __PYX_ERR(0, 52, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_identify, __pyx_int_0) < 0) __PYX_ERR(0, 52, __pyx_L1_error)
 
-  /* "message_struct.py":54
+  /* "message_struct.py":57
  * 	"identify" : 0,
  * 	"message" : {
  * 		"download" : "",             # <<<<<<<<<<<<<<
  * 	},
  * }
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_download, __pyx_kp_s_) < 0) __PYX_ERR(0, 54, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_message, __pyx_t_2) < 0) __PYX_ERR(0, 49, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_download, __pyx_kp_s_) < 0) __PYX_ERR(0, 57, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_message, __pyx_t_2) < 0) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_QR_DOWN2VCODE, __pyx_t_1) < 0) __PYX_ERR(0, 48, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_QR_DOWN2VCODE, __pyx_t_1) < 0) __PYX_ERR(0, 51, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "message_struct.py":59
+  /* "message_struct.py":62
  * 
  * QR_GENERATE2VCODE = {
  * 	"device_sn" : "",             # <<<<<<<<<<<<<<
  * 	"stime" : 0,
  * 	"type" : 0,
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 59, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_int_0) < 0) __PYX_ERR(0, 59, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_type, __pyx_int_0) < 0) __PYX_ERR(0, 59, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_identify, __pyx_int_0) < 0) __PYX_ERR(0, 59, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_int_0) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_type, __pyx_int_0) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_identify, __pyx_int_0) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
 
-  /* "message_struct.py":64
+  /* "message_struct.py":67
  * 	"identify" : 0,
  * 	"message" : {
  * 		"data" : "",             # <<<<<<<<<<<<<<
  * 	},
  * }
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 67, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_data, __pyx_kp_s_) < 0) __PYX_ERR(0, 64, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_message, __pyx_t_2) < 0) __PYX_ERR(0, 59, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_data, __pyx_kp_s_) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_message, __pyx_t_2) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_QR_GENERATE2VCODE, __pyx_t_1) < 0) __PYX_ERR(0, 58, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_QR_GENERATE2VCODE, __pyx_t_1) < 0) __PYX_ERR(0, 61, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "message_struct.py":69
+  /* "message_struct.py":72
  * 
  * QR_RESPONSE = {
  * 	"device_sn" : "",             # <<<<<<<<<<<<<<
  * 	"rtime" : 0,
  * 	"type" : 0,
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 69, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_rtime, __pyx_int_0) < 0) __PYX_ERR(0, 69, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_type, __pyx_int_0) < 0) __PYX_ERR(0, 69, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_identify, __pyx_int_0) < 0) __PYX_ERR(0, 69, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_status_2, __pyx_kp_s_) < 0) __PYX_ERR(0, 69, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_QR_RESPONSE, __pyx_t_1) < 0) __PYX_ERR(0, 68, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 72, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_rtime, __pyx_int_0) < 0) __PYX_ERR(0, 72, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_type, __pyx_int_0) < 0) __PYX_ERR(0, 72, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_identify, __pyx_int_0) < 0) __PYX_ERR(0, 72, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_status_2, __pyx_kp_s_) < 0) __PYX_ERR(0, 72, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_QR_RESPONSE, __pyx_t_1) < 0) __PYX_ERR(0, 71, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "message_struct.py":77
+  /* "message_struct.py":80
  * 
  * DEVICE_STATUS = {
  * 	"rtime" : 0,             # <<<<<<<<<<<<<<
  * 	"status" : 0,
  * }
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_rtime, __pyx_int_0) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_status_2, __pyx_int_0) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DEVICE_STATUS, __pyx_t_1) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_rtime, __pyx_int_0) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_status_2, __pyx_int_0) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DEVICE_STATUS, __pyx_t_1) < 0) __PYX_ERR(0, 79, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "message_struct.py":82
+  /* "message_struct.py":85
  * 
  * UPDATE_INFO = {
  * 	"device_sn" : "",             # <<<<<<<<<<<<<<
  * 	"stime" : "",
  * 	"firmware" : {
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 85, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_kp_s_) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 85, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_kp_s_) < 0) __PYX_ERR(0, 85, __pyx_L1_error)
 
-  /* "message_struct.py":85
+  /* "message_struct.py":88
  * 	"stime" : "",
  * 	"firmware" : {
  * 		"url" : "",             # <<<<<<<<<<<<<<
  * 		"version" : "",
  * 		"packetsize" : 0,
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 85, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_url, __pyx_kp_s_) < 0) __PYX_ERR(0, 85, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_version, __pyx_kp_s_) < 0) __PYX_ERR(0, 85, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_packetsize, __pyx_int_0) < 0) __PYX_ERR(0, 85, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_enable, __pyx_kp_s_) < 0) __PYX_ERR(0, 85, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_md5, __pyx_kp_s_) < 0) __PYX_ERR(0, 85, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_firmware, __pyx_t_2) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_url, __pyx_kp_s_) < 0) __PYX_ERR(0, 88, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_version, __pyx_kp_s_) < 0) __PYX_ERR(0, 88, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_packetsize, __pyx_int_0) < 0) __PYX_ERR(0, 88, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_enable, __pyx_kp_s_) < 0) __PYX_ERR(0, 88, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_md5, __pyx_kp_s_) < 0) __PYX_ERR(0, 88, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_firmware, __pyx_t_2) < 0) __PYX_ERR(0, 85, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_UPDATE_INFO, __pyx_t_1) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_UPDATE_INFO, __pyx_t_1) < 0) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "message_struct.py":94
+  /* "message_struct.py":97
  * 
  * UPDATE_RESP_INFO = {
  * 	"device_sn" : "",             # <<<<<<<<<<<<<<
  * 	"rtime" : "",
  * 	"firmware" : {
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_rtime, __pyx_kp_s_) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_rtime, __pyx_kp_s_) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
 
-  /* "message_struct.py":97
+  /* "message_struct.py":100
  * 	"rtime" : "",
  * 	"firmware" : {
  * 		"version" : "",             # <<<<<<<<<<<<<<
  * 		"status" : "",
  * 	}
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 97, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_version, __pyx_kp_s_) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_status_2, __pyx_kp_s_) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_firmware, __pyx_t_2) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_version, __pyx_kp_s_) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_status_2, __pyx_kp_s_) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_firmware, __pyx_t_2) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_UPDATE_RESP_INFO, __pyx_t_1) < 0) __PYX_ERR(0, 93, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_UPDATE_RESP_INFO, __pyx_t_1) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "message_struct.py":103
+  /* "message_struct.py":106
  * 
  * OPENSSH_INFO = {
  * 	"device_sn" : "",             # <<<<<<<<<<<<<<
  * 	"stime" : "",
  * 	"enable" : 0,
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 103, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_kp_s_) < 0) __PYX_ERR(0, 103, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_enable, __pyx_int_0) < 0) __PYX_ERR(0, 103, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_opentime, __pyx_int_0) < 0) __PYX_ERR(0, 103, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_OPENSSH_INFO, __pyx_t_1) < 0) __PYX_ERR(0, 102, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 106, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_kp_s_) < 0) __PYX_ERR(0, 106, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_enable, __pyx_int_0) < 0) __PYX_ERR(0, 106, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_opentime, __pyx_int_0) < 0) __PYX_ERR(0, 106, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_OPENSSH_INFO, __pyx_t_1) < 0) __PYX_ERR(0, 105, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "message_struct.py":110
+  /* "message_struct.py":113
  * 
  * OPENSSH_RESP_INFO = {
  * 	"device_sn" : "",             # <<<<<<<<<<<<<<
  * 	"rtime" : "",
  * 	"status" : 0,
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 110, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 113, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 110, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_rtime, __pyx_kp_s_) < 0) __PYX_ERR(0, 110, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_status_2, __pyx_int_0) < 0) __PYX_ERR(0, 110, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_OPENSSH_RESP_INFO, __pyx_t_1) < 0) __PYX_ERR(0, 109, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 113, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_rtime, __pyx_kp_s_) < 0) __PYX_ERR(0, 113, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_status_2, __pyx_int_0) < 0) __PYX_ERR(0, 113, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_OPENSSH_RESP_INFO, __pyx_t_1) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "message_struct.py":116
+  /* "message_struct.py":119
+ * 
+ * WLAN_CONFIG_INFO = {
+ * 	"device_sn" : "",             # <<<<<<<<<<<<<<
+ * 	"stime" : "",
+ * 	"wlan" : {
+ */
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 119, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 119, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_kp_s_) < 0) __PYX_ERR(0, 119, __pyx_L1_error)
+
+  /* "message_struct.py":122
+ * 	"stime" : "",
+ * 	"wlan" : {
+ * 		"ssid" : "",             # <<<<<<<<<<<<<<
+ * 		"psk" : "",
+ * 	}
+ */
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_ssid, __pyx_kp_s_) < 0) __PYX_ERR(0, 122, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_psk, __pyx_kp_s_) < 0) __PYX_ERR(0, 122, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_wlan, __pyx_t_2) < 0) __PYX_ERR(0, 119, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_WLAN_CONFIG_INFO, __pyx_t_1) < 0) __PYX_ERR(0, 118, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "message_struct.py":128
+ * 
+ * WLAN_CONFIG_RESP_INFO = {
+ * 	"device_sn" : "",             # <<<<<<<<<<<<<<
+ * 	"rtime" : "",
+ * 	"status" : 0,
+ */
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 128, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_rtime, __pyx_kp_s_) < 0) __PYX_ERR(0, 128, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_status_2, __pyx_int_0) < 0) __PYX_ERR(0, 128, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_WLAN_CONFIG_RESP_INFO, __pyx_t_1) < 0) __PYX_ERR(0, 127, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "message_struct.py":134
  * 
  * DEVICE_INFO = {
  * 	"device_sn" : "",             # <<<<<<<<<<<<<<
  * 	"stime" : 0,
  * 	# 0  = get doorlock time
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 116, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 116, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_int_0) < 0) __PYX_ERR(0, 116, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_doorlock, __pyx_int_0) < 0) __PYX_ERR(0, 116, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_ip, __pyx_kp_s_) < 0) __PYX_ERR(0, 116, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_current, __pyx_kp_s_) < 0) __PYX_ERR(0, 116, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_kp_s_thread_status, __pyx_kp_s_) < 0) __PYX_ERR(0, 116, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DEVICE_INFO, __pyx_t_1) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_device_sn, __pyx_kp_s_) < 0) __PYX_ERR(0, 134, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_stime, __pyx_int_0) < 0) __PYX_ERR(0, 134, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_doorlock, __pyx_int_0) < 0) __PYX_ERR(0, 134, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_ip, __pyx_kp_s_) < 0) __PYX_ERR(0, 134, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_current, __pyx_kp_s_) < 0) __PYX_ERR(0, 134, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_kp_s_thread_status, __pyx_kp_s_) < 0) __PYX_ERR(0, 134, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_DEVICE_INFO, __pyx_t_1) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "message_struct.py":1

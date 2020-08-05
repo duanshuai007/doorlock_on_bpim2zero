@@ -30,6 +30,7 @@ class mqtt_client(mqtt.Client):
 	wx2vcode = None
 	publish_queue = None
 	work_queue = None
+	status = None
 
 	update_status_file = "/home/ubuntu/update_status"
 
@@ -69,6 +70,7 @@ class mqtt_client(mqtt.Client):
 			self.logger.info("connect success")
 			self.subscribe(self.sub_topic_list)
 			
+			self.status = "success"
 			ms.DEVICE_STATUS["status"] = 1
 			ms.DEVICE_STATUS["rtime"] = int(time.time())
 			respjson = json.dumps(ms.DEVICE_STATUS)
@@ -95,6 +97,7 @@ class mqtt_client(mqtt.Client):
 	#执行mqttc.disconnect()主动断开连接会触发该函数
 	#当因为什么原因导致客户端断开连接时也会触发该函数,ctrl-c停止程序不会触发该函数
 	def on_disconnect(self, mqttc, obj, rc):
+		self.status = "failed"	
 		self.logger.info("on_disconnect obj={}, rc={}".format(obj, rc))
 		#if obj is not None:
 			#mqttc.user_data_set(obj + 1)
@@ -184,6 +187,11 @@ class mqtt_client(mqtt.Client):
 					if info.rc == mqtt.MQTT_ERR_SUCCESS:
 						#self.delete_list.append({"mid":info.mid, "msg":msg})
 						info.wait_for_publish()
+				if self.status is not None:
+					connect_status="{}".format(self.status)
+					with open("/root/mqtt_connect_status", "w") as f:
+						f.write(connect_status)
+					self.status = None
 				time.sleep(0.01)
 				'''
 				for wait in self.delete_list:
@@ -358,7 +366,23 @@ class mqtt_client(mqtt.Client):
 							ms.DEVICE_INFO["ip"] = ip
 							sendmsg = json.dumps(ms.DEVICE_INFO)
 							self.publish_queue.put({"topic":ms.DEVICE_INFO_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
-							pass	
+							pass
+						elif topic == ms.WLAN_CONFIG_TOPIC:
+							ssid = json_msg["wlan"]["ssid"]
+							psk = json_msg["wlan"]["psk"]
+							ms.WLAN_CONFIG_RESP_INFO["device_sn"] = self.device_sn
+							ms.WLAN_CONFIG_RESP_INFO["rtime"] = int(time.time())
+							ms.WLAN_CONFIG_RESP_INFO["status"] = 0
+
+							shellcmd = "/root/set_current_wifi.sh wlan {} {}".format(ssid, psk)
+							self.logger.info("set wlan:cmd={}".format(shellcmd))
+							os.system(shellcmd)
+							retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]
+							retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]
+							if retssid == ssid and retpsk == psk:
+								ms.WLAN_CONFIG_RESP_INFO["status"] = 1
+							sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)
+							self.publish_queue.put({"topic":ms.WLAN_CONFIG_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
 						else:
 							self.logger.info("invaild topic = {}".format(topic))
 							#send response failed
@@ -456,13 +480,14 @@ def client_start():
 	mc.setsubscribe(topic=ms.DEVICE_INFO_TOPIC, qos=0)
 	mc.setsubscribe(topic=ms.UPDATE_TOPIC, qos=0)
 	mc.setsubscribe(topic=ms.OPENSSH_TOPIC, qos=0)
+	mc.setsubscribe(topic=ms.WLAN_CONFIG_TOPIC, qos=0)
 	mc.set_user_and_password(user, passwd)
 	if mc.set_cafile(cafile) == False:
 		exit(1)
 	time.sleep(0.2)
 	screen = sc.screen()
 	mc.set_wx2vcode_hand(wx2vcode_hand, screen)
-	if mc.run_mqtt(host=host, port=port, keepalive=60) == False:
+	if mc.run_mqtt(host=host, port=port, keepalive=10) == False:
 		exit(1)
 	mc.start_other_thread()
 	mc.loop_forever()

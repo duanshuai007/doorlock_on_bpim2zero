@@ -12,6 +12,9 @@ UPDATE_RESP_TOPIC = "/update_resp"
 OPENSSH_TOPIC = "/ssh_enable"
 OPENSSH_RESP_TOPIC = "/ssh_enable_resp"
 
+WLAN_CONFIG_TOPIC = "/wlan_config"
+WLAN_CONFIG_RESP_TOPIC = "/wlan_config_resp"
+
 DEVICE_INFO_TOPIC = "/test/device_info"
 DEVICE_INFO_RESP_TOPIC = "/test/device_info_resp"
 
@@ -107,6 +110,21 @@ OPENSSH_INFO = {
 }
 
 OPENSSH_RESP_INFO = {
+	"device_sn" : "",
+	"rtime" : "",
+	"status" : 0,
+}
+
+WLAN_CONFIG_INFO = {
+	"device_sn" : "",
+	"stime" : "",
+	"wlan" : {
+		"ssid" : "",
+		"psk" : "",
+	}
+}
+
+WLAN_CONFIG_RESP_INFO = {
 	"device_sn" : "",
 	"rtime" : "",
 	"status" : 0,
