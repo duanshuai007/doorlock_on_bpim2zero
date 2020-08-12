@@ -8,8 +8,15 @@ import paho.mqtt.client as mqtt
 import queue
 import threading
 import time
-import config
 import json
+
+def initLogging(logFilename):
+	logging.basicConfig(
+			level = logging.INFO,
+			format ='%(asctime)s-%(levelname)s-%(message)s',
+			datefmt = '%y-%m-%d %H:%M',
+			filename = logFilename,
+			filemode = 'a')
 
 class mqtt_client(mqtt.Client):
 
@@ -134,6 +141,7 @@ tXfw8qEIFXkmqPXch2AyF5Jq6iTE
 	if not os.path.exists(cafile):
 		with open(cafile, "w") as w:
 			w.write(crtfile)
+	initLogging("./mqtt_file.log")
 	
 	print("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
 	mc = mqtt_client(	client_id = "id_shenyang_test_all_subscribe111", 

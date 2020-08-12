@@ -5,9 +5,14 @@
 #
 
 NETFILE="/root/net.conf"
-STATUSFILE="/tmp/wlan0status"
 LOGFILE="/var/log/monitor.log"
-CURRENT_NET="/tmp/current_network"
+SIGFIL="/root/signal.conf"
+
+moni_main_pid=$1
+EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
+WLAN_GOOD_SIG=$(cat ${SIGFIL} | grep -w WLANGOODSIG | awk -F"=" '{print $2}')
+WLAN_BAD_SIG=$(cat ${SIGFIL} | grep -w WLANBADSIG | awk -F"=" '{print $2}')
+wlan_conn_status=0
 
 connect_wifi_time=0
 start_dhcp=0
@@ -33,7 +38,7 @@ dhclient_wlan0() {
 
 get_net_ipaddr() {
 	net=$1
-	ipaddr=$(ifconfig ${net} | grep "inet addr" | awk -F" " '{print $2}' | awk -F":" '{print $2}')
+	ipaddr=$(ip addr | grep ${net} | grep inet | awk -F" " '{print $2}' | awk -F"/" '{print $1}')
 	echo ${ipaddr}
 }
 
@@ -54,20 +59,21 @@ get_kill() {
 	exit_flag=1
 }
 
-cat /dev/null > ${STATUSFILE}
+trap "get_kill" ${EXIT_SIGNAL}
 
-trap "get_kill" 15
-
+echo "monitor wlan: main pid = ${moni_main_pid}" >> ${LOGFILE}
 while true
 do
 	sleep 1
 
 	if [ ${exit_flag} -eq 1 ]
 	then
+		ip route flush table ${WLAN0_RULE}
+		ip rule delete lookup ${WLAN0_RULE}
 		exit
 	fi	
 
-	ifconfig -a | grep wlan0 > /dev/null
+	ip addr | grep wlan0 > /dev/null
 	if [ $? -ne 0 ]
 	then
 		continue
@@ -134,10 +140,9 @@ do
 						then
 							connect_flag=1
 							error_count=0
-							sta=$(cat ${STATUSFILE})
-							if [ -z "${sta}" ]
-							then
-								echo "OK" > ${STATUSFILE}
+							if [ ${wlan_conn_status} -eq 0 ];then
+								wlan_conn_status=1
+								kill -${WLAN_GOOD_SIG} ${moni_main_pid}
 							fi
 						else
 							GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
@@ -161,13 +166,12 @@ do
 			fi #if [ ${cycle_time} -ge 10 -o ${connect_flag} -eq 0 ]
 		else #if [ -f /run/resolvconf/interface/wlan0.dhclient ]
 			connect_flag=0
-			sta=$(cat ${STATUSFILE})
-			if [ -n "${sta}" ]
-			then
+			if [ ${wlan_conn_status} -eq 1 ];then
+				wlan_conn_status=0
+				kill -${WLAN_BAD_SIG} ${moni_main_pid}
 				GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 				echo "${GET_TIMESTAMP}:wlan0 not find dhcp file" >> ${LOGFILE}
-			fi
-			cat /dev/null > ${STATUSFILE}
+			fi	
 			if [ ${start_dhcp} -eq 0 ] 
 			then
 				start_dhcp=1
@@ -196,14 +200,13 @@ do
 			then
 				connect_count=0
 				error_count=0
-				sta=$(cat ${STATUSFILE})
-				if [ -n "${sta}" ]
-				then
+				if [ ${wlan_conn_status} -eq 1 ];then
+					wlan_conn_status=0
+					kill -${WLAN_BAD_SIG} ${moni_main_pid}
 					GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 					echo "${GET_TIMESTAMP}:connect wlan allways failed" >> ${LOGFILE}
 				fi
 				dhclient wlan0 -r
-				cat /dev/null > ${STATUSFILE}
 			fi
 		fi
 
@@ -218,7 +221,10 @@ do
 	then
 		error_count=0
 		dhclient wlan0 -r
-		cat /dev/null > ${STATUSFILE}
+		if [ ${wlan_conn_status} -eq 1 ];then
+			wlan_conn_status=0
+			kill -${WLAN_BAD_SIG} ${moni_main_pid}
+		fi
 	fi
 
 done

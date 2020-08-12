@@ -9,17 +9,20 @@
 #ppp0通过route add default ppp0来设置路由信息
 NETFILE="/root/net.conf"
 LOGFILE="/var/log/monitor.log"
-NETSTAT="/root/netstatus"
+#NETSTAT="/root/netstatus"
 CURRENTNET="/tmp/current_network"
-NETTIMESTAMP="/tmp/network_timestamp"
-MQTTSTATUS="/root/mqtt_connect_status"
+#NETTIMESTAMP="/tmp/network_timestamp"
+SIGFIL="/root/signal.conf"
 
-cat /dev/null > ${NETSTAT}
-cat /dev/null > ${MQTTSTATUS}
-
-ETHSTATUS="/tmp/eth0status"
-WLANSTATUS="/tmp/wlan0status"
-PPPSTATUS="/tmp/ppp0status"
+EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
+ETH_GOOD_SIG=$(cat ${SIGFIL} | grep -w ETHGOODSIG | awk -F"=" '{print $2}')
+ETH_BAD_SIG=$(cat ${SIGFIL} | grep -w ETHBADSIG | awk -F"=" '{print $2}')
+WLAN_GOOD_SIG=$(cat ${SIGFIL} | grep -w WLANGOODSIG | awk -F"=" '{print $2}')
+WLAN_BAD_SIG=$(cat ${SIGFIL} | grep -w WLANBADSIG | awk -F"=" '{print $2}')
+PPP_GOOD_SIG=$(cat ${SIGFIL} | grep -w PPPGOODSIG | awk -F"=" '{print $2}')
+PPP_BAD_SIG=$(cat ${SIGFIL} | grep -w PPPBADSIG | awk -F"=" '{print $2}')
+NET_GOOD_SIG=$(cat ${SIGFIL} | grep -w NETWORKOK | awk -F"=" '{print $2}')
+NET_BAD_SIG=$(cat ${SIGFIL} | grep -w NETWORKBAD | awk -F"=" '{print $2}')
 
 get_gateway() {
 	net=$1
@@ -73,13 +76,11 @@ setCurrentRoute() {
 
 kill_mqtt_thread() {
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-	#echo "${GET_TIMESTAMP}:net is change, kill old thread and restart" >> ${LOGFILE}
 	pid=$(ps -ef | grep "mqtt" | grep -v grep | awk -F" " '{print $2}')
 	echo "${GET_TIMESTAMP}:kill_mqtt_thread pid = ${pid}" >> ${LOGFILE}
 	if [ ! -z "${pid}" ]
 	then
-		kill ${pid} > /dev/null
-		kill -9 ${pid} > /dev/null
+		kill -${EXIT_SIGNAL} ${pid} > /dev/null
 		sleep 1
 	fi
 }
@@ -88,44 +89,31 @@ monitor_network() {
 	pidnum=$(ps -ef | grep zywl_moni_eth | grep -v grep | wc -l)
 	if [ ${pidnum} -eq 0 ]
 	then
-		/root/zywl_moni_eth.sh &
+		/root/zywl_moni_eth.sh $$ &
 	elif [ ${pidnum} -ge 3 ]
 	then
 		pid=$(ps -ef | grep zywl_moni_eth | grep -v grep | awk '{print $2}')
-		kill ${pid} > /dev/null
-		kill -9 ${pid} > /dev/null
+		kill -${EXIT_SIGNAL} ${pid} > /dev/null
 	fi
-#	if [ -n "${pid}" ]
-#		then
-#		if [ ${pid} -ge 3 ]
-#		then
-#			kill ${pid} > /dev/null
-#			kill -9 ${pid} > /dev/null
-#		elif [ ${pid} -eq 0 ]
-#		then
-#			/root/zywl_moni_eth.sh &
-#		fi
-#	fi
 
 	pidnum=$(ps -ef | grep zywl_moni_wlan | grep -v grep | wc -l)
 	if [ ${pidnum} -eq 0 ]
 	then
-		/root/zywl_moni_wlan.sh &
+		/root/zywl_moni_wlan.sh $$ &
 	elif [ ${pidnum} -ge 3 ]
 	then
 		pid=$(ps -ef | grep zywl_moni_wlan | grep -v grep | awk '{print $2}')
-		kill ${pid} > /dev/null
-		kill -9 ${pid} > /dev/null
+		kill -${EXIT_SIGNAL} ${pid} > /dev/null
 	fi
 
 	pidnum=$(ps -ef | grep zywl_moni_ppp | grep -v grep | wc -l)
 	if [ ${pidnum} -eq 0 ]
 	then
-		/root/zywl_moni_ppp.sh &
+		/root/zywl_moni_ppp.sh $$ &
 	elif [ ${pidnum} -ge 2 ]
 	then
 		pid=$(ps -ef | grep zywl_moni_ppp | grep -v grep | awk '{print $2}')
-		kill -INT ${pid} > /dev/null
+		kill -${EXIT_SIGNAL} ${pid} > /dev/null
 	fi
 }
 
@@ -133,71 +121,19 @@ donot_monitor_network() {
 	pid=$(ps -ef | grep zywl_moni_eth | grep -v grep | awk '{print $2}')
 	if [ -n "${pid}" ]
 	then
-		kill -15 ${pid}  > /dev/null
+		kill -${EXIT_SIGNAL} ${pid}  > /dev/null
 	fi
 
 	pid=$(ps -ef | grep zywl_moni_wlan | grep -v grep | awk '{print $2}')
 	if [ -n "${pid}" ]
 	then
-		kill -15 ${pid}  > /dev/null
+		kill -${EXIT_SIGNAL} ${pid}  > /dev/null
 	fi
 
 	pid=$(ps -ef | grep zywl_moni_ppp | grep -v grep | awk '{print $2}')
 	if [ -n "${pid}" ]
 	then
-		kill -15 ${pid}  > /dev/null
-	fi
-}
-
-time_sync() {
-	ps -ef | grep ntpd | grep -v grep > /dev/null
-	if [ $? -ne 0 ]
-	then
-		pid=$(ps -ef | grep update_time.sh | grep -v grep | awk -F" " '{print $2}')
-		if [ -z "${pid}" ]
-		then
-			service ntp start
-		fi
-	fi
-}
-
-read_netstatus() {
-	case $1 in
-		"wlan0")
-		netsta=$(cat ${WLANSTATUS})
-		;;
-		"eth0")
-		netsta=$(cat ${ETHSTATUS})
-		;;
-		"ppp0")
-		netsta=$(cat ${PPPSTATUS})
-		;;
-		*)
-		;;
-	esac
-	
-	echo "${netsta}"
-}
-
-#获取一个可用的网络
-get_vaild_network() {
-	sta=$(cat ${ETHSTATUS})
-	if [ "${sta}" == "OK" ]
-	then
-		echo "eth0"
-		return
-	fi
-	sta=$(cat ${WLANSTATUS})
-	if [ "${sta}" == "OK" ]
-	then
-		echo "wlan0"
-		return
-	fi
-	sta=$(cat ${PPPSTATUS})
-	if [ "${sta}" == "OK" ]
-	then
-		echo "ppp0"
-		return
+		kill -${EXIT_SIGNAL} ${pid}  > /dev/null
 	fi
 }
 
@@ -213,63 +149,132 @@ else
 	CURRENT_NET=${DEFAULT_NET}
 fi
 
+start_pid=$(ps -ef | grep zywlstart | grep -v grep | awk -F" " '{print $2}')
 count=0
 net_state=0
 fail_count=0
 default_net_is_ok=0
 network_is_bad=0
+network_status=0
+eth0_network_status=0
+wlan0_network_status=0
+ppp0_network_status=0
+exit_flag=0
 
 GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 echo "${GET_TIMESTAMP}:zywlmonitor script start!" >> ${LOGFILE}
 
+eth0_network_status_is_bad(){
+	eth0_network_status=0
+}
+eth0_network_status_is_good(){
+	eth0_network_status=1
+}
+wlan0_network_status_is_bad(){
+	wlan0_network_status=0
+}
+wlan0_network_status_is_good(){
+	wlan0_network_status=1
+}
+ppp0_network_status_is_bad(){
+	ppp0_network_status=0
+}
+ppp0_network_status_is_good(){
+	ppp0_network_status=1
+}
+thread_exit(){
+	exit_flag=1
+}
+
+trap "thread_exit" ${EXIT_SIGNAL}
+trap "eth0_network_status_is_bad" ${ETH_BAD_SIG}
+trap "eth0_network_status_is_good" ${ETH_GOOD_SIG}
+trap "wlan0_network_status_is_bad" ${WLAN_BAD_SIG}
+trap "wlan0_network_status_is_good" ${WLAN_GOOD_SIG}
+trap "ppp0_network_status_is_bad" ${PPP_BAD_SIG}
+trap "ppp0_network_status_is_good" ${PPP_GOOD_SIG}
+
+get_netstatus() {
+	case $1 in
+		"wlan0")
+		netsta=${wlan0_network_status}
+		;;
+		"eth0")
+		netsta=${eth0_network_status}
+		;;
+		"ppp0")
+		netsta=${ppp0_network_status}
+		;;
+		*)
+		;;
+	esac
+	
+	echo ${netsta}
+}
+
+#获取一个可用的网络
+get_vaild_network() {
+	if [ ${eth0_network_status} -eq 1 ];then
+		echo "eth0"
+		return
+	fi
+	if [ ${wlan0_network_status} -eq 1 ];then
+		echo "wlan0"
+		return
+	fi
+	if [ ${ppp0_network_status} -eq 1 ];then
+		echo "ppp0"
+		return
+	fi
+}
+
+net_state=0
+
 while true
 do
-	time_sync
-	sta=$(cat ${MQTTSTATUS})
-	if [ "${sta}" == "success" ]
-	then
+	if [ ${exit_flag} -eq 1 ];then
 		donot_monitor_network
-		sleep 5
-		continue
+		GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+		echo "${GET_TIMESTAMP}:monitor script exit now!" >> ${LOGFILE}
+		sync
+		exit
 	fi
 
 	monitor_network
 
 	#系统启动时会从配置文件net.conf中读取默认配置的网络并进行连接
-	if [ ${count} -ge 5 ]
+	if [ ${count} -ge 2 ]
 	then
 		count=0
 		
 		DEFAULT_NET=$(cat ${NETFILE} | grep choice |  awk -F"=" '{print $2}')
 	
-		net_state=$(read_netstatus ${DEFAULT_NET})
-		if [ "${net_state}" == "OK" ]
-		then
+		net_state=$(get_netstatus ${DEFAULT_NET})
+		if [ ${net_state} -eq 1 ];then
 			default_net_is_ok=$(expr ${default_net_is_ok} + 1)
-			if [ ${default_net_is_ok} -ge 3 ]
-			then
+			if [ ${default_net_is_ok} -ge 3 ];then
 				default_net_is_ok=0
-				if [ "${DEFAULT_NET}" != "${CURRENT_NET}" ]
-				then
+				if [ "${DEFAULT_NET}" != "${CURRENT_NET}" ];then
 					GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 					echo "${GET_TIMESTAMP}: cur net not equl default net, from ${CURRENT_NET} change to ${DEFAULT_NET}" >> ${LOGFILE}
 					CURRENT_NET=${DEFAULT_NET}
-					cat /dev/null > ${NETSTAT}
+					if [ ${network_status} -eq 1 ];then
+						network_status=0
+						#kill -${NET_BAD_SIG} ${start_pid}
+						#cat /dev/null > ${NETSTAT}
+					fi
 				fi
 			fi
 		else
 			default_net_is_ok=0
-			net_state=$(read_netstatus ${CURRENT_NET})
+			net_state=$(get_netstatus ${CURRENT_NET})
 		fi
 
-		if [ "${net_state}" == "OK" ]
-		then
+		if [ ${net_state} -eq 1 ];then
 			#equl 0 mean network is fine
 			fail_count=0
-			echo 0 > ${NETTIMESTAMP}
-			sta=$(cat ${NETSTAT})
-			if [ -z "${sta}" ]
-			then
+			#echo 0 > ${NETTIMESTAMP}
+			if [ ${network_status} -eq 0 ];then
 				#kill_mqtt_thread
 				setCurrentRoute ${CURRENT_NET}
 				if [ ${network_is_bad} -eq 1 ]
@@ -277,9 +282,9 @@ do
 					python3 /root/showimage.py 3
 					network_is_bad=0
 				fi
-				echo "OK" > ${NETSTAT}
+				network_status=1
+				kill -${NET_GOOD_SIG} ${start_pid}
 				echo ${CURRENT_NET} > ${CURRENTNET}
-				/root/update_time.sh &
 			else
 				#用来处理默认路由因为某种情况被错误的删除
 				net=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $8}')
@@ -298,7 +303,7 @@ do
 				echo "${GET_TIMESTAMP}:network[${CURRENT_NET}] is bad" >> ${LOGFILE}
 				vail_net=$(get_vaild_network)
 				kill_mqtt_thread
-				cat /dev/null > ${NETSTAT}
+
 				if [ -n "${vail_net}" ]
 				then
 					#发现其他可用的网络，切换到可用网络
@@ -314,6 +319,11 @@ do
 					network_is_bad=1
 					echo "${GET_TIMESTAMP}:not find vaild network" >> ${LOGFILE}
 					python3 /root/showimage.py 2
+					if [ ${network_status} -eq 1 ];then
+						network_status=0
+						kill -${NET_BAD_SIG} ${start_pid}
+						#cat /dev/null > ${NETSTAT}
+					fi
 				fi
 			fi
 		fi

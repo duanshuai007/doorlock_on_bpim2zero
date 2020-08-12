@@ -4,22 +4,28 @@
 
 PPPD=$(which pppd)
 
-LOG_FILE=/var/log/zywllog
+LOG_FILE="/var/log/zywllog"
 UPDATESTATUS="/home/ubuntu/update_status"
-NETFILE="/root/netstatus"
+UPDATE_END="/home/ubuntu/update_end"
 MACFILE="/tmp/eth0macaddr"
 WATCHDOGSCRIPT="/home/watchdog/feed.py"
+SIGFIL="/root/signal.conf"
+
+EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
+GSMSERIAL_SIGNAL=$(cat /root/config.ini | grep -w GSMSERIALOK | awk -F"=" '{print $2}')
+GSMSIMNOTINSERTED_SIGNAL=$(cat /root/config.ini | grep -w GSMSIMNOTINSERTED | awk -F"=" '{print $2}')
+GSMSIMMODULEERROR_SIGNAL=$(cat /root/config.ini | grep -w GSMSIMMODULEERROR | awk -F"=" '{print $2}')
+NET_GOOD_SIG=$(cat ${SIGFIL} | grep -w NETWORKOK | awk -F"=" '{print $2}')
+NET_BAD_SIG=$(cat ${SIGFIL} | grep -w NETWORKBAD | awk -F"=" '{print $2}')
+MQTT_CONN_OK_SIG=$(cat /root/config.ini | grep -w MQTTCONNOK | awk -F"=" '{print $2}')
+MQTT_CONN_BAD_SIG=$(cat /root/config.ini | grep -w MQTTCONNBAD | awk -F"=" '{print $2}')
 
 CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-echo "${CUR_TIME}:$0 start work!}" >> ${LOG_FILE}
+echo "${CUR_TIME}:$0 start work!" >> ${LOG_FILE}
 
 /bin/dmesg -n 1
 
-#ps -ef | grep start_network | grep -v grep | awk -F" " '{print $2}' > /var/run/start_network.pid
-
 #echo "*/10 * * * * /usr/sbin/ntpdate ntp.api.bz > /dev/null" > /var/spool/cron/crontabs/root
-#echo "*/10 * * * * /usr/sbin/ntpdate cn.pool.ntp.org > /dev/null" >> /var/spool/cron/crontabs/root
-#echo "*/10 * * * * /bin/bash /root/update_time.sh" >> /var/spool/cron/crontabs/root
 #service cron start
 
 cp /root/ntp.conf /etc/
@@ -30,33 +36,25 @@ service frpc stop
 systemctl stop systemd-timesyncd
 systemctl disable systemd-timesyncd
 
-#insmod /root/hardware_ctrl/linux/char/lcd_driver_simulation_spi.ko 
-
 cat /dev/null > /tmp/network_timestamp
-cat /dev/null > ${NETFILE}
 cat /dev/null > ${LOG_FILE}
 
 wpa_connect_flag=0
 feedcount=0
 
+eth0macaddr=$(ifconfig eth0 | grep HWaddr | awk -F" " '{print $5}' | awk -F":" '{print $1$2$3$4$5$6}')
+echo ${eth0macaddr} > ${MACFILE}
+/bin/hostname zywldl${eth0macaddr}
+
 mqtt_start() {
-	#pid=$(ps -ef | grep mqtt | grep -v grep | awk -F" " '{print $2}')
-	mac=$(cat ${MACFILE})
-	if [ -n "${mac}" ]
-	then
-		python3 /root/mqtt_client.py ${mac} &
-	else
-		mac=$(ifconfig eth0 | grep HWaddr | awk -F" " '{print $5}' | awk -F":" '{print $1$2$3$4$5$6}')
-		echo ${mac} > ${MACFILE}
-		python3 /root/mqtt_client.py ${mac} &
-	fi
+	python3 /root/mqtt_client.py ${eth0macaddr} &
 }
 
 mqtt_stop() {
 	pid=$(ps -ef | grep "mqtt" | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
-		kill ${pid}
+		kill -${EXIT_SIGNAL} ${pid}
 		sleep 0.5
 		kill -9 ${pid}
 	fi
@@ -75,18 +73,122 @@ pppd_stop() {
 	fi
 }
 
-timecount_for_systemctl=0
-timecount_for_pppd=0
 wpa_start_error=0
 check_pppd_count=0
 check_wpa_count=0
+check_temp_time=0
+pppd_wait_count=0
+gsmserial_status=0
+network_status=0
+sim_not_insert=0
+sim_module_error=0
+check_pppd_cycle=0
+mqtt_conn_status=0
+exit_flag=0
+
+thread_exit() {
+	exit_flag=1
+}
+
+gsmserial_status_is_ok() {
+	echo "gsm serial is ok" >> ${LOG_FILE}
+	gsmserial_status=1
+	sim_not_insert=0
+	sim_module_error=0
+	systemctl stop zywlpppd
+}
+
+network_status_is_ok(){
+	echo "network is ok" >> ${LOG_FILE}
+	network_status=1
+}
+
+network_status_is_bad(){
+	echo "network is bad" >> ${LOG_FILE}
+	network_status=0
+}
+
+gsm_sim_not_inserted() {
+	systemctl stop zywlpppd
+	echo "sim card not inserted" >> ${LOG_FILE}
+	sim_not_insert=1
+	pppd_stop
+}
+
+gsm_sim_module_error() {
+	systemctl stop zywlpppd
+	echo "sim module error!" >> ${LOG_FILE}
+	pppd_stop
+	sim_module_error=1
+}
+
+mqtt_connect_status_is_bad(){
+	mqtt_conn_status=0
+	echo "mqtt connect bad" >> ${LOG_FILE}
+}
+mqtt_connect_status_is_ok(){
+	mqtt_conn_status=1
+	echo "mqtt connect ok" >> ${LOG_FILE}
+}
+
+trap "thread_exit" ${EXIT_SIGNAL}
+trap "gsmserial_status_is_ok" ${GSMSERIAL_SIGNAL}
+trap "network_status_is_ok" ${NET_GOOD_SIG}
+trap "network_status_is_bad" ${NET_BAD_SIG}
+trap "gsm_sim_not_inserted" ${GSMSIMNOTINSERTED_SIGNAL}
+trap "gsm_sim_module_error" ${GSMSIMMODULEERROR_SIGNAL}
+trap "mqtt_connect_status_is_bad" ${MQTT_CONN_BAD_SIG}
+trap "mqtt_connect_status_is_ok" ${MQTT_CONN_OK_SIG}
 
 #set /tmp/eth0macaddr and set hostname
-/root/get_eth0_mac.sh
+
+python3 /root/showimage.py 1
+
+time_sync() {
+	ps -ef | grep ntpd | grep -v grep > /dev/null
+	if [ $? -ne 0 ];then
+		pid=$(ps -ef | grep update_time | grep -v grep | awk -F" " '{print $2}')
+		if [ -z "${pid}" ];then
+			service ntp start
+		fi  
+	fi  
+}
+
+monitor_thread_exit(){
+	pid=$(ps -ef | grep zywlmonitor | grep -v grep | awk -F" " '{print $2}')
+	if [ -n "${pid}" ];then
+		kill -${EXIT_SIGNAL} ${pid}
+	fi
+}
+
+monitor_thread_start(){
+	ps -ef | grep zywlmonitor | grep -v grep > /dev/null
+	if [ $? -ne 0 ];then
+		/root/zywlmonitor.sh &
+	fi
+}
 
 while true
 do
 	sleep 1
+
+	if [ ${exit_flag} -eq 1 ];then
+		exit
+	fi
+
+	if [ ${mqtt_conn_status} -eq 1 ];then
+		monitor_thread_exit
+	else
+		monitor_thread_start
+	fi
+
+	check_temp_time=$(expr ${check_temp_time} + 1)
+	if [ ${check_temp_time} -ge 600 ];then
+		check_temp_time=0
+		temp=$(cat /sys/class/thermal/thermal_zone0/temp)
+		CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+		echo "${CUR_TIME}:current temp = ${temp}" >> /var/log/monitor.log
+	fi
 
 	#echo "ssid=${ssid} psk=${psk}"
 	check_wpa_count=$(expr ${check_wpa_count} + 1)
@@ -126,74 +228,74 @@ do
 		fi
 	fi
 
-	check_pppd_count=$(expr ${check_pppd_count} + 1)
-	if [ ${check_pppd_count} -ge 10 ]
-	then
-		check_pppd_count=0
-		ps -ef | grep pppd | grep -v grep > /dev/null
-		if [ $? -ne 0 ]
-		then
-			timecount_for_pppd=0
-			python3 ${WATCHDOGSCRIPT}
-			python3 /root/check_tty.py
-			sleep 0.2
-			sta=$(cat /tmp/serial)
-			if [ "${sta}" == "OK" ]
-			then
-				cat /dev/null > /var/log/ppplogfile
-				${PPPD} call myapp &
-			fi
-		else
-			timecount_for_pppd=$(expr ${timecount_for_pppd} + 1)
-			if [ ${timecount_for_pppd} -ge 5 ]
-			then
-				timecount_for_pppd=0
-				cat /var/log/ppplogfile | grep "Connect script failed" > /dev/null
-				if [ $? -eq 0 ]
-				then
-					pppd_stop
-				fi
-				#检查ppp0是否获得IP地址
-				ifconfig -a | grep ppp0 > /dev/null
-				if [ $? -eq 0 ]
-				then
-					ifconfig ppp0 | grep "inet addr" > /dev/null
-					if [ $? -ne 0 ]
-					then
-						pppd_stop			
+	if [ ${sim_module_error} -eq 0 ];then
+		check_pppd_count=$(expr ${check_pppd_count} + 1)
+		if [ ${check_pppd_count} -ge 10 ];then
+			check_pppd_count=0
+			ps -ef | grep -w pppd | grep -v grep > /dev/null
+			if [ $? -ne 0 ];then
+				if [ ${gsmserial_status} -eq 1 ];then
+					cat /dev/null > /var/log/ppplogfile
+#systemctl stop zywlpppd
+#					sleep 2
+					${PPPD} call myapp &
+				else
+					if [ ${sim_not_insert} -eq 0 ];then
+						systemctl start zywlpppd
 					fi
 				fi
+			else
+				cat /var/log/ppplogfile | grep "Connect script failed" > /dev/null
+				if [ $? -eq 0 ];then
+					gsmserial_status=0
+					pppd_wait_count=$(expr ${pppd_wait_count} + 1)
+				fi
+				#检查ppp0是否获得IP地址
+				ip addr | grep ppp0 > /dev/null
+				if [ $? -eq 0 ];then
+					ip addr | grep ppp0 | grep inet > /dev/null
+					if [ $? -ne 0 ];then
+						gsmserial_status=0
+						pppd_wait_count=$(expr ${pppd_wait_count} + 1)
+					fi
+				else
+					gsmserial_status=0
+					pppd_wait_count=$(expr ${pppd_wait_count} + 1)
+				fi
+				if [ ${pppd_wait_count} -ge 3 ];then
+					pppd_wait_count=0
+					pppd_stop
+					if [ ${sim_not_insert} -eq 0 ];then
+						systemctl start zywlpppd
+					fi
+				fi	
 			fi
 		fi
 	fi
 
 	feedcount=$(expr ${feedcount} + 1)
-	if [ ${feedcount} -ge 5 ] 
-	then
+	if [ ${feedcount} -ge 5 ];then
 		feedcount=0
 		python3 ${WATCHDOGSCRIPT}
 	fi  
 
-	if [ -f "${UPDATESTATUS}" ]
-	then
+	if [ -f "${UPDATESTATUS}" ];then
 		sta=$(cat ${UPDATESTATUS} | awk -F":" '{print $1}')
-		if [ -n "${sta}" ]
-		then
-			if [ "${sta}" == "done" ]
-			then
+		if [ -n "${sta}" ];then
+			if [ "${sta}" == "done" ];then
 				ver=$(cat ${UPDATESTATUS} | awk -F":" '{print $2}')
 				no=$(cat ${UPDATESTATUS} | awk -F":" '{print $3}')
 				echo "success:${ver}:${no}" > ${UPDATESTATUS}
-			elif [ "${sta}" == "success" -o "${sta}" == "error" ]
-			then
+				sync
+			elif [ "${sta}" == "success" -o "${sta}" == "error" ];then
 				#echo "update firmware done!" > /dev/null
-				sta=$(cat ${NETFILE}) 
-				if [ -z "${sta}" ]
-				then
-					echo "OK" > ${NETFILE}
+				if [ ! -f "${UPDATE_END}" ];then
+					touch ${UPDATE_END}
+					sync
+					systemctl restart zywldl
 				fi
-			else
-				cat /dev/null > ${NETFILE}
+			elif [ "${sta}" == "start" -o "${sta}" == "move" -o "${sta}" == "clear" ];then
+				network_status=0
 				mqtt_stop
 				ps -ef | grep update_firmware | grep -v grep > /dev/null
 				if [ $? -ne 0 ]
@@ -202,47 +304,39 @@ do
 					python3 ${WATCHDOGSCRIPT}
 					/root/update_firmware.sh &
 				fi
+			else
+				rm ${UPDATESTATUS}
+				echo "update firmware: rm update_status file sta:${sta}" >> ${LOG_FILE}
+				network_status=1
 			fi
+		else
+			#如果UPDATESTATUS文件因为某些原因导致没有内容写入，那么就删除该文件
+			rm ${UPDATESTATUS}
+			echo "update firmware: rm update_status file sta is null" >> ${LOG_FILE}
+			network_status=1
 		fi
-#	else
-#		timecount_for_systemctl=$(expr ${timecount_for_systemctl} + 1)
-#		if [ ${timecount_for_systemctl} -ge 60 ]
-#		then
-#			timecount_for_systemctl=0
-#			feedcount=0
-#			python3 ${WATCHDOGSCRIPT}
 #			for var in $(systemctl list-unit-files | grep \.service | awk '{print $1}')
-#			do  
 #				ret=$(systemctl status $var 2>&1 | grep "changed on disk")
-#				if [ -n "${ret}" ]
-#				then
-#					cmd=$(echo ${ret} | awk -F"Run" '{print $2}' | awk -F"'" '{print $2}' | awk -F"'" '{print $1}')
-#					#echo "cmd : ${cmd}"
-#					${cmd}
-#					python3 ${WATCHDOGSCRIPT}
-#				fi  
-#			done
-#			python3 ${WATCHDOGSCRIPT}
-#		fi
 	fi
 
-	if [ -f ${NETFILE} ]
-	then
-		sta=$(cat ${NETFILE}) 
-		if [ "${sta}" == "OK" ]
-		then
-			num=$(ps -ef | grep "mqtt" | grep -v grep | wc -l)
-			if [ ${num} -eq 0 ] 
-			then
-				CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-				echo "${CUR_TIME}:mqtt client start" >> ${LOG_FILE}
-				mqtt_start
-			elif [ ${num} -gt 1 ] 
-			then
-				CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-				echo "${CUR_TIME}:mqtt client stop" >> ${LOG_FILE}
-				mqtt_stop
-			fi  
+	if [ -f ${UPDATE_END} ];then
+		network_status=1
+	fi
+
+	time_sync
+
+	if [ ${network_status} -eq 1 ];then
+		num=$(ps -ef | grep "mqtt" | grep -v grep | wc -l)
+		if [ ${num} -eq 0 ];then
+			CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+			echo "${CUR_TIME}:mqtt client start" >> ${LOG_FILE}
+			/root/update_time.sh
+			#systemctl restart frpc
+			mqtt_start
+		elif [ ${num} -ge 2 ];then
+			CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+			echo "${CUR_TIME}:mqtt client stop" >> ${LOG_FILE}
+			mqtt_stop
 		fi  
 	fi  
 done

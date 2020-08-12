@@ -1,0 +1,13 @@
+[Unit]
+Description=zywl pppd Service
+After=network.target
+
+[Service]
+Type=simple
+RestartSec=300
+ExecStart=/usr/bin/zywlpppd start
+ExecStop=/usr/bin/zywlpppd stop
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

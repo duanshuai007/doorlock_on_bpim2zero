@@ -1,0 +1,30 @@
+TIMEOUT 15
+# 连续15秒, 收到以下字符, 退出执行
+ABORT   "BUSY" 
+ABORT   "NO CARRIER" 
+ABORT   "NO DIALTONE" 
+ABORT   "ERROR" 
+ABORT   "NO ANSWER" 
+
+TIMEOUT 20
+# 40秒内没有收到指定字符, 退出
+# 如: OK \rATZ, 发送 ATZ, 希望收到的是 OK.
+'' AT 
+SAY "\nCheck SIM80)\n" 
+OK \rATZ
+SAY "\nCheck SIM800 active\n" 
+OK ATE1
+
+#cmnet 是移动的接入点 3gnet是联通3g接入点。
+OK \rAT+COPS?
+'CHN-UNICOM' \rAT+CGDCONT=1,"IP","3gnet",,0,0
+
+OK AT+CGQREQ=1,0,0,0,0,0
+OK AT+CGQMIN=1,0,0,0,0,0
+
+# 拨号
+OK \rAT+COPS?
+'CHN-UNICOM' ATDT*99#
+SAY "\nWaiting for connect...\n"
+CONNECT "" 
+SAY "\nConnected!"

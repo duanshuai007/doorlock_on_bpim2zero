@@ -3,7 +3,7 @@
 #update firmware
 DOWNLOADDIR="/home/firmware"
 UPDATESTATUS="/home/ubuntu/update_status"
-#FIRMWARE=$(ls /home/download/ | grep firmware)
+BACKUPDIR="/home/backfile"
 
 if [ ! -f "${UPDATESTATUS}" ]
 then
@@ -18,21 +18,35 @@ if [ ! -f "${FIRMWARE}" ]
 then
 	echo "not find firmware:${FIRMWARE}"
 	echo "error:${version}:1" > ${UPDATESTATUS}
+	sync
 	exit
 fi
 
-ret=$(which rsync)
-if [ -z "${ret}" ]
-then
-	apt-get install rsync
-fi
+cat /dev/null > /home/ubuntu/updatelog
 
-update_start() {
-	python3 /root/showimage.py 4
-	echo "tarfile:${version}:0" > ${UPDATESTATUS}
+all_file_backup() {
+	mkdir -p ${BACKUPDIR}
+	mkdir -p ${BACKUPDIR}/python
+	mkdir -p ${BACKUPDIR}/script
+	#LoggingQueue.so checkfiletype.so config.so downloadfile.so generate_pillow_buffer.so message_struct.so mqtt.so spilcd_api.so uncompressfirmware.so
+	#watchdog.so wx2vcode.so
+	cp /usr/local/lib/python3.5/dist-packages/LoggingQueue.so	${BACKUPDIR}/python
+	cp /usr/local/lib/python3.5/dist-packages/checkfiletype.so	${BACKUPDIR}/python
+	cp /usr/local/lib/python3.5/dist-packages/config.so			${BACKUPDIR}/python
+	cp /usr/local/lib/python3.5/dist-packages/downloadfile.so	${BACKUPDIR}/python
+	cp /usr/local/lib/python3.5/dist-packages/generate_pillow_buffer.so		${BACKUPDIR}/python
+	cp /usr/local/lib/python3.5/dist-packages/message_struct.so	${BACKUPDIR}/python
+	cp /usr/local/lib/python3.5/dist-packages/mqtt.so			${BACKUPDIR}/python
+	cp /usr/local/lib/python3.5/dist-packages/spilcd_api.so		${BACKUPDIR}/python
+	cp /usr/local/lib/python3.5/dist-packages/uncompressfirmware.so		${BACKUPDIR}/python
+	cp /usr/local/lib/python3.5/dist-packages/watchdog.so		${BACKUPDIR}/python
+	cp /usr/local/lib/python3.5/dist-packages/wx2vcode.so		${BACKUPDIR}/python
+
+	cp /root/* ${BACKUPDIR}/script
 }
 
 tarfile() {
+	python3 /root/showimage.py 4
 	if [ -d "${DOWNLOADDIR}.back" ]
 	then 
 		rm -rf "${DOWNLOADDIR}.back"
@@ -45,23 +59,38 @@ tarfile() {
 
 	mkdir -p ${DOWNLOADDIR}
 
+	all_file_backup
+
 	#该文件必须首先要存在/root目录下才能解压
 	python3 /root/uncompress.py ${FIRMWARE} ${DOWNLOADDIR}
 	if [ ! -d "${DOWNLOADDIR}/target" ]
 	then
 		echo "tar firmware:${FIRMWARE} failed"
 		echo "error:${version}:2" > ${UPDATESTATUS}
+		sync
 		exit
 	fi
 
 	sleep 1
-	#rsync ${DOWNLOADDIR}/target/shell/little_feed.sh /home/watchdog
-	#rsync python feed watchdog script to /home/watchdog
 	if [ -d "${DOWNLOADDIR}/target/watchdog" ];then
-		rsync -r ${DOWNLOADDIR}/target/watchdog/ /home/watchdog
+		cp -r ${DOWNLOADDIR}/target/watchdog/ /home/watchdog
 	fi
 
+	firmwaredir="${DOWNLOADDIR}/target"
+	for var in $(cat ${firmwaredir}/md5file | awk -F" " '{print $2}')
+	do
+		oldmd5val=$(cat ${firmwaredir}/md5file | grep "${var}" | awk -F" " '{print $1}')
+		newmd5val=$(md5sum ${firmwaredir}/${var} | awk -F" " '{print $1}')
+		echo "file:${var} old:${oldmd5val} new:${newmd5val}" >> /home/ubuntu/updatelog
+		if [ "${oldmd5val}" != "${newmd5val}" ];then
+			echo "error:${version}:4" > ${UPDATESTATUS}
+			sync
+			exit
+		fi
+	done
+
 	echo "move:${version}:0" > ${UPDATESTATUS}
+	sync
 }
 
 move() {
@@ -70,111 +99,77 @@ move() {
 	then 
 		echo "move file error!"
 		echo "error:${version}:3" > ${UPDATESTATUS}
+		sync
 	else
-		#删除只存在于/root中，不存在于更新包中的文件
-		sleep 1
-
-		#rsync shell script to /root
 		if [ -d "${DOWNLOADDIR}/target/shell" ];then
 			if [ -f "${DOWNLOADDIR}/target/shell/update_firmware.sh" ];then
 				diff ${DOWNLOADDIR}/target/shell/update_firmware.sh /root/update_firmware.sh > /dev/null
 				if [ $? -eq 1 ];then
-					rsync ${DOWNLOADDIR}/target/shell/update_firmware.sh /root/update_firmware.sh
+					cp ${DOWNLOADDIR}/target/shell/update_firmware.sh /root/update_firmware.sh
 					exit
 				fi
 			fi		
-			rsync -r ${DOWNLOADDIR}/target/shell/*.sh /root/
-		fi
-				
-		#rsync python modules
-		if [ -d "${DOWNLOADDIR}/target/python" ];then
-			rsync -r ${DOWNLOADDIR}/target/python/*.so /usr/local/lib/python3.5/dist-packages/
 		fi
 
-		#rsync python run script to /root
-		if [ -d "${DOWNLOADDIR}/target/run" ];then
-			rsync -r ${DOWNLOADDIR}/target/run/*.py /root/
+		prefix=${DOWNLOADDIR}/target
+		if [ ! -f "${prefix}/buildfile" ];then
+			echo "error:${version}:6" > ${UPDATESTATUS}
+			sync
+			exit
 		fi
 
-		#rsync image file to /root
-		if [ -d "${DOWNLOADDIR}/target/image" ];then
-			rsync -r ${DOWNLOADDIR}/target/image /root/
-		fi
-
-		#rsync image file to /root
-		if [ -d "${DOWNLOADDIR}/target/ppp" ];then
-			rsync -r ${DOWNLOADDIR}/target/ppp /etc/ppp/
-		fi
-
-		#config file rsync
-		if [ ! -f "/root/net.conf" ];then
-			cp ${DOWNLOADDIR}/target/net.conf /root
-		fi
-
-		if [ ! -f "/root/config.ini" ];then
-			cp ${DOWNLOADDIR}/target/config.ini /root
-		fi
-
-		if [ -f "${DOWNLOADDIR}/target/ntp.conf " ];then
-			rsync -r ${DOWNLOADDIR}/target/ntp.conf /etc/
-		fi
-
-		#crtfile rsync
-		if [ -f "${DOWNLOADDIR}/target/mqtt.iotwonderful.cn.crt" ];then
-			mkdir -p /root/crtfile
-			rsync -r ${DOWNLOADDIR}/target/mqtt.iotwonderful.cn.crt /root/crtfile/
-		fi
-
-		if [ ! -d "/root/log" ];then
-			mkdir -p /root/log
-		fi
-
-		#install frpc service
-		if [ -d "${DOWNLOADDIR}/target/frp" ];then
-			if [ -d "${DOWNLOADDIR}/target/frp/systemd" ];then
-				rsync -r ${DOWNLOADDIR}/target/frp/systemd/* /lib/systemd/system/
-			fi
-			if [ -f "${DOWNLOADDIR}/target/frp/frpc" ];then
-				rsync -r ${DOWNLOADDIR}/target/frp/frpc /usr/bin/
-			fi
-			if [ -f "${DOWNLOADDIR}/target/frp/frpc.ini" ];then
-				rsync -r ${DOWNLOADDIR}/target/frp/frpc.ini /etc/frp/
-			fi
-		fi
-
-		#ver=${FIRMWARE#*_}
-		#ver=${ver%%.*}
-		/root/set_config.sh "version " " ${version}"
-		/root/set_config.sh "VERSION" "${version}"
-
-		#rsync ${DOWNLOADDIR}/target/rc.local /etc/
-		if [ -f "${DOWNLOADDIR}/systemd/zywldl.service" ];then
-			rsync ${DOWNLOADDIR}/systemd/zywldl.service /lib/systemd/system/
-			systemctl enable zywldl
-		fi
-
+		for var in $(cat ${prefix}/buildfile)
+		do
+			src=$(echo ${var} | awk -F":" '{print $1}')
+			dst=$(echo ${var} | awk -F":" '{print $2}')
+			cp ${prefix}/${src} ${dst}
+		done
+		
 		echo "clear:${version}:0" > ${UPDATESTATUS}
+		sync
 	fi
 }
 
 update_clear() {
 	cd /root
 	rm /home/download/*
+
+	errornumber=0
+	echo "==================" >> /home/ubuntu/updatelog
+
+	prefix=${DOWNLOADDIR}/target
+	for var in $(cat ${prefix}/buildfile)
+	do
+		src=$(echo ${var} | awk -F":" '{print $1}')
+		dst=$(echo ${var} | awk -F":" '{print $2}')
+		
+		after=$(md5sum ${dst} | awk -F" " '{print $1}')
+		before=$(cat ${prefix}/md5file | grep "${src}" | awk -F" " '{print $1}')
+		echo "file:${src} after:${after} before:${before}" >> /home/ubuntu/updatelog
+		if [ "${after}" != "${before}" ];then
+			errornumber=1
+		fi
+	done
+
+	if [ ${errornumber} -ne 0 ];then
+		cp ${BACKUPDIR}/python/* /usr/local/lib/python3.5/dist-packages/
+		cp ${BACKUPDIR}/script/* /root/	 
+		echo "error:${version}:5" > ${UPDATESTATUS}
+		sync
+		exit
+	fi
+
+	/root/set_config.sh "version " " ${version}"
+	/root/set_config.sh "VERSION" "${version}"
+
 	echo "done:${version}:0" > ${UPDATESTATUS}
-	sleep 1
-	systemctl restart zywldl
+	sync
 }
 
 if [ -n "${sta}" ]
 then
 	case ${sta} in 
 	"start")
-		update_start	
-		tarfile
-		move
-		update_clear
-	;;
-	"tarfile")
 		tarfile
 		move
 		update_clear

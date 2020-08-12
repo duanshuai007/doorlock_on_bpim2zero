@@ -3,12 +3,12 @@ Description=zywl doorlock Service
 After=network.target
 
 [Service]
-Type=simple
+Type=forking
 RestartSec=5
 ExecStart=/usr/bin/zywldl start
 ExecStop=/usr/bin/zywldl stop
 ExecReload=/usr/bin/zywldl restart
-Restart=on-failure
+Restart=on-abnormal
 
 [Install]
 WantedBy=multi-user.target

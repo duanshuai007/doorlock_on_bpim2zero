@@ -1,10 +1,8 @@
 #!/bin/sh
 
-
 #	2020 07 16
 #this script will generate a firmware
 #
-
 user=$(whoami)
 if [ ${user} != "root" ]
 then
@@ -19,7 +17,6 @@ then
 fi
 
 version=$1
-#tarpassword=$2
 
 STONEFILE="python_modules/message_struct/message_struct.py"
 
@@ -32,16 +29,21 @@ fi
 tarpassword=$(cat ${STONEFILE} | grep DOORSTONE | awk -F"=" '{print $2}')
 if [ -z "${tarpassword}" ]
 then
-	print "can find DOORSTONE in ${STONEFILE}"
+	print "can't find DOORSTONE in ${STONEFILE}"
 	exit
 fi
 
-target="./target"
+sourcedir=$(pwd)
+target=${sourcedir}/target
 
 if [ -d "${target}" ]
 then
 	rm -rf ${target}
 fi
+
+MD5FILE=${target}/md5file
+BUILDFILE=${target}/buildfile
+
 
 mkdir ${target}
 mkdir -p ${target}/shell
@@ -49,23 +51,39 @@ mkdir -p ${target}/python
 mkdir -p ${target}/image
 mkdir -p ${target}/run
 mkdir -p ${target}/systemd
+mkdir -p ${target}/frp
 
-cd ./python_modules
+cat /dev/null > ${MD5FILE}
+cat /dev/null > ${BUILDFILE}
+
+cd ${sourcedir}/python_modules
 ./make.sh build
 
 for var in $(find . -name "*.so")
 do
 	newname=$(echo $var | awk -F"/" '{print $4}' | awk -F"." '{print $1}')
-	mv ${var} ../${target}/python/${newname}.so
+	mv ${var} ${target}/python/${newname}.so
+	echo "python/${newname}.so:/usr/local/lib/python3.5/dist-packages/${newname}.so" >> ${BUILDFILE}
 done
 
-cd ..
 
-cp shellscript/* ${target}/shell/
+cd ${sourcedir}/shellscript
 
+for var in $(find . -name "*")
+do
+	if [ -f "${var}" ];then 
+		name=${var##*/}
+		cp ${var} ${target}/shell/
+		echo "shell/${name}:/root/${name}" >> ${BUILDFILE}
+	fi
+done
+
+cd ${sourcedir}
 #cp rc.local		${target}
 cp config.ini	${target}
-#cp crtfile/*	${target}
+echo "config.ini:/root/config.ini" >> ${BUILDFILE}
+cp crtfile/*	${target}
+echo "mqtt.iotwonderful.cn.crt:/root/crtfile/mqtt.iotwonderful.cn.crt" >> ${BUILDFILE}
 
 frpc_server_addr=$(cat frp/frpc.ini | grep server_addr | awk -F" = " '{print $2}')
 frpc_server_port=$(cat frp/frpc.ini | grep server_port | awk -F" = " '{print $2}')
@@ -86,18 +104,66 @@ else
 fi
 
 cp zywldl.service ${target}/systemd
-#cp -r frp	${target}
-cp net.conf ${target}
-#cp ntp.conf ${target}
+echo "systemd/zywldl.service:/lib/systemd/system/zywldl.service" >> ${BUILDFILE}
+cp zywlpppd.service ${target}/systemd
+echo "systemd/zywlpppd.service:/lib/systemd/system/zywlpppd.service" >> ${BUILDFILE}
 
-#cp image/error_160x160.png	${target}/image
-#cp image/logo_160x160.png	${target}/image
-#cp image/update_160x160.jpg ${target}/image
+cp frp/frpc.ini	${target}/frp
+echo "frp/frpc.ini:/etc/frp/frpc.ini" >> ${BUILDFILE}
+#cp net.conf ${target}
+#echo "net.conf:/root/net.conf" >> ${BUILDFILE}
+cp ntp.conf ${target}
+echo "ntp.conf:/etc/ntp.conf" >> ${BUILDFILE}
 
-#cp -r ppp ${target}
-cp pythonscript/* ${target}/run
-#cp -r watchdog ${target}
+cp image/error_160x160.png	${target}/image
+echo "image/error_160x160.png:/root/image/error_160x160.png" >> ${BUILDFILE}
+cp image/logo_160x160.png	${target}/image
+echo "image/logo_160x160.png:/root/image/logo_160x160.png" >> ${BUILDFILE}
+cp image/updateing_160x160.png ${target}/image
+echo "image/updateing_160x160.png:/root/image/updateing_160x160.png" >> ${BUILDFILE}
+
+mkdir -p ${target}/ppp
+mkdir -p ${target}/ppp/mobile
+mkdir -p ${target}/ppp/peers
+mkdir -p ${target}/ppp/telecom
+mkdir -p ${target}/ppp/unicom
+
+cd ${sourcedir}/ppp
+for var in $(find . -name "*")
+do
+	if [ -f "${var}" ];then
+		path=${var%/*}
+		path=${path#*/}
+		filename=${var#*/}
+		cp ${var} ${target}/ppp/${path}
+		echo "ppp/${filename}:/etc/ppp/${filename}" >> ${BUILDFILE}
+	fi
+done
+
+cd ${sourcedir}/pythonscript
+for var in $(find . -name "*")
+do
+	if [ -f "${var}" ];then
+		cp ${var} ${target}/run
+		name=${var#*/}
+		echo "run/${name}:/root/${name}" >> ${BUILDFILE}
+	fi
+done
+
+cd ${target}
+for var in $(find . -name "*")
+do
+	if [ -f ${var} ];then
+		filename=${var#*/}
+		if [ "${filename}" == "buildfile" -o "${filename}" == "md5file" ];then
+			continue
+		fi
+		md5val=$(md5sum ${var} | awk -F" " '{print $1}')
+		echo "${md5val} ${filename}" >> ${MD5FILE}
+	fi
+done
+cd ${sourcedir}
 
 echo "compress password = ${tarpassword}"
-tar -zcvf - ${target} | openssl des3 -salt -k ${tarpassword} | dd of=firmware_${version}.des3.tar.gz
+tar -zcvf - target | openssl des3 -salt -k ${tarpassword} | dd of=firmware_${version}.des3.tar.gz
 

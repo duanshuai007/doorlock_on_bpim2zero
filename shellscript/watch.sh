@@ -1,4 +1,6 @@
 #!/bin/bash
+SIGFIL="/root/signal.conf"
+EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
 
 all_start() {
 	#echo "start all"
@@ -7,13 +9,7 @@ all_start() {
 	ps -ef | grep "zywlstart" | grep -v grep > /dev/null
 	if [ $? -ne 0 ]
 	then
-		/root/zywlstart.sh &
-	fi
-
-	ps -ef | grep "zywlmonitor" | grep -v grep > /dev/null
-	if [ $? -ne 0 ]
-	then
-		/root/zywlmonitor.sh &
+		/root/zywlstart.sh
 	fi
 }
 
@@ -25,37 +21,39 @@ all_stop() {
 	pid=$(ps -ef | grep "zywlstart" | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
-		kill -9 ${pid}
+		kill -${EXIT_SIGNAL} ${pid}
 	fi
 	
 	pid=$(ps -ef | grep "zywlmonitor" | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
-		kill -9 ${pid}
+		kill -${EXIT_SIGNAL} ${pid}
 	fi
 
 	pid=$(ps -ef | grep "mqtt" |  grep -v watch | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
+		kill -${EXIT_SIGNAL} ${pid}
+		sleep 1
 		kill -9 ${pid}
 	fi
 
 	pid=$(ps -ef | grep "zywl_moni_wlan" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
-		kill -9 ${pid}
+		kill -${EXIT_SIGNAL} ${pid}
 	fi
 		
 	pid=$(ps -ef | grep "zywl_moni_eth" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
-		kill -9 ${pid}
+		kill -${EXIT_SIGNAL} ${pid}
 	fi
 
 	pid=$(ps -ef | grep "zywl_moni_ppp" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
-		kill -9 ${pid}
+		kill -${EXIT_SIGNAL} ${pid}
 	fi
 }
 
@@ -65,58 +63,6 @@ all_restart() {
 	all_start
 }
 
-mqtt_stop() {
-	cat /dev/null > /tmp/netstatus
-	pid=$(ps -ef | grep "mqtt" |  grep -v watch | grep -v grep | awk -F" " '{print $2}')
-	if [ -n "${pid}" ]
-	then
-		kill ${pid}
-	fi
-}
-
-mqtt_start() {
-	echo "OK" > /tmp/netstatus
-}
-
-mqtt_restart() {
-	mqtt_stop
-	sleep 1
-	mqtt_start
-}
-
-start_network_stop() {
-	pid=$(ps -ef | grep "zywlstart" | grep -v grep | awk -F" " '{print $2}')
-	if [ -n "${pid}" ]
-	then
-		kill ${pid}
-	fi
-}
-
-monitor_network_stop() {
-	pid=$(ps -ef | grep "zywlmonitor" | grep -v grep | awk -F" " '{print $2}')
-	if [ -n "${pid}" ]
-	then
-		kill ${pid}
-	fi
-
-	pid=$(ps -ef | grep "zywl_moni_wlan" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
-	if [ -n "${pid}" ]
-	then
-		kill -9 ${pid}
-	fi
-		
-	pid=$(ps -ef | grep "zywl_moni_eth" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
-	if [ -n "${pid}" ]
-	then
-		kill -9 ${pid}
-	fi
-
-	pid=$(ps -ef | grep "zywl_moni_ppp" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
-	if [ -n "${pid}" ]
-	then
-		kill -9 ${pid}
-	fi
-}
 
 if [ $# -lt 1 ]
 then
@@ -134,41 +80,6 @@ case $1 in
 	;;
 	"restart")
 		all_restart
-	;;
-	"mqtt")
-		case $2 in
-			"stop")
-				mqtt_stop
-			;;
-			"start")
-				mqtt_start
-			;;
-			"restart")
-				mqtt_restart
-			;;
-		esac
-	;;
-	"zywlstart.sh")
-		case $2 in
-			"stop")
-				start_network_stop
-			;;
-			"restart")
-				start_network_stop
-				/root/zywlstart.sh &
-			;;
-		esac
-	;;
-	"zywlmonitor.sh")
-		case $2 in
-			"stop")
-				monitor_network_stop
-			;;
-			"restart")
-				monitor_network_stop
-				/root/zywlmonitor.sh &
-			;;
-		esac
 	;;
 	*)
 	;;

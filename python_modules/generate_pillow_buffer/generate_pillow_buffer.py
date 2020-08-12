@@ -213,7 +213,7 @@ class screen():
 		self.show_image_on_screen("/root/image/logo_160x160.png", True, True)
 
 	def show_update(self):
-		self.show_image_on_screen("/root/image/update_160x160.jpg", True, True)
+		self.show_image_on_screen("/root/image/updateing_160x160.png", True, True)
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:

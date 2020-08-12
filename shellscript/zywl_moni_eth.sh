@@ -4,10 +4,14 @@
 #	监视eth网络状态
 #	
 
-NETFILE="/root/net.conf"
-STATUSFILE="/tmp/eth0status"
-CURRENT_NET="/tmp/current_network"
 LOGFILE="/var/log/monitor.log"
+SIGFIL="/root/signal.conf"
+
+moni_main_pid=$1
+EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
+ETH_GOOD_SIG=$(cat ${SIGFIL} | grep -w ETHGOODSIG | awk -F"=" '{print $2}')
+ETH_BAD_SIG=$(cat ${SIGFIL} | grep -w ETHBADSIG | awk -F"=" '{print $2}')
+
 start_dhcp_time=0
 cycle_time=0
 #用来使网络在第一次链接上的时候快速进行route和dhcp等操作而不必等待cycle_time>10
@@ -45,34 +49,35 @@ delete_iprule() {
 }
 
 exit_flag=0
+connect_status=0
 
 get_kill() {
 	exit_flag=1
 }
 
-cat /dev/null > ${STATUSFILE}
+trap "get_kill" ${EXIT_SIGNAL}
 
-trap "get_kill" 15
-
+echo "monitor eth: main pid = ${moni_main_pid}" >> ${LOGFILE}
 while true
 do
 	sleep 1
 	if [ ${exit_flag} -eq 1 ]
 	then
+		ip route flush table ${ETH0_RULE}
+		ip rule delete lookup ${ETH0_RULE}
 		exit
 	fi
 
 	ifconfig eth0 | grep RUNNING > /dev/null
 	if [ $? -ne 0 ]
 	then
-		sta=$(cat ${STATUSFILE})
-		if [ -n "${sta}" ]
-		then
+		if [ ${connect_status} -eq 1 ];then
+			connect_status=0
 			cycle_time=0
 			start_dhcp_time=0
 			connect_flag=0
 			error_count=0
-			cat /dev/null > ${STATUSFILE}
+			kill -${ETH_BAD_SIG} ${moni_main_pid}
 			GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 			echo "${GET_TIMESTAMP}:find eth0 is not running" >> ${LOGFILE}
 		fi
@@ -133,10 +138,9 @@ do
 					then
 						connect_flag=1
 						error_count=0
-						sta=$(cat ${STATUSFILE})
-						if [ -z "${sta}" ]
-						then
-							echo "OK" > ${STATUSFILE}
+						if [ ${connect_status} -eq 0 ];then
+							connect_status=1
+							kill -${ETH_GOOD_SIG} ${moni_main_pid}
 						fi
 					else
 						GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
@@ -159,7 +163,10 @@ do
 		fi
 	else
 		connect_flag=0
-		cat /dev/null > ${STATUSFILE}
+		if [ ${connect_status} -eq 1 ];then
+			connect_status=0
+			kill -${ETH_BAD_SIG} ${moni_main_pid}
+		fi
 		if [ ${start_dhcp_time} -eq 0 ]
 		then
 			ip addr flush dev eth0
@@ -177,6 +184,9 @@ do
 	then
 		error_count=0
 		dhclient eth0 -r
-		cat /dev/null > ${STATUSFILE}
+		if [ ${connect_status} -eq 1 ];then
+			connect_status=0
+			kill -${ETH_BAD_SIG} ${moni_main_pid}
+		fi
 	fi   
 done

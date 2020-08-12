@@ -61,5 +61,4 @@ if __name__ == "__main__":
 	elif p == 4:
 		show_update()
 	else:
-		print("else")
 		pass

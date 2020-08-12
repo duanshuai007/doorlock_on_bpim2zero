@@ -1499,10 +1499,10 @@ static const char __pyx_k_read_image_return_list_error[] = "read_image_return_li
 static const char __pyx_k_root_image_error_160x160_png[] = "/root/image/error_160x160.png";
 static const char __pyx_k_screen_show_matrix_on_screen[] = "screen.show_matrix_on_screen";
 static const char __pyx_k_show_qrcode_2vcode_on_screen[] = "show_qrcode_2vcode_on_screen";
-static const char __pyx_k_root_image_update_160x160_jpg[] = "/root/image/update_160x160.jpg";
 static const char __pyx_k_screen_read_image_return_list[] = "screen.read_image_return_list";
 static const char __pyx_k_create_2vcode_save_image_error[] = "create_2vcode_save_image error:{}";
 static const char __pyx_k_generate_pillow_buffer_generate[] = "generate_pillow_buffer/generate_pillow_buffer.py";
+static const char __pyx_k_root_image_updateing_160x160_pn[] = "/root/image/updateing_160x160.png";
 static const char __pyx_k_screen_create_2vcode_save_image[] = "screen.create_2vcode_save_image";
 static const char __pyx_k_create_2vcode_return_matrix_erro[] = "create_2vcode_return_matrix error:{}";
 static const char __pyx_k_down_image_and_show_image_on_scr[] = "down_image_and_show_image_on_screen";
@@ -1606,7 +1606,7 @@ static PyObject *__pyx_n_s_resize;
 static PyObject *__pyx_n_s_return;
 static PyObject *__pyx_kp_s_root_image_error_160x160_png;
 static PyObject *__pyx_kp_s_root_image_logo_160x160_png;
-static PyObject *__pyx_kp_s_root_image_update_160x160_jpg;
+static PyObject *__pyx_kp_s_root_image_updateing_160x160_pn;
 static PyObject *__pyx_n_s_row;
 static PyObject *__pyx_n_s_s;
 static PyObject *__pyx_n_s_screen;
@@ -6029,7 +6029,7 @@ static PyObject *__pyx_pf_22generate_pillow_buffer_6screen_22show_logo(CYTHON_UN
  * 		self.show_image_on_screen("/root/image/logo_160x160.png", True, True)
  * 
  * 	def show_update(self):             # <<<<<<<<<<<<<<
- * 		self.show_image_on_screen("/root/image/update_160x160.jpg", True, True)
+ * 		self.show_image_on_screen("/root/image/updateing_160x160.png", True, True)
  * 
  */
 
@@ -6060,7 +6060,7 @@ static PyObject *__pyx_pf_22generate_pillow_buffer_6screen_24show_update(CYTHON_
   /* "generate_pillow_buffer.py":216
  * 
  * 	def show_update(self):
- * 		self.show_image_on_screen("/root/image/update_160x160.jpg", True, True)             # <<<<<<<<<<<<<<
+ * 		self.show_image_on_screen("/root/image/updateing_160x160.png", True, True)             # <<<<<<<<<<<<<<
  * 
  * if __name__ == "__main__":
  */
@@ -6075,7 +6075,7 @@ static PyObject *__pyx_pf_22generate_pillow_buffer_6screen_24show_update(CYTHON_
  * 		self.show_image_on_screen("/root/image/logo_160x160.png", True, True)
  * 
  * 	def show_update(self):             # <<<<<<<<<<<<<<
- * 		self.show_image_on_screen("/root/image/update_160x160.jpg", True, True)
+ * 		self.show_image_on_screen("/root/image/updateing_160x160.png", True, True)
  * 
  */
 
@@ -6232,7 +6232,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_return, __pyx_k_return, sizeof(__pyx_k_return), 0, 0, 1, 1},
   {&__pyx_kp_s_root_image_error_160x160_png, __pyx_k_root_image_error_160x160_png, sizeof(__pyx_k_root_image_error_160x160_png), 0, 0, 1, 0},
   {&__pyx_kp_s_root_image_logo_160x160_png, __pyx_k_root_image_logo_160x160_png, sizeof(__pyx_k_root_image_logo_160x160_png), 0, 0, 1, 0},
-  {&__pyx_kp_s_root_image_update_160x160_jpg, __pyx_k_root_image_update_160x160_jpg, sizeof(__pyx_k_root_image_update_160x160_jpg), 0, 0, 1, 0},
+  {&__pyx_kp_s_root_image_updateing_160x160_pn, __pyx_k_root_image_updateing_160x160_pn, sizeof(__pyx_k_root_image_updateing_160x160_pn), 0, 0, 1, 0},
   {&__pyx_n_s_row, __pyx_k_row, sizeof(__pyx_k_row), 0, 0, 1, 1},
   {&__pyx_n_s_s, __pyx_k_s, sizeof(__pyx_k_s), 0, 0, 1, 1},
   {&__pyx_n_s_screen, __pyx_k_screen, sizeof(__pyx_k_screen), 0, 0, 1, 1},
@@ -6338,11 +6338,11 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "generate_pillow_buffer.py":216
  * 
  * 	def show_update(self):
- * 		self.show_image_on_screen("/root/image/update_160x160.jpg", True, True)             # <<<<<<<<<<<<<<
+ * 		self.show_image_on_screen("/root/image/updateing_160x160.png", True, True)             # <<<<<<<<<<<<<<
  * 
  * if __name__ == "__main__":
  */
-  __pyx_tuple__5 = PyTuple_Pack(3, __pyx_kp_s_root_image_update_160x160_jpg, Py_True, Py_True); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 216, __pyx_L1_error)
+  __pyx_tuple__5 = PyTuple_Pack(3, __pyx_kp_s_root_image_updateing_160x160_pn, Py_True, Py_True); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 216, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__5);
   __Pyx_GIVEREF(__pyx_tuple__5);
 
@@ -6494,7 +6494,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 		self.show_image_on_screen("/root/image/logo_160x160.png", True, True)
  * 
  * 	def show_update(self):             # <<<<<<<<<<<<<<
- * 		self.show_image_on_screen("/root/image/update_160x160.jpg", True, True)
+ * 		self.show_image_on_screen("/root/image/updateing_160x160.png", True, True)
  * 
  */
   __pyx_tuple__31 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(0, 215, __pyx_L1_error)
@@ -7134,7 +7134,7 @@ if (!__Pyx_RefNanny) {
  * 		self.show_image_on_screen("/root/image/logo_160x160.png", True, True)
  * 
  * 	def show_update(self):             # <<<<<<<<<<<<<<
- * 		self.show_image_on_screen("/root/image/update_160x160.jpg", True, True)
+ * 		self.show_image_on_screen("/root/image/updateing_160x160.png", True, True)
  * 
  */
   __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_22generate_pillow_buffer_6screen_25show_update, 0, __pyx_n_s_screen_show_update, NULL, __pyx_n_s_generate_pillow_buffer, __pyx_d, ((PyObject *)__pyx_codeobj__32)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 215, __pyx_L1_error)
@@ -7156,7 +7156,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "generate_pillow_buffer.py":218
- * 		self.show_image_on_screen("/root/image/update_160x160.jpg", True, True)
+ * 		self.show_image_on_screen("/root/image/updateing_160x160.png", True, True)
  * 
  * if __name__ == "__main__":             # <<<<<<<<<<<<<<
  * 	if len(sys.argv) < 2:
@@ -7383,7 +7383,7 @@ if (!__Pyx_RefNanny) {
     __pyx_L4:;
 
     /* "generate_pillow_buffer.py":218
- * 		self.show_image_on_screen("/root/image/update_160x160.jpg", True, True)
+ * 		self.show_image_on_screen("/root/image/updateing_160x160.png", True, True)
  * 
  * if __name__ == "__main__":             # <<<<<<<<<<<<<<
  * 	if len(sys.argv) < 2:

@@ -11,6 +11,7 @@ import time
 import json
 import copy
 import random
+import signal
 
 import config
 import generate_pillow_buffer as sc
@@ -31,19 +32,19 @@ class mqtt_client(mqtt.Client):
 	publish_queue = None
 	work_queue = None
 	status = None
-
+	exit_flag = False
+	update_flag = False
+	
 	update_status_file = "/home/ubuntu/update_status"
+	update_end_file = "/home/ubuntu/update_end"
 
 	def set_device_sn(self, sn):
 		self.device_sn = sn	
 		self.status_topic = "{}/{}".format(ms.DEVICE_STATUS_TOPIC, sn)
 		self.work_queue = queue.Queue(32)
 		self.publish_queue = queue.Queue(32)
-
-	def set_wx2vcode_hand(self, hand, screen):
-		self.wx2vcode = hand
-		self.screen = screen
-		#self.screen.closesceen()
+		self.wx2vcode = wx.wx_2vcode()
+		self.screen = sc.screen()
 
 	def set_logger(self, logger):
 		self.logger = logger
@@ -67,35 +68,38 @@ class mqtt_client(mqtt.Client):
 		#flags中的标志位能够知道此次连接时第一次连接还是短线后重连的
 		self.logger.info("Connection returned result: " + mqtt.connack_string(rc))
 		if rc == 0:
-			self.logger.info("connect success")
-			self.subscribe(self.sub_topic_list)
-			
-			self.status = "success"
-			ms.DEVICE_STATUS["status"] = 1
-			ms.DEVICE_STATUS["rtime"] = int(time.time())
-			respjson = json.dumps(ms.DEVICE_STATUS)
-			self.publish_queue.put({"topic":self.status_topic, "payload":respjson, 'qos':0, 'retain':True})
+			if self.exit_flag == False or self.update_flag == False:
+				self.logger.info("connect success")
+				self.subscribe(self.sub_topic_list)
+				
+				self.status = "success"
+				ms.DEVICE_STATUS["status"] = 1
+				ms.DEVICE_STATUS["rtime"] = int(time.time())
+				respjson = json.dumps(ms.DEVICE_STATUS)
+				self.publish_queue.put({"topic":self.status_topic, "payload":respjson, 'qos':0, 'retain':True})
 
-			if os.path.exists(self.update_status_file):
-				with open(self.update_status_file, 'r') as f:
-					try:
-						line = f.read(32).split('\n')[0]
-						result = line.split(':')[0]
-						version = line.split(':')[1]
-						reason = line.split(':')[2]
-						ms.UPDATE_RESP_INFO["device_sn"] = self.device_sn
-						ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
-						ms.UPDATE_RESP_INFO["firmware"]["version"] = version
-						if result == "success":
-							#send firmware update success message
-							ms.UPDATE_RESP_INFO["firmware"]["status"] = "success"
-						else:
-							ms.UPDATE_RESP_INFO["firmware"]["status"] = "{}:{}".format(result, reason)
-						sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
-						self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
-					except Exception as e:
-						self.logger.error("read update status file error:{}".format(e))
-				os.remove(self.update_status_file)
+				if os.path.exists(self.update_status_file):
+					with open(self.update_status_file, 'r') as f:
+						try:
+							line = f.read(32).split('\n')[0]
+							result = line.split(':')[0]
+							version = line.split(':')[1]
+							reason = line.split(':')[2]
+							ms.UPDATE_RESP_INFO["device_sn"] = self.device_sn
+							ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
+							ms.UPDATE_RESP_INFO["firmware"]["version"] = version
+							if result == "success":
+								#send firmware update success message
+								ms.UPDATE_RESP_INFO["firmware"]["status"] = "success"
+							else:
+								ms.UPDATE_RESP_INFO["firmware"]["status"] = "{}:{}".format(result, reason)
+							sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
+							self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
+						except Exception as e:
+							self.logger.error("read update status file error:{}".format(e))
+					os.remove(self.update_status_file)
+				if os.path.exists(self.update_end_file):
+					os.remove(self.update_end_file)
 
 	#执行mqttc.disconnect()主动断开连接会触发该函数
 	#当因为什么原因导致客户端断开连接时也会触发该函数,ctrl-c停止程序不会触发该函数
@@ -114,51 +118,52 @@ class mqtt_client(mqtt.Client):
 	'''
 	def on_message(self, mqttc, obj, msg):
 		try:
-			json_msg = json.loads(str(msg.payload, encoding="utf-8"))
-			if json_msg["device_sn"] == self.device_sn or json_msg["device_sn"] == ms.BOARDCAST_ADDR:
-				self.logger.info("on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-				local_time = int(time.time())
-				recv_time = int(json_msg["stime"])
-				if msg.topic == ms.UPDATE_TOPIC:
-					self.work_queue.put([msg.topic, json_msg])
-				else:
-					if (abs(local_time - recv_time) < 15):
-						if self.work_queue is not None:
-							self.work_queue.put([msg.topic, json_msg])
-						else:
-							#device busy，message lost
-							self.logger.error("on message:self.work_queue is None")
-							pass
+			if self.exit_flag == False or self.update_flag == False:
+				json_msg = json.loads(str(msg.payload, encoding="utf-8"))
+				if json_msg["device_sn"] == self.device_sn or json_msg["device_sn"] == ms.BOARDCAST_ADDR:
+					self.logger.info("on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+					local_time = int(time.time())
+					recv_time = int(json_msg["stime"])
+					if msg.topic == ms.UPDATE_TOPIC:
+						self.work_queue.put([msg.topic, json_msg])
 					else:
-						#timeout, message lost
-						self.logger.warn("on message: this message timestamp was timeout")
-						if msg.topic == ms.OPENDOOR_TOPIC:
-							ms.OPENDOOR_RESP_MSG["device_sn"] = self.device_sn
-							ms.OPENDOOR_RESP_MSG["result"] = 2
-							ms.OPENDOOR_RESP_MSG["identify"] = json_msg["identify"]
-							ms.OPENDOOR_RESP_MSG["rtime"] = int(time.time())
-							sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
-							self.publish_queue.put({"topic":ms.OPENDOOR_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
-						elif msg.topic == ms.QR_TOPIC:
-							ms.QR_RESPONSE["device_sn"] = self.device_sn
-							ms.QR_RESPONSE["rtime"] = int(time.time())
-							ms.QR_RESPONSE["type"] = json_msg["type"]
-							ms.QR_RESPONSE["identify"] = json_msg["identify"]
-							ms.QR_RESPONSE["status"] = 2
-							sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
-							self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+						if (abs(local_time - recv_time) < 15):
+							if self.work_queue is not None:
+								self.work_queue.put([msg.topic, json_msg])
+							else:
+								#device busy，message lost
+								self.logger.error("on message:self.work_queue is None")
+								pass
 						else:
-							#topic format: recvtopic + "_resp"
-							resp_topic = "{}_resp".format(msg.topic)
-							resp_dict = {
-								"device_sn" : self.device_sn,
-								"rtime" : int(time.time()),
-								"status" : 1,
-								"error" : "timeout",
-							}
-							respmsg = json.dumps(resp_dict)
-							self.publish_queue.put({"topic":resp_topic, "payload":respmsg, 'qos':0, 'retain':False})
-							pass
+							#timeout, message lost
+							self.logger.warn("on message: this message timestamp was timeout")
+							if msg.topic == ms.OPENDOOR_TOPIC:
+								ms.OPENDOOR_RESP_MSG["device_sn"] = self.device_sn
+								ms.OPENDOOR_RESP_MSG["result"] = 2
+								ms.OPENDOOR_RESP_MSG["identify"] = json_msg["identify"]
+								ms.OPENDOOR_RESP_MSG["rtime"] = int(time.time())
+								sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
+								self.publish_queue.put({"topic":ms.OPENDOOR_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+							elif msg.topic == ms.QR_TOPIC:
+								ms.QR_RESPONSE["device_sn"] = self.device_sn
+								ms.QR_RESPONSE["rtime"] = int(time.time())
+								ms.QR_RESPONSE["type"] = json_msg["type"]
+								ms.QR_RESPONSE["identify"] = json_msg["identify"]
+								ms.QR_RESPONSE["status"] = 2
+								sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
+								self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+							else:
+								#topic format: recvtopic + "_resp"
+								resp_topic = "{}_resp".format(msg.topic)
+								resp_dict = {
+									"device_sn" : self.device_sn,
+									"rtime" : int(time.time()),
+									"status" : 1,
+									"error" : "timeout",
+								}
+								respmsg = json.dumps(resp_dict)
+								self.publish_queue.put({"topic":resp_topic, "payload":respmsg, 'qos':0, 'retain':False})
+								pass
 		except Exception as e:
 			self.logger.error("on message exception:{}".format(e))
 
@@ -182,6 +187,8 @@ class mqtt_client(mqtt.Client):
 		self.sub_topic_list.append((topic, qos))
 
 	def do_hardware_work(self):
+		MQTT_CONNECT_SUCCESS_SIG = int(config.config("/root/config.ini").get("SIGNAL", "MQTTCONNOK"))
+		MQTT_CONNECT_FAILED_SIG = int(config.config("/root/config.ini").get("SIGNAL", "MQTTCONNBAD"))
 		doorlock_open_flag = False
 		doorlock_open_time = 0
 		doorlock_time = int(config.config("/root/config.ini").get("DOORLOCK", "OPEN_TIME"))
@@ -199,9 +206,14 @@ class mqtt_client(mqtt.Client):
 						#self.delete_list.append({"mid":info.mid, "msg":msg})
 						info.wait_for_publish()
 				if self.status is not None:
-					connect_status="{}".format(self.status)
-					with open("/root/mqtt_connect_status", "w") as f:
-						f.write(connect_status)
+					pid = int(os.popen("ps -ef | grep zywlstart | grep -v grep | awk -F\" \" '{print $2}'").read().split('\n')[0])
+					if self.status == "success":
+						os.kill(pid, MQTT_CONNECT_SUCCESS_SIG)
+					else:
+						os.kill(pid, MQTT_CONNECT_FAILED_SIG)
+					#connect_status="{}".format(self.status)
+					#with open("/root/mqtt_connect_status", "w") as f:
+					#	f.write(connect_status)
 					self.status = None
 				if not self.work_queue.empty():
 					[topic, json_msg] = self.work_queue.get()
@@ -265,6 +277,7 @@ class mqtt_client(mqtt.Client):
 						self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
 					else:
 						if topic == ms.UPDATE_TOPIC:
+							self.update_flag = True
 							version = int(config.config("/root/config.ini").get("FIRMWARE", "VERSION"))
 							update_version = int(json_msg["firmware"]["version"])
 							ms.UPDATE_RESP_INFO["device_sn"] = self.device_sn
@@ -291,11 +304,11 @@ class mqtt_client(mqtt.Client):
 									download_url = json_msg["firmware"]["url"]
 									filename = "/home/download/firmware_{}.des3.tar.gz".format(json_msg["firmware"]["version"])
 									if downloadtool.download_firmware(download_url, md5str, filename) == True:
-									#if sendmsg is not None:	#for test allways in
 										ms.UPDATE_RESP_INFO["firmware"]["status"] = "download success"
 										ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
 										sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
 										self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+										self.exit_flag = True
 										time.sleep(0.5)
 										with open(self.update_status_file, "w") as f:
 											update_message="{}:{}:0".format("start", update_version)
@@ -305,6 +318,7 @@ class mqtt_client(mqtt.Client):
 										ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
 										sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
 										self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+										self.update_flag = False
 									
 						elif topic == ms.OPENSSH_TOPIC:
 							enable = json_msg["enable"]
@@ -394,9 +408,15 @@ class mqtt_client(mqtt.Client):
 				self.logger.info("do hardware work except:{}".format(e))
 
 	def start_other_thread(self):
+		self.exit_flag = False
+		self.exit_signal = int(config.config("/root/config.ini").get("SIGNAL", "EXITFLAG"))
+		signal.signal(self.exit_signal, self.exit_handler)
 		work_thread = threading.Thread(target = self.do_hardware_work)
 		work_thread.setDaemon(False)
 		work_thread.start()
+
+	def exit_handler(self):
+		self.exit_flag = True
 
 	def run_mqtt(self, host=None, port=1883, keepalive=60):
 		try:
@@ -449,7 +469,6 @@ def client_start():
 	passwd="NjBlNjY3ZWRlZ"
 	cafile="/root/crtfile/mqtt.iotwonderful.cn.crt"
 
-	wx2vcode_hand = wx.wx_2vcode()
 	#logger.info("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
 	mc = mqtt_client(   client_id = device_sn, 
 			clean_session = True,
@@ -468,8 +487,6 @@ def client_start():
 	if mc.set_cafile(cafile) == False:
 		exit(1)
 	time.sleep(0.2)
-	screen = sc.screen()
-	mc.set_wx2vcode_hand(wx2vcode_hand, screen)
 	if mc.run_mqtt(host=host, port=port, keepalive=10) == False:
 		exit(1)
 	mc.start_other_thread()
