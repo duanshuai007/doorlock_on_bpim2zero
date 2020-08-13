@@ -14,7 +14,8 @@ def initialization():
 	spilcd_api.on()
 	screen = sc.screen()
 	screen.show_logo()
-	spilcd_api.set_doorlock(0)
+	close_door_level = int(config.config("/root/config.ini").get("DOORLOCK", "CLOSE_LEVEL"))
+	spilcd_api.set_doorlock(close_door_level)
 	wdten = config.config("/root/config.ini").get("WATCHDOG", "ENABLE")
 	if wdten == "true":
 		wdtfile = "/home/watchdog/feed.py"

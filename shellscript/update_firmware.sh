@@ -28,6 +28,9 @@ all_file_backup() {
 	mkdir -p ${BACKUPDIR}
 	mkdir -p ${BACKUPDIR}/python
 	mkdir -p ${BACKUPDIR}/script
+	mkdir -p ${BACKUPDIR}/systemd
+	mkdir -p ${BACKUPDIR}/frp
+
 	#LoggingQueue.so checkfiletype.so config.so downloadfile.so generate_pillow_buffer.so message_struct.so mqtt.so spilcd_api.so uncompressfirmware.so
 	#watchdog.so wx2vcode.so
 	cp /usr/local/lib/python3.5/dist-packages/LoggingQueue.so	${BACKUPDIR}/python
@@ -42,7 +45,16 @@ all_file_backup() {
 	cp /usr/local/lib/python3.5/dist-packages/watchdog.so		${BACKUPDIR}/python
 	cp /usr/local/lib/python3.5/dist-packages/wx2vcode.so		${BACKUPDIR}/python
 
-	cp /root/* ${BACKUPDIR}/script
+	cp -r /root/* ${BACKUPDIR}/script
+	cp /lib/systemd/system/zywl* ${BACKUPDIR}/systemd
+	cp /etc/frp/frpc.ini ${BACKUPDIR}/frp
+}
+
+resume_all_file() {
+	cp ${BACKUPDIR}/python/* /usr/local/lib/python3.5/dist-packages/
+	cp -r ${BACKUPDIR}/script/* /root/
+	cp ${BACKUPDIR}/systemd/* /lib/systemd/system/
+	cp ${BACKUPDIR}/frp/* /etc/frp/
 }
 
 tarfile() {
@@ -152,11 +164,20 @@ update_clear() {
 	done
 
 	if [ ${errornumber} -ne 0 ];then
-		cp ${BACKUPDIR}/python/* /usr/local/lib/python3.5/dist-packages/
-		cp ${BACKUPDIR}/script/* /root/	 
+		resume_all_file
 		echo "error:${version}:5" > ${UPDATESTATUS}
 		sync
 		exit
+	fi
+
+	if [ ! -f /usr/bin/zywldl ];then
+		ln -s /root/watch.sh /usr/bin/zywlmqtt
+	fi
+	if [ ! -f /usr/bin/zywlpppd ];then
+		ln -s /root/watchpppd.sh /usr/bin/zywlmqtt
+	fi
+	if [ ! -f /usr/bin/zywlmqtt ];then
+		ln -s /root/watchmqtt.sh /usr/bin/zywlmqtt
 	fi
 
 	/root/set_config.sh "version " " ${version}"

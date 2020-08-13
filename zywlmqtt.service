@@ -1,0 +1,14 @@
+[Unit]
+Description=zywl mqtt Service
+After=network.target
+
+[Service]
+Type=simple
+RestartSec=5
+ExecStart=/usr/bin/zywlmqtt start
+ExecStop=/usr/bin/zywlmqtt stop
+ExecReload=/usr/bin/zywlmqtt restart
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

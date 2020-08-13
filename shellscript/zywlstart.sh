@@ -8,7 +8,7 @@ LOG_FILE="/var/log/zywllog"
 UPDATESTATUS="/home/ubuntu/update_status"
 UPDATE_END="/home/ubuntu/update_end"
 MACFILE="/tmp/eth0macaddr"
-WATCHDOGSCRIPT="/home/watchdog/feed.py"
+#WATCHDOGSCRIPT="/home/watchdog/feed.py"
 SIGFIL="/root/signal.conf"
 
 EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
@@ -19,6 +19,7 @@ NET_GOOD_SIG=$(cat ${SIGFIL} | grep -w NETWORKOK | awk -F"=" '{print $2}')
 NET_BAD_SIG=$(cat ${SIGFIL} | grep -w NETWORKBAD | awk -F"=" '{print $2}')
 MQTT_CONN_OK_SIG=$(cat /root/config.ini | grep -w MQTTCONNOK | awk -F"=" '{print $2}')
 MQTT_CONN_BAD_SIG=$(cat /root/config.ini | grep -w MQTTCONNBAD | awk -F"=" '{print $2}')
+DEVICE_UPFATE_SIG=$(cat /root/config.ini | grep -w DEVICEUPDATE | awk -F"=" '{print $2}')
 
 CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
 echo "${CUR_TIME}:$0 start work!" >> ${LOG_FILE}
@@ -39,31 +40,10 @@ systemctl disable systemd-timesyncd
 cat /dev/null > /tmp/network_timestamp
 cat /dev/null > ${LOG_FILE}
 
-wpa_connect_flag=0
-feedcount=0
 
 eth0macaddr=$(ifconfig eth0 | grep HWaddr | awk -F" " '{print $5}' | awk -F":" '{print $1$2$3$4$5$6}')
 echo ${eth0macaddr} > ${MACFILE}
 /bin/hostname zywldl${eth0macaddr}
-
-mqtt_start() {
-	python3 /root/mqtt_client.py ${eth0macaddr} &
-}
-
-mqtt_stop() {
-	pid=$(ps -ef | grep "mqtt" | grep -v grep | awk -F" " '{print $2}')
-	if [ -n "${pid}" ]
-	then
-		kill -${EXIT_SIGNAL} ${pid}
-		sleep 0.5
-		kill -9 ${pid}
-	fi
-}
-
-mqtt_restart() {
-	mqtt_stop
-	mqtt_start
-}
 
 pppd_stop() {
 	pid=$(ps -ef | grep pppd | grep -v grep | awk -F" " '{print $2}')
@@ -73,6 +53,7 @@ pppd_stop() {
 	fi
 }
 
+wpa_connect_flag=0
 wpa_start_error=0
 check_pppd_count=0
 check_wpa_count=0
@@ -84,6 +65,9 @@ sim_not_insert=0
 sim_module_error=0
 check_pppd_cycle=0
 mqtt_conn_status=0
+monitor_close=0
+mqtt_run_status=0
+firmware_update_flag=0
 exit_flag=0
 
 thread_exit() {
@@ -130,6 +114,10 @@ mqtt_connect_status_is_ok(){
 	mqtt_conn_status=1
 	echo "mqtt connect ok" >> ${LOG_FILE}
 }
+device_will_update(){
+	firmware_update_flag=1
+	echo "i will update firmware" >> ${LOG_FILE}
+}
 
 trap "thread_exit" ${EXIT_SIGNAL}
 trap "gsmserial_status_is_ok" ${GSMSERIAL_SIGNAL}
@@ -139,8 +127,7 @@ trap "gsm_sim_not_inserted" ${GSMSIMNOTINSERTED_SIGNAL}
 trap "gsm_sim_module_error" ${GSMSIMMODULEERROR_SIGNAL}
 trap "mqtt_connect_status_is_bad" ${MQTT_CONN_BAD_SIG}
 trap "mqtt_connect_status_is_ok" ${MQTT_CONN_OK_SIG}
-
-#set /tmp/eth0macaddr and set hostname
+trap "device_will_update" ${DEVICE_UPFATE_SIG}
 
 python3 /root/showimage.py 1
 
@@ -168,6 +155,14 @@ monitor_thread_start(){
 	fi
 }
 
+if [ -f "${UPDATE_END}" ];then
+	network_status=1
+fi
+
+if [ -f "${UPDATESTATUS}" ];then
+	firmware_update_flag=1
+fi
+
 while true
 do
 	sleep 1
@@ -177,9 +172,15 @@ do
 	fi
 
 	if [ ${mqtt_conn_status} -eq 1 ];then
-		monitor_thread_exit
+		if [ ${monitor_close} -eq 1 ];then
+			monitor_close=0
+			monitor_thread_exit
+		fi
 	else
-		monitor_thread_start
+		if [ ${monitor_close} -eq 0 ];then
+			monitor_close=1
+			monitor_thread_start
+		fi
 	fi
 
 	check_temp_time=$(expr ${check_temp_time} + 1)
@@ -236,8 +237,8 @@ do
 			if [ $? -ne 0 ];then
 				if [ ${gsmserial_status} -eq 1 ];then
 					cat /dev/null > /var/log/ppplogfile
-#systemctl stop zywlpppd
-#					sleep 2
+					#systemctl stop zywlpppd
+					#sleep 2
 					${PPPD} call myapp &
 				else
 					if [ ${sim_not_insert} -eq 0 ];then
@@ -273,70 +274,66 @@ do
 		fi
 	fi
 
-	feedcount=$(expr ${feedcount} + 1)
-	if [ ${feedcount} -ge 5 ];then
-		feedcount=0
-		python3 ${WATCHDOGSCRIPT}
-	fi  
+#	feedcount=$(expr ${feedcount} + 1)
+#	if [ ${feedcount} -ge 5 ];then
+#		feedcount=0
+#		python3 ${WATCHDOGSCRIPT}
+#	fi  
 
-	if [ -f "${UPDATESTATUS}" ];then
-		sta=$(cat ${UPDATESTATUS} | awk -F":" '{print $1}')
-		if [ -n "${sta}" ];then
-			if [ "${sta}" == "done" ];then
-				ver=$(cat ${UPDATESTATUS} | awk -F":" '{print $2}')
-				no=$(cat ${UPDATESTATUS} | awk -F":" '{print $3}')
-				echo "success:${ver}:${no}" > ${UPDATESTATUS}
-				sync
-			elif [ "${sta}" == "success" -o "${sta}" == "error" ];then
-				#echo "update firmware done!" > /dev/null
-				if [ ! -f "${UPDATE_END}" ];then
-					touch ${UPDATE_END}
+	if [ ${firmware_update_flag} -eq 1 ];then
+		if [ -f "${UPDATESTATUS}" ];then
+			sta=$(cat ${UPDATESTATUS} | awk -F":" '{print $1}')
+			if [ -n "${sta}" ];then
+				if [ "${sta}" == "done" ];then
+					ver=$(cat ${UPDATESTATUS} | awk -F":" '{print $2}')
+					no=$(cat ${UPDATESTATUS} | awk -F":" '{print $3}')
+					echo "success:${ver}:${no}" > ${UPDATESTATUS}
 					sync
-					systemctl restart zywldl
-				fi
-			elif [ "${sta}" == "start" -o "${sta}" == "move" -o "${sta}" == "clear" ];then
-				network_status=0
-				mqtt_stop
-				ps -ef | grep update_firmware | grep -v grep > /dev/null
-				if [ $? -ne 0 ]
-				then
-					feedcount=0
-					python3 ${WATCHDOGSCRIPT}
-					/root/update_firmware.sh &
+				elif [ "${sta}" == "success" -o "${sta}" == "error" ];then
+					#echo "update firmware done!" > /dev/null
+					if [ ! -f "${UPDATE_END}" ];then
+						touch ${UPDATE_END}
+						sync
+						systemctl restart zywldl
+					fi
+				elif [ "${sta}" == "start" -o "${sta}" == "move" -o "${sta}" == "clear" ];then
+					network_status=0
+					systemctl stop zywlmqtt
+					ps -ef | grep update_firmware | grep -v grep > /dev/null
+					if [ $? -ne 0 ]
+					then
+						#feedcount=0
+						#python3 ${WATCHDOGSCRIPT}
+						/root/update_firmware.sh &
+					fi
+				else
+					rm ${UPDATESTATUS}
+					echo "update firmware: rm update_status file sta:${sta}" >> ${LOG_FILE}
+					network_status=1
 				fi
 			else
+				#如果UPDATESTATUS文件因为某些原因导致没有内容写入，那么就删除该文件
 				rm ${UPDATESTATUS}
-				echo "update firmware: rm update_status file sta:${sta}" >> ${LOG_FILE}
+				echo "update firmware: rm update_status file sta is null" >> ${LOG_FILE}
 				network_status=1
 			fi
-		else
-			#如果UPDATESTATUS文件因为某些原因导致没有内容写入，那么就删除该文件
-			rm ${UPDATESTATUS}
-			echo "update firmware: rm update_status file sta is null" >> ${LOG_FILE}
-			network_status=1
-		fi
 #			for var in $(systemctl list-unit-files | grep \.service | awk '{print $1}')
 #				ret=$(systemctl status $var 2>&1 | grep "changed on disk")
+		else
+			firmware_update_flag=0
+		fi
 	fi
-
-	if [ -f ${UPDATE_END} ];then
-		network_status=1
-	fi
-
-	time_sync
 
 	if [ ${network_status} -eq 1 ];then
-		num=$(ps -ef | grep "mqtt" | grep -v grep | wc -l)
-		if [ ${num} -eq 0 ];then
-			CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-			echo "${CUR_TIME}:mqtt client start" >> ${LOG_FILE}
+		if [ ${mqtt_run_status} -eq 0 ];then
+			mqtt_run_status=1
 			/root/update_time.sh
-			#systemctl restart frpc
-			mqtt_start
-		elif [ ${num} -ge 2 ];then
-			CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-			echo "${CUR_TIME}:mqtt client stop" >> ${LOG_FILE}
-			mqtt_stop
-		fi  
+			systemctl start zywlmqtt
+		fi
+	else
+		if [ ${mqtt_run_status} -eq 1 ];then
+			mqtt_run_status=0
+			systemctl stop zywlmqtt
+		fi
 	fi  
 done

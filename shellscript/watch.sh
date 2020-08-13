@@ -3,9 +3,8 @@ SIGFIL="/root/signal.conf"
 EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
 
 all_start() {
-	#echo "start all"
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-	echo "${GET_TIMESTAMP}:zywldl service start!" >> /var/log/monitor.log
+	echo "${GET_TIMESTAMP}:zywldl service start!" >> /var/log/zywllog
 	ps -ef | grep "zywlstart" | grep -v grep > /dev/null
 	if [ $? -ne 0 ]
 	then
@@ -14,10 +13,8 @@ all_start() {
 }
 
 all_stop() {
-	#echo "stop all"
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-	echo "${GET_TIMESTAMP}:zywldl service stop!" >> /var/log/monitor.log
-	python3 /home/watchdog/feed.py
+	echo "${GET_TIMESTAMP}:zywldl service stop!" >> /var/log/zywllog
 	pid=$(ps -ef | grep "zywlstart" | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
@@ -28,14 +25,6 @@ all_stop() {
 	if [ -n "${pid}" ]
 	then
 		kill -${EXIT_SIGNAL} ${pid}
-	fi
-
-	pid=$(ps -ef | grep "mqtt" |  grep -v watch | grep -v grep | awk -F" " '{print $2}')
-	if [ -n "${pid}" ]
-	then
-		kill -${EXIT_SIGNAL} ${pid}
-		sleep 1
-		kill -9 ${pid}
 	fi
 
 	pid=$(ps -ef | grep "zywl_moni_wlan" | grep -v watch | grep -v grep | awk -F" " '{print $2}')
@@ -55,6 +44,9 @@ all_stop() {
 	then
 		kill -${EXIT_SIGNAL} ${pid}
 	fi
+
+	systemctl stop zywlmqtt
+	systemctl stop zywlpppd
 }
 
 all_restart() {
@@ -62,14 +54,6 @@ all_restart() {
 	sleep 1
 	all_start
 }
-
-
-if [ $# -lt 1 ]
-then
-	echo "should run like this"
-	echo "./watch.sh start/stop/restart"
-	exit
-fi
 
 case $1 in
 	"start")

@@ -12,6 +12,7 @@ import json
 import copy
 import random
 import signal
+from threading import Timer
 
 import config
 import generate_pillow_buffer as sc
@@ -38,8 +39,9 @@ class mqtt_client(mqtt.Client):
 	update_status_file = "/home/ubuntu/update_status"
 	update_end_file = "/home/ubuntu/update_end"
 
-	def set_device_sn(self, sn):
+	def set_device_sn(self, sn, pid):
 		self.device_sn = sn	
+		self.zywlstart_pid = pid
 		self.status_topic = "{}/{}".format(ms.DEVICE_STATUS_TOPIC, sn)
 		self.work_queue = queue.Queue(32)
 		self.publish_queue = queue.Queue(32)
@@ -72,11 +74,11 @@ class mqtt_client(mqtt.Client):
 				self.logger.info("connect success")
 				self.subscribe(self.sub_topic_list)
 				
-				self.status = "success"
 				ms.DEVICE_STATUS["status"] = 1
 				ms.DEVICE_STATUS["rtime"] = int(time.time())
 				respjson = json.dumps(ms.DEVICE_STATUS)
 				self.publish_queue.put({"topic":self.status_topic, "payload":respjson, 'qos':0, 'retain':True})
+				self.publish_queue.put("success")
 
 				if os.path.exists(self.update_status_file):
 					with open(self.update_status_file, 'r') as f:
@@ -104,7 +106,7 @@ class mqtt_client(mqtt.Client):
 	#执行mqttc.disconnect()主动断开连接会触发该函数
 	#当因为什么原因导致客户端断开连接时也会触发该函数,ctrl-c停止程序不会触发该函数
 	def on_disconnect(self, mqttc, obj, rc):
-		self.status = "failed"	
+		self.publish_queue.put("failed")
 		self.logger.info("on_disconnect obj={}, rc={}".format(obj, rc))
 		#if obj is not None:
 			#mqttc.user_data_set(obj + 1)
@@ -186,224 +188,202 @@ class mqtt_client(mqtt.Client):
 	def setsubscribe(self, topic=None, qos=0):
 		self.sub_topic_list.append((topic, qos))
 
-	def do_hardware_work(self):
+	def timer_for_doorlockctl(self):
+		spilcd_api.set_doorlock(self.DOORLOCK_LEVEL)
+		self.logger.info("door lock close!")
+
+	def publish_threading(self):
 		MQTT_CONNECT_SUCCESS_SIG = int(config.config("/root/config.ini").get("SIGNAL", "MQTTCONNOK"))
 		MQTT_CONNECT_FAILED_SIG = int(config.config("/root/config.ini").get("SIGNAL", "MQTTCONNBAD"))
-		doorlock_open_flag = False
-		doorlock_open_time = 0
-		doorlock_time = int(config.config("/root/config.ini").get("DOORLOCK", "OPEN_TIME"))
-		doorlock_continue_time = doorlock_time * 1000
-		image_show_flag = False
-		image_show_time = 0
-		image_continue_time = int(config.config("/root/config.ini").get("DOORLOCK", "2VCODE_TIME")) * 1000
-		spilcd_api.on()
 		while True:
 			try:
-				if not self.publish_queue.empty():
-					msg = self.publish_queue.get()
+				msg = self.publish_queue.get()
+				if isinstance(msg, dict) == True:
 					info = self.publish(topic = msg["topic"], payload = msg["payload"], qos = msg["qos"], retain = msg["retain"])
 					if info.rc == mqtt.MQTT_ERR_SUCCESS:
 						#self.delete_list.append({"mid":info.mid, "msg":msg})
 						info.wait_for_publish()
-				if self.status is not None:
-					pid = int(os.popen("ps -ef | grep zywlstart | grep -v grep | awk -F\" \" '{print $2}'").read().split('\n')[0])
-					if self.status == "success":
-						os.kill(pid, MQTT_CONNECT_SUCCESS_SIG)
+				else:
+					if msg == "success":
+						os.kill(self.zywlstart_pid, MQTT_CONNECT_SUCCESS_SIG)
 					else:
-						os.kill(pid, MQTT_CONNECT_FAILED_SIG)
-					#connect_status="{}".format(self.status)
-					#with open("/root/mqtt_connect_status", "w") as f:
-					#	f.write(connect_status)
-					self.status = None
-				if not self.work_queue.empty():
-					[topic, json_msg] = self.work_queue.get()
-					#json_msg = json.loads(str(msg.payload, encoding="utf-8"))
-					#self.logger.info("topic={}, msg={}".format(topic, json_msg))
-					if topic == ms.OPENDOOR_TOPIC:
-						#执行开锁动作,返回动作响应信息
-						if json_msg["action"] == 1 or json_msg["action"] == "1":
-							#高电平门锁断电，能够打开
-							gpio_val = 1
-							doorlock_open_flag = True
-							doorlock_open_time = int(time.time() * 1000)
-						else:
-							#低电平门锁给电，不能打开
-							gpio_val = 0
-						
-						spilcd_api.set_doorlock(gpio_val)
-						ms.OPENDOOR_RESP_MSG["device_sn"]	= self.device_sn
-						ms.OPENDOOR_RESP_MSG["rtime"]		= int(time.time())
-						ms.OPENDOOR_RESP_MSG["result"]		= 1
-						ms.OPENDOOR_RESP_MSG["identify"]	= json_msg["identify"]
-						sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
-						self.publish_queue.put({"topic":ms.OPENDOOR_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+						os.kill(self.zywlstart_pid, MQTT_CONNECT_FAILED_SIG)
+			except Exception as e:
+				self.logger.error("publish_threading error:{}".format(e))
+
+	def do_hardware_work(self):
+		DEVICE_UPDATE_SIG = int(config.config("/root/config.ini").get("SIGNAL", "DEVICEUPDATE"))
+		DOORLOCK_TIME = int(config.config("/root/config.ini").get("DOORLOCK", "OPEN_TIME"))
+		self.DOORLOCK_LEVEL = int(config.config("/root/config.ini").get("DOORLOCK", "CLOSE_LEVEL"))
+		spilcd_api.on()
+		while True:
+			try:
+				[topic, json_msg] = self.work_queue.get()
+				#json_msg = json.loads(str(msg.payload, encoding="utf-8"))
+				#self.logger.info("topic={}, msg={}".format(topic, json_msg))
+				if topic == ms.OPENDOOR_TOPIC:
+					#执行开锁动作,返回动作响应信息
+					if json_msg["action"] == 1 or json_msg["action"] == "1":
+						#高电平门锁断电，能够打开
+						gpio_val = 1 - self.DOORLOCK_LEVEL
+						close_door_timer = Timer(DOORLOCK_TIME, self.timer_for_doorlockctl)
+						close_door_timer.setDaemon(False)
+						close_door_timer.start()
+					else:
+						#低电平门锁给电，不能打开
+						gpio_val = self.DOORLOCK_LEVEL
+					
+					spilcd_api.set_doorlock(gpio_val)
+					ms.OPENDOOR_RESP_MSG["device_sn"]	= self.device_sn
+					ms.OPENDOOR_RESP_MSG["rtime"]		= int(time.time())
+					ms.OPENDOOR_RESP_MSG["result"]		= 1
+					ms.OPENDOOR_RESP_MSG["identify"]	= json_msg["identify"]
+					sendmsg = json.dumps(ms.OPENDOOR_RESP_MSG)
+					self.publish_queue.put({"topic":ms.OPENDOOR_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+					pass
+				elif topic == ms.QR_TOPIC:
+					#执行显示二维码动作,该动作不需要返回响应信息
+					ms.QR_RESPONSE["device_sn"] = self.device_sn
+					ms.QR_RESPONSE["rtime"]		= int(time.time())
+					ms.QR_RESPONSE["type"]		= json_msg["type"]
+					ms.QR_RESPONSE["identify"]  = json_msg["identify"]
+					ms.QR_RESPONSE["status"]	= 0
+					if json_msg["type"] == 1:
+						filepath = self.wx2vcode.get_2vcode(json_msg["message"])
+						#self.logger.info("wx2ccode ret = {}".format(filepath))
+						if filepath is not None:
+							#self.logger.info("filepath = {}".format(filepath))
+							ret = self.screen.show_image_on_screen(filepath, True, True)
+							if ret == True:
+								ms.QR_RESPONSE["status"] = 1
+					elif json_msg["type"] == 2:
+						ret = self.screen.down_image_and_show_image_on_screen(json_msg["message"])
+						if ret == True:
+							ms.QR_RESPONSE["status"] = 1
+					elif json_msg["type"] == 3:
+						ret = self.screen.show_qrcode_2vcode_on_screen(json_msg["message"])
+						if ret == True:
+							ms.QR_RESPONSE["status"] = 1
+					else:
 						pass
-					elif topic == ms.QR_TOPIC:
-						#执行显示二维码动作,该动作不需要返回响应信息
-						ms.QR_RESPONSE["device_sn"] = self.device_sn
-						ms.QR_RESPONSE["rtime"]		= int(time.time())
-						ms.QR_RESPONSE["type"]		= json_msg["type"]
-						ms.QR_RESPONSE["identify"]  = json_msg["identify"]
-						ms.QR_RESPONSE["status"]	= 0
-						if json_msg["type"] == 1:
-							filepath = self.wx2vcode.get_2vcode(json_msg["message"])
-							#self.logger.info("wx2ccode ret = {}".format(filepath))
-							if filepath is not None:
-								#self.logger.info("filepath = {}".format(filepath))
-								ret = self.screen.show_image_on_screen(filepath, True, True)
-								if ret == True:
-									ms.QR_RESPONSE["status"] = 1
-									image_show_flag = True
-									image_show_time = int(time.time() * 1000)
-						elif json_msg["type"] == 2:
-							ret = self.screen.down_image_and_show_image_on_screen(json_msg["message"])
-							if ret == True:
-								ms.QR_RESPONSE["status"] = 1
-								image_show_flag = True
-								image_show_time = int(time.time() * 1000)
-						elif json_msg["type"] == 3:
-							ret = self.screen.show_qrcode_2vcode_on_screen(json_msg["message"])
-							if ret == True:
-								ms.QR_RESPONSE["status"] = 1
-								image_show_flag = True
-								image_show_time = int(time.time() * 1000)
-						else:
+					
+					if ms.QR_RESPONSE["status"] == 0:
+						self.screen.show_erroricon()
+					
+					sendmsg = json.dumps(ms.QR_RESPONSE)
+					self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+				else:
+					if topic == ms.UPDATE_TOPIC:
+						self.update_flag = True
+						version = int(config.config("/root/config.ini").get("FIRMWARE", "VERSION"))
+						update_version = int(json_msg["firmware"]["version"])
+						ms.UPDATE_RESP_INFO["device_sn"] = self.device_sn
+						ms.UPDATE_RESP_INFO["firmware"]["version"] = update_version
+						ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
+						if version >= update_version:
+							#当前版本高于等待升级的版本，不升级
+							ms.UPDATE_RESP_INFO["firmware"]["status"] = "ignore"
+							sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
+							self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
 							pass
-						
-						if ms.QR_RESPONSE["status"] == 0:
-							self.screen.show_erroricon()
-						
-						sendmsg = json.dumps(ms.QR_RESPONSE)
-						self.publish_queue.put({"topic":ms.QR_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
-					else:
-						if topic == ms.UPDATE_TOPIC:
-							self.update_flag = True
-							version = int(config.config("/root/config.ini").get("FIRMWARE", "VERSION"))
-							update_version = int(json_msg["firmware"]["version"])
-							ms.UPDATE_RESP_INFO["device_sn"] = self.device_sn
-							ms.UPDATE_RESP_INFO["firmware"]["version"] = update_version
-							ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
-							if version >= update_version:
-								#当前版本高于等待升级的版本，不升级
-								ms.UPDATE_RESP_INFO["firmware"]["status"] = "ignore"
+						else:
+							#当前版本低于等待升级的版本，进行升级
+							if os.path.exists(self.update_status_file):
+								ms.UPDATE_RESP_INFO["firmware"]["status"] = "updating"
 								sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
 								self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
-								pass
 							else:
-								#当前版本低于等待升级的版本，进行升级
-								if os.path.exists(self.update_status_file):
-									ms.UPDATE_RESP_INFO["firmware"]["status"] = "updating"
+								ms.UPDATE_RESP_INFO["firmware"]["status"] = "ready"
+								sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
+								self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+								packetsize = json_msg["firmware"]["packetsize"]
+								md5str = json_msg["firmware"]["md5"]
+								download_url = json_msg["firmware"]["url"]
+								filename = "/home/download/firmware_{}.des3.tar.gz".format(json_msg["firmware"]["version"])
+								if downloadtool.download_firmware(download_url, md5str, filename) == True:
+									ms.UPDATE_RESP_INFO["firmware"]["status"] = "download success"
+									ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
 									sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
 									self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+									self.exit_flag = True
+									time.sleep(0.5)
+									with open(self.update_status_file, "w") as f:
+										update_message="{}:{}:0".format("start", update_version)
+										f.write(update_message)
+									os.kill(self.zywlstart_pid, DEVICE_UPDATE_SIG)
 								else:
-									ms.UPDATE_RESP_INFO["firmware"]["status"] = "ready"
+									ms.UPDATE_RESP_INFO["firmware"]["status"] = "download failed"
+									ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
 									sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
 									self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
-									packetsize = json_msg["firmware"]["packetsize"]
-									md5str = json_msg["firmware"]["md5"]
-									download_url = json_msg["firmware"]["url"]
-									filename = "/home/download/firmware_{}.des3.tar.gz".format(json_msg["firmware"]["version"])
-									if downloadtool.download_firmware(download_url, md5str, filename) == True:
-										ms.UPDATE_RESP_INFO["firmware"]["status"] = "download success"
-										ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
-										sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
-										self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
-										self.exit_flag = True
-										time.sleep(0.5)
-										with open(self.update_status_file, "w") as f:
-											update_message="{}:{}:0".format("start", update_version)
-											f.write(update_message)
-									else:
-										ms.UPDATE_RESP_INFO["firmware"]["status"] = "download failed"
-										ms.UPDATE_RESP_INFO["rtime"] = int(time.time())
-										sendmsg = json.dumps(ms.UPDATE_RESP_INFO)
-										self.publish_queue.put({"topic":ms.UPDATE_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
-										self.update_flag = False
-									
-						elif topic == ms.OPENSSH_TOPIC:
-							enable = json_msg["enable"]
-							opentime = json_msg["opentime"]
-							ms.OPENSSH_RESP_INFO["device_sn"] = self.device_sn
-							if enable == 0:	#close ssh
-								cmd = "service frpc stop"
-								ret = "close"
-								os.system(cmd)
-								pass
-							else:	#open ssh
-								cmd = "service frpc start"
-								ret = "open"
-								os.system(cmd)
-								pass
-							ms.OPENSSH_RESP_INFO["status"] = ret
-							ms.OPENSSH_RESP_INFO["rtime"] = int(time.time())
-							sendmsg = json.dumps(ms.OPENSSH_RESP_INFO)
-							self.publish_queue.put({"topic":ms.OPENSSH_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+									self.update_flag = False
+								
+					elif topic == ms.OPENSSH_TOPIC:
+						enable = json_msg["enable"]
+						opentime = json_msg["opentime"]
+						ms.OPENSSH_RESP_INFO["device_sn"] = self.device_sn
+						if enable == 0:	#close ssh
+							cmd = "service frpc stop"
+							ret = "close"
+							os.system(cmd)
 							pass
-						elif topic == ms.DEVICE_INFO_TOPIC:
-							ms.DEVICE_INFO["device_sn"] = self.device_sn
-							#doorlock  = 0: get doorlock time
-							#doorlock != 0: set doorlock time
-							if json_msg["doorlock"] != 0:
-								c = config.config("/root/config.ini")
-								ret = c.set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
-								if ret == False:
-									ms.DEVICE_INFO["doorlock"] = "failed"
-								else:
-									doorlock_time = int(json_msg["doorlock"])
-									doorlock_continue_time = doorlock_time * 1000
-									ms.DEVICE_INFO["doorlock"] = "success"
-								pass
-							else:
-								ms.DEVICE_INFO["doorlock"] = doorlock_time
-									
-							current = os.popen("cat /tmp/current_network").read().split('\n')[0]
-							ms.DEVICE_INFO["current"] = current
-							
-							cmd1="ifconfig {} | grep 'inet addr' ".format(current)
-							cmd2 = "{}{}{}{}".format(" | awk -F\" \" ", "'{", "print $2", "}'")
-							cmd3 = "{}{}{}{}".format(" | awk -F\":\" ", "'{", "print $2", "}'")
-							cmd = "{}{}{}".format(cmd1, cmd2, cmd3)
-							ip = os.popen(cmd).read().split('\n')[0]
-							ms.DEVICE_INFO["ip"] = ip
-							sendmsg = json.dumps(ms.DEVICE_INFO)
-							self.publish_queue.put({"topic":ms.DEVICE_INFO_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+						else:	#open ssh
+							cmd = "service frpc start"
+							ret = "open"
+							os.system(cmd)
 							pass
-						elif topic == ms.WLAN_CONFIG_TOPIC:
-							ssid = json_msg["wlan"]["ssid"]
-							psk = json_msg["wlan"]["psk"]
-							ms.WLAN_CONFIG_RESP_INFO["device_sn"] = self.device_sn
-							ms.WLAN_CONFIG_RESP_INFO["rtime"] = int(time.time())
-							ms.WLAN_CONFIG_RESP_INFO["status"] = 0
-
-							shellcmd = "/root/set_current_wifi.sh wlan {} {}".format(ssid, psk)
-							self.logger.info("set wlan:cmd={}".format(shellcmd))
-							os.system(shellcmd)
-							retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]
-							retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]
-							if retssid == ssid and retpsk == psk:
-								ms.WLAN_CONFIG_RESP_INFO["status"] = 1
-							sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)
-							self.publish_queue.put({"topic":ms.WLAN_CONFIG_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
-						else:
-							self.logger.info("invaild topic = {}".format(topic))
-							#send response failed
-				
-				if doorlock_open_flag == True:
-					curtime = int(time.time() * 1000)
-					if curtime - doorlock_open_time > doorlock_continue_time:	#1000ms
-						spilcd_api.set_doorlock(0)
-						doorlock_open_flag = False
-				'''
-				if image_show_flag == True:
-					curtime = int(time.time() * 1000)
-					if curtime - image_show_time > image_continue_time:
-						#clear screen
-						#spilcd_api.close_screen()
-						self.screen.show_logo()
-						image_show_flag = False
+						ms.OPENSSH_RESP_INFO["status"] = ret
+						ms.OPENSSH_RESP_INFO["rtime"] = int(time.time())
+						sendmsg = json.dumps(ms.OPENSSH_RESP_INFO)
+						self.publish_queue.put({"topic":ms.OPENSSH_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
 						pass
-				'''
-				time.sleep(0.01)
+					elif topic == ms.DEVICE_INFO_TOPIC:
+						ms.DEVICE_INFO["device_sn"] = self.device_sn
+						#doorlock  = 0: get doorlock time
+						#doorlock != 0: set doorlock time
+						if json_msg["doorlock"] != 0:
+							c = config.config("/root/config.ini")
+							ret = c.set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
+							if ret == False:
+								ms.DEVICE_INFO["doorlock"] = "failed"
+							else:
+								doorlock_time = int(json_msg["doorlock"])
+								ms.DEVICE_INFO["doorlock"] = "success"
+							pass
+						else:
+							ms.DEVICE_INFO["doorlock"] = doorlock_time
+								
+						current = os.popen("cat /tmp/current_network").read().split('\n')[0]
+						ms.DEVICE_INFO["current"] = current
+						
+						cmd1="ifconfig {} | grep 'inet addr' ".format(current)
+						cmd2 = "{}{}{}{}".format(" | awk -F\" \" ", "'{", "print $2", "}'")
+						cmd3 = "{}{}{}{}".format(" | awk -F\":\" ", "'{", "print $2", "}'")
+						cmd = "{}{}{}".format(cmd1, cmd2, cmd3)
+						ip = os.popen(cmd).read().split('\n')[0]
+						ms.DEVICE_INFO["ip"] = ip
+						sendmsg = json.dumps(ms.DEVICE_INFO)
+						self.publish_queue.put({"topic":ms.DEVICE_INFO_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+						pass
+					elif topic == ms.WLAN_CONFIG_TOPIC:
+						ssid = json_msg["wlan"]["ssid"]
+						psk = json_msg["wlan"]["psk"]
+						ms.WLAN_CONFIG_RESP_INFO["device_sn"] = self.device_sn
+						ms.WLAN_CONFIG_RESP_INFO["rtime"] = int(time.time())
+						ms.WLAN_CONFIG_RESP_INFO["status"] = 0
+
+						shellcmd = "/root/set_current_wifi.sh wlan {} {}".format(ssid, psk)
+						self.logger.info("set wlan:cmd={}".format(shellcmd))
+						os.system(shellcmd)
+						retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]
+						retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]
+						if retssid == ssid and retpsk == psk:
+							ms.WLAN_CONFIG_RESP_INFO["status"] = 1
+						sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)
+						self.publish_queue.put({"topic":ms.WLAN_CONFIG_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+					else:
+						self.logger.info("invaild topic = {}".format(topic))
+						#send response failed
 			except Exception as e:
 				self.logger.info("do hardware work except:{}".format(e))
 
@@ -414,6 +394,9 @@ class mqtt_client(mqtt.Client):
 		work_thread = threading.Thread(target = self.do_hardware_work)
 		work_thread.setDaemon(False)
 		work_thread.start()
+		publish_thread = threading.Thread(target = self.publish_threading)
+		publish_thread.setDaemon(False)
+		publish_thread.start()
 
 	def exit_handler(self):
 		self.exit_flag = True
@@ -452,6 +435,7 @@ def client_start():
 		print("paramter must be 2")
 		exit(1)
 	device_sn = sys.argv[1]
+	zywlstart_pid = int(sys.argv[2])
 
 	LoggingConsumer()
 	logger = LoggingProducer().getlogger()
@@ -476,7 +460,7 @@ def client_start():
 			protocol = mqtt.MQTTv31,
 			transport = 'tcp')
 	mc.set_logger(logger)
-	mc.set_device_sn(device_sn)
+	mc.set_device_sn(device_sn, zywlstart_pid)
 	mc.setsubscribe(topic=ms.OPENDOOR_TOPIC, qos=0)
 	mc.setsubscribe(topic=ms.QR_TOPIC, qos=0)
 	mc.setsubscribe(topic=ms.DEVICE_INFO_TOPIC, qos=0)
