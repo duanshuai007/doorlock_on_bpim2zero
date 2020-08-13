@@ -88,39 +88,21 @@ make install
 在BPIM2-zero中有两个spi，其中spi0是默认提供的spi接口，linux还提供了一个通用驱动程序spidev.c，我们的设备接在了spi1上，无法直接使用Linux的spi驱动，所以选择使用字符设备驱动读写寄存器的方式来对spi进行控制。
 
 
-## 启动MQTT
-最后在/root目录下执行`pyhthon3 mqtt_client.py {device sn}`启动客户端程序。
-
-* log信息输出在`/root/log/server.log`文件中
 
 
 ## 设置开机启动
 
 通过`/etc/rc.local`的方式设置开机启动已经逐渐被弃用，本文中使用`systemctl`的方式来设置开机启动。  
-通过编写一个`service`来把我们的程序加入到开机启动，并可以通过`systemctl`进行`start,stop,restart`等操作
+通过编写一个`service`来把我们的程序加入到开机启动，并可以通过`systemctl`进行`start,stop,restart`等操作。
 
-#### zywldl.service
+本工程一共实现了3个`service`，分别是`zywldl`、`zywlpppd`和`zywlmqtt`.
 
-```
-[Unit]
-Description=zywl doorlock Service
-After=network.target
+- `zywldl`:`正(z)源(y)物(w)联(l)门(d{oor})锁(l{ock})`的简称。该服务为整个工程的开始和停止服务，需要设置为开机启动。该服务能够正常使用的前提是在`/usr/bin/`目录下生成`watch.sh`的链接`ln -s /root/watch.sh /usr/bin/zywldl`,并且将`zywldl.service`文件放入`/lib/systemd/system/`目录下。执行`systemctl enable zywldl`使能开机启动功能。
+- `zywlpppd`:该服务是用来检测`gsm`模块内是否有`sim`卡，识别卡的类型，并将对应的`pppd connect`文件复制到`/etc/ppp/peers/`目录下。启动与停止完全由`zywldl`服务来控制，不需要开机启动。
+- `zywlmqtt`:改脚本是用来控制`mqtt`客户端程序的开启和停止。启动与停止完全由`zywldl`服务来控制，不需要开机启动。
 
-[Service]
-Type=forking
-RestartSec=5
-ExecStart=/usr/bin/zywldl start
-ExecStop=/usr/bin/zywldl stop
-ExecReload=/usr/bin/zywldl restart
-Restart=on-abnormal
-
-[Install]
-WantedBy=multi-user.target
-```
-
-然后通过`ln -s /root/watch.sh /usr/bin/zywldl`生成连接。  
-把`zywldl.service`放到`/lib/systemd/system/`目录下，执行`systemctl start zywldl`就可以启动程序了，执行`systemctl enable zywldl`就把程序设置为开机启动。
-
+* 也可以通过`systemctl start/stop zywldl/zywlpppd/zywlmqtt`来控制对应服务的启停。
+* 通过`systemctl status zywldl/zywlpppd/zywlmqtt`来查询对应服务的状态。  
 
 ## 烧写镜像的方法
 
