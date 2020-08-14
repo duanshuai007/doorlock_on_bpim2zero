@@ -10,7 +10,6 @@ SIGFIL="/root/signal.conf"
 
 PPP0_RULE=3
 error_count=0
-ping_count=0
 ppp_connect_status=0
 
 moni_main_pid=$1
@@ -53,7 +52,7 @@ trap "get_kill" ${EXIT_SIGNAL}
 echo "monitor ppp: main pid = ${moni_main_pid}" >> ${LOGFILE}
 while true
 do
-	sleep 5
+	sleep 1
 	if [ ${exit_flag} -eq 1 ]
 	then
 		ip route flush table ${PPP0_RULE}
@@ -96,14 +95,6 @@ do
 			sleep 1
 		fi
 		
-		if [ ${ppp_connect_status} -eq 1 ];then
-			ping_count=$(expr ${ping_count} + 1)
-			if [ ${ping_count} -lt 12 ]
-			then
-				continue
-			fi
-		fi
-
 		ip=$(get_net_ipaddr ppp0)
 		ip rule | grep "${ip}" > /dev/null
 		if [ $? -ne 0 ] 
@@ -119,8 +110,7 @@ do
 			ip route add default via 0.0.0.0 dev ppp0 src ${ip} table ${PPP0_RULE}
 		fi
 		
-		ping_count=0
-		GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+		#GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 		#echo "${GET_TIMESTAMP}:ppp ping test" >> ${LOGFILE}
 		ping ${TESTDNSSERVER} -I ppp0 -c 1 > /dev/null
 		if [ $? -eq 0 ]

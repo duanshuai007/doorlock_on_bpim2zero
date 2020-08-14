@@ -2,39 +2,42 @@
 #-*- coding:utf-8 -*-
 
 import json
-from urllib import request, parse
+import requests
 
-url="https://acstest.iotwonderful.cn/access/token"
+url="https://acstest.iotwonderful.cn/api/access/token"
 msg = {
 	"device_sn":"02421a71c57b"
 }
 
-def get_token_from_server(url:str):
-	try:
-		global msg
-		jsonmsg = json.dumps(msg)
-		jsonstr = str(jsonmsg)
-		print("body={}".format(jsonstr))
-		req = request.Request(url, bytes(jsonstr, encoding="utf-8"))
-		with request.urlopen(req) as resp:
-			page = resp.read()
-			print(page)
-			return ret
-	except Exception as e:
-		print(e)
+def get_token():
+	url="https://acstest.iotwonderful.cn/api/access/token"
+	values = {
+		"device_sn":"02421a71c57b"
+	}
+	req = requests.post(url, params=values)
+	data = json.loads(req.text)
+	if data['status'] == 0:
+		return data['data']
+	return None
 
-def get_token(url:str):
-	try:
-		print(url)
-		with request.urlopen(url) as resp:
-			page = resp.read()
-			if page is not None and page != False and page != "false" and page != "False":
-				return str(page, encoding="utf-8")
-		pass
-	except Exception as e:
-		print("error:{}".format(e))
-		pass
+def get_2vcode(token:str):
+	message = { 
+		"scene" : "0242074b7d2b-1597304702",
+		"page" : "pages/index/index",
+		"width" : 280,
+	}
+	url="https://api.weixin.qq.com/wxa/getwxacodeunlimit"
+	url="{}?access_token={}3".format(url, token)
+	print(url)
+	jsonstr = str(json.dumps(message))
+	bmsg = bytes(jsonstr, encoding='utf-8')
+	req = requests.post(url, data=bmsg)
+	print(req)
+	print(req.text)
+	print("status code={}".format(req.status_code))
+	print("reason={}".format(req.reason))
 
 if __name__ == "__main__":
-	#print(get_token(url))
-	get_token_from_server(url)
+	token = get_token()
+	print(token)
+	get_2vcode(token)

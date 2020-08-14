@@ -1239,9 +1239,6 @@ static PyObject* __Pyx_PyInt_SubtractCObj(PyObject *op1, PyObject *op2, long int
 /* PyIntCompare.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_NeObjC(PyObject *op1, PyObject *op2, long intval, long inplace);
 
-/* None.proto */
-static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname);
-
 /* Import.proto */
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level);
 
@@ -1407,7 +1404,6 @@ static PyObject *__pyx_builtin_open;
 static const char __pyx_k_[] = "{}/{}";
 static const char __pyx_k_0[] = "{}:{}:0";
 static const char __pyx_k_1[] = "1";
-static const char __pyx_k_c[] = "c";
 static const char __pyx_k_e[] = "e";
 static const char __pyx_k_f[] = "f";
 static const char __pyx_k_r[] = "r";
@@ -1687,7 +1683,7 @@ static const char __pyx_k_publish_threading[] = "publish_threading";
 static const char __pyx_k_service_frpc_stop[] = "service frpc stop";
 static const char __pyx_k_OPENSSH_RESP_TOPIC[] = "OPENSSH_RESP_TOPIC";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
-static const char __pyx_k_paramter_must_be_2[] = "paramter must be 2";
+static const char __pyx_k_paramter_must_be_3[] = "paramter must be 3";
 static const char __pyx_k_service_frpc_start[] = "service frpc start";
 static const char __pyx_k_start_other_thread[] = "start_other_thread";
 static const char __pyx_k_update_status_file[] = "update_status_file";
@@ -1808,7 +1804,6 @@ static PyObject *__pyx_n_s_append;
 static PyObject *__pyx_n_s_argv;
 static PyObject *__pyx_kp_s_awk_F;
 static PyObject *__pyx_kp_s_awk_F_2;
-static PyObject *__pyx_n_s_c;
 static PyObject *__pyx_n_s_ca_certs;
 static PyObject *__pyx_n_s_cafile;
 static PyObject *__pyx_kp_s_cafile_is_not_exists;
@@ -1951,7 +1946,7 @@ static PyObject *__pyx_n_s_opentime;
 static PyObject *__pyx_n_s_os;
 static PyObject *__pyx_n_s_packetsize;
 static PyObject *__pyx_n_s_paho_mqtt_client;
-static PyObject *__pyx_kp_s_paramter_must_be_2;
+static PyObject *__pyx_kp_s_paramter_must_be_3;
 static PyObject *__pyx_n_s_passwd;
 static PyObject *__pyx_n_s_password;
 static PyObject *__pyx_n_s_path;
@@ -2340,7 +2335,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_set_device_sn(CYTHON_UNUSED PyObje
  * 		self.status_topic = "{}/{}".format(ms.DEVICE_STATUS_TOPIC, sn)
  * 		self.work_queue = queue.Queue(32)             # <<<<<<<<<<<<<<
  * 		self.publish_queue = queue.Queue(32)
- * 		self.wx2vcode = wx.wx_2vcode()
+ * 		self.wx2vcode = wx.wx_2vcode(sn)
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_queue); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -2369,7 +2364,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_set_device_sn(CYTHON_UNUSED PyObje
  * 		self.status_topic = "{}/{}".format(ms.DEVICE_STATUS_TOPIC, sn)
  * 		self.work_queue = queue.Queue(32)
  * 		self.publish_queue = queue.Queue(32)             # <<<<<<<<<<<<<<
- * 		self.wx2vcode = wx.wx_2vcode()
+ * 		self.wx2vcode = wx.wx_2vcode(sn)
  * 		self.screen = sc.screen()
  */
   __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_queue); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 47, __pyx_L1_error)
@@ -2398,7 +2393,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_set_device_sn(CYTHON_UNUSED PyObje
   /* "mqtt.py":48
  * 		self.work_queue = queue.Queue(32)
  * 		self.publish_queue = queue.Queue(32)
- * 		self.wx2vcode = wx.wx_2vcode()             # <<<<<<<<<<<<<<
+ * 		self.wx2vcode = wx.wx_2vcode(sn)             # <<<<<<<<<<<<<<
  * 		self.screen = sc.screen()
  * 
  */
@@ -2417,7 +2412,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_set_device_sn(CYTHON_UNUSED PyObje
       __Pyx_DECREF_SET(__pyx_t_6, function);
     }
   }
-  __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_6);
+  __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_2, __pyx_v_sn) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_v_sn);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -2427,7 +2422,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_set_device_sn(CYTHON_UNUSED PyObje
 
   /* "mqtt.py":49
  * 		self.publish_queue = queue.Queue(32)
- * 		self.wx2vcode = wx.wx_2vcode()
+ * 		self.wx2vcode = wx.wx_2vcode(sn)
  * 		self.screen = sc.screen()             # <<<<<<<<<<<<<<
  * 
  * 	def set_logger(self, logger):
@@ -7484,7 +7479,6 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
   PyObject *__pyx_v_enable = NULL;
   CYTHON_UNUSED PyObject *__pyx_v_opentime = NULL;
   PyObject *__pyx_v_cmd = NULL;
-  PyObject *__pyx_v_c = NULL;
   PyObject *__pyx_v_doorlock_time = NULL;
   PyObject *__pyx_v_current = NULL;
   PyObject *__pyx_v_cmd1 = NULL;
@@ -10487,8 +10481,8 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
  * 						#doorlock  = 0: get doorlock time
  * 						#doorlock != 0: set doorlock time
  * 						if json_msg["doorlock"] != 0:             # <<<<<<<<<<<<<<
- * 							c = config.config("/root/config.ini")
- * 							ret = c.set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
+ * 							ret = config.config("/root/config.ini").set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
+ * 							if ret == False:
  */
             __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v_json_msg, __pyx_n_s_doorlock); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 344, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
@@ -10502,79 +10496,70 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
               /* "mqtt.py":345
  * 						#doorlock != 0: set doorlock time
  * 						if json_msg["doorlock"] != 0:
- * 							c = config.config("/root/config.ini")             # <<<<<<<<<<<<<<
- * 							ret = c.set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
- * 							if ret == False:
- */
-              __Pyx_GetModuleGlobalName(__pyx_t_12, __pyx_n_s_config); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 345, __pyx_L5_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_config); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 345, __pyx_L5_error)
-              __Pyx_GOTREF(__pyx_t_1);
-              __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-              __pyx_t_12 = NULL;
-              if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
-                __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_1);
-                if (likely(__pyx_t_12)) {
-                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-                  __Pyx_INCREF(__pyx_t_12);
-                  __Pyx_INCREF(function);
-                  __Pyx_DECREF_SET(__pyx_t_1, function);
-                }
-              }
-              __pyx_t_7 = (__pyx_t_12) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_12, __pyx_kp_s_root_config_ini) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_kp_s_root_config_ini);
-              __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-              if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 345, __pyx_L5_error)
-              __Pyx_GOTREF(__pyx_t_7);
-              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-              __Pyx_XDECREF_SET(__pyx_v_c, __pyx_t_7);
-              __pyx_t_7 = 0;
-
-              /* "mqtt.py":346
- * 						if json_msg["doorlock"] != 0:
- * 							c = config.config("/root/config.ini")
- * 							ret = c.set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))             # <<<<<<<<<<<<<<
+ * 							ret = config.config("/root/config.ini").set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))             # <<<<<<<<<<<<<<
  * 							if ret == False:
  * 								ms.DEVICE_INFO["doorlock"] = "failed"
  */
-              __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_c, __pyx_n_s_set); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 346, __pyx_L5_error)
+              __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_config); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 345, __pyx_L5_error)
               __Pyx_GOTREF(__pyx_t_1);
-              __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v_json_msg, __pyx_n_s_doorlock); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 346, __pyx_L5_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              __pyx_t_2 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_t_12); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 346, __pyx_L5_error)
+              __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_config); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 345, __pyx_L5_error)
               __Pyx_GOTREF(__pyx_t_2);
+              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+              __pyx_t_1 = NULL;
+              if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
+                __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
+                if (likely(__pyx_t_1)) {
+                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+                  __Pyx_INCREF(__pyx_t_1);
+                  __Pyx_INCREF(function);
+                  __Pyx_DECREF_SET(__pyx_t_2, function);
+                }
+              }
+              __pyx_t_12 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1, __pyx_kp_s_root_config_ini) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_kp_s_root_config_ini);
+              __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+              if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 345, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_12);
+              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+              __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_set); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 345, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_2);
+              __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+              __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v_json_msg, __pyx_n_s_doorlock); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 345, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_12);
+              __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 345, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_1);
               __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
               __pyx_t_12 = NULL;
               __pyx_t_11 = 0;
-              if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
-                __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_1);
+              if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+                __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_2);
                 if (likely(__pyx_t_12)) {
-                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
                   __Pyx_INCREF(__pyx_t_12);
                   __Pyx_INCREF(function);
-                  __Pyx_DECREF_SET(__pyx_t_1, function);
+                  __Pyx_DECREF_SET(__pyx_t_2, function);
                   __pyx_t_11 = 1;
                 }
               }
               #if CYTHON_FAST_PYCALL
-              if (PyFunction_Check(__pyx_t_1)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_12, __pyx_n_s_DOORLOCK, __pyx_n_s_OPEN_TIME, __pyx_t_2};
-                __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_11, 3+__pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 346, __pyx_L5_error)
+              if (PyFunction_Check(__pyx_t_2)) {
+                PyObject *__pyx_temp[4] = {__pyx_t_12, __pyx_n_s_DOORLOCK, __pyx_n_s_OPEN_TIME, __pyx_t_1};
+                __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_11, 3+__pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 345, __pyx_L5_error)
                 __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
                 __Pyx_GOTREF(__pyx_t_7);
-                __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
               } else
               #endif
               #if CYTHON_FAST_PYCCALL
-              if (__Pyx_PyFastCFunction_Check(__pyx_t_1)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_12, __pyx_n_s_DOORLOCK, __pyx_n_s_OPEN_TIME, __pyx_t_2};
-                __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_11, 3+__pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 346, __pyx_L5_error)
+              if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
+                PyObject *__pyx_temp[4] = {__pyx_t_12, __pyx_n_s_DOORLOCK, __pyx_n_s_OPEN_TIME, __pyx_t_1};
+                __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_11, 3+__pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 345, __pyx_L5_error)
                 __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
                 __Pyx_GOTREF(__pyx_t_7);
-                __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
               } else
               #endif
               {
-                __pyx_t_3 = PyTuple_New(3+__pyx_t_11); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 346, __pyx_L5_error)
+                __pyx_t_3 = PyTuple_New(3+__pyx_t_11); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 345, __pyx_L5_error)
                 __Pyx_GOTREF(__pyx_t_3);
                 if (__pyx_t_12) {
                   __Pyx_GIVEREF(__pyx_t_12); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_12); __pyx_t_12 = NULL;
@@ -10585,47 +10570,47 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
                 __Pyx_INCREF(__pyx_n_s_OPEN_TIME);
                 __Pyx_GIVEREF(__pyx_n_s_OPEN_TIME);
                 PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_11, __pyx_n_s_OPEN_TIME);
-                __Pyx_GIVEREF(__pyx_t_2);
-                PyTuple_SET_ITEM(__pyx_t_3, 2+__pyx_t_11, __pyx_t_2);
-                __pyx_t_2 = 0;
-                __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_3, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 346, __pyx_L5_error)
+                __Pyx_GIVEREF(__pyx_t_1);
+                PyTuple_SET_ITEM(__pyx_t_3, 2+__pyx_t_11, __pyx_t_1);
+                __pyx_t_1 = 0;
+                __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_3, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 345, __pyx_L5_error)
                 __Pyx_GOTREF(__pyx_t_7);
                 __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
               }
-              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
               __Pyx_XDECREF_SET(__pyx_v_ret, __pyx_t_7);
               __pyx_t_7 = 0;
 
-              /* "mqtt.py":347
- * 							c = config.config("/root/config.ini")
- * 							ret = c.set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
+              /* "mqtt.py":346
+ * 						if json_msg["doorlock"] != 0:
+ * 							ret = config.config("/root/config.ini").set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
  * 							if ret == False:             # <<<<<<<<<<<<<<
  * 								ms.DEVICE_INFO["doorlock"] = "failed"
  * 							else:
  */
-              __pyx_t_7 = PyObject_RichCompare(__pyx_v_ret, Py_False, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 347, __pyx_L5_error)
-              __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 347, __pyx_L5_error)
+              __pyx_t_7 = PyObject_RichCompare(__pyx_v_ret, Py_False, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 346, __pyx_L5_error)
+              __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 346, __pyx_L5_error)
               __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
               if (__pyx_t_9) {
 
-                /* "mqtt.py":348
- * 							ret = c.set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
+                /* "mqtt.py":347
+ * 							ret = config.config("/root/config.ini").set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
  * 							if ret == False:
  * 								ms.DEVICE_INFO["doorlock"] = "failed"             # <<<<<<<<<<<<<<
  * 							else:
- * 								doorlock_time = int(json_msg["doorlock"])
+ * 								ms.DEVICE_INFO["doorlock"] = "success"
  */
-                __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_ms); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 348, __pyx_L5_error)
+                __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_ms); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 347, __pyx_L5_error)
                 __Pyx_GOTREF(__pyx_t_7);
-                __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_DEVICE_INFO); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 348, __pyx_L5_error)
-                __Pyx_GOTREF(__pyx_t_1);
+                __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_DEVICE_INFO); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 347, __pyx_L5_error)
+                __Pyx_GOTREF(__pyx_t_2);
                 __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-                if (unlikely(PyObject_SetItem(__pyx_t_1, __pyx_n_s_doorlock, __pyx_n_s_failed) < 0)) __PYX_ERR(0, 348, __pyx_L5_error)
-                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_n_s_doorlock, __pyx_n_s_failed) < 0)) __PYX_ERR(0, 347, __pyx_L5_error)
+                __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-                /* "mqtt.py":347
- * 							c = config.config("/root/config.ini")
- * 							ret = c.set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
+                /* "mqtt.py":346
+ * 						if json_msg["doorlock"] != 0:
+ * 							ret = config.config("/root/config.ini").set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
  * 							if ret == False:             # <<<<<<<<<<<<<<
  * 								ms.DEVICE_INFO["doorlock"] = "failed"
  * 							else:
@@ -10633,36 +10618,21 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
                 goto __pyx_L49;
               }
 
-              /* "mqtt.py":350
+              /* "mqtt.py":349
  * 								ms.DEVICE_INFO["doorlock"] = "failed"
  * 							else:
- * 								doorlock_time = int(json_msg["doorlock"])             # <<<<<<<<<<<<<<
- * 								ms.DEVICE_INFO["doorlock"] = "success"
- * 							pass
- */
-              /*else*/ {
-                __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_json_msg, __pyx_n_s_doorlock); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 350, __pyx_L5_error)
-                __Pyx_GOTREF(__pyx_t_1);
-                __pyx_t_7 = __Pyx_PyNumber_Int(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 350, __pyx_L5_error)
-                __Pyx_GOTREF(__pyx_t_7);
-                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-                __Pyx_XDECREF_SET(__pyx_v_doorlock_time, __pyx_t_7);
-                __pyx_t_7 = 0;
-
-                /* "mqtt.py":351
- * 							else:
- * 								doorlock_time = int(json_msg["doorlock"])
  * 								ms.DEVICE_INFO["doorlock"] = "success"             # <<<<<<<<<<<<<<
  * 							pass
  * 						else:
  */
-                __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_ms); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 351, __pyx_L5_error)
+              /*else*/ {
+                __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 349, __pyx_L5_error)
+                __Pyx_GOTREF(__pyx_t_2);
+                __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_DEVICE_INFO); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 349, __pyx_L5_error)
                 __Pyx_GOTREF(__pyx_t_7);
-                __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_DEVICE_INFO); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 351, __pyx_L5_error)
-                __Pyx_GOTREF(__pyx_t_1);
+                __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+                if (unlikely(PyObject_SetItem(__pyx_t_7, __pyx_n_s_doorlock, __pyx_n_s_success) < 0)) __PYX_ERR(0, 349, __pyx_L5_error)
                 __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-                if (unlikely(PyObject_SetItem(__pyx_t_1, __pyx_n_s_doorlock, __pyx_n_s_success) < 0)) __PYX_ERR(0, 351, __pyx_L5_error)
-                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
               }
               __pyx_L49:;
 
@@ -10670,45 +10640,98 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
  * 						#doorlock  = 0: get doorlock time
  * 						#doorlock != 0: set doorlock time
  * 						if json_msg["doorlock"] != 0:             # <<<<<<<<<<<<<<
- * 							c = config.config("/root/config.ini")
- * 							ret = c.set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
+ * 							ret = config.config("/root/config.ini").set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
+ * 							if ret == False:
  */
               goto __pyx_L48;
             }
 
-            /* "mqtt.py":354
+            /* "mqtt.py":352
  * 							pass
  * 						else:
+ * 							doorlock_time = config.config("/root/config.ini").get("DOORLOCK", "OPEN_TIME")             # <<<<<<<<<<<<<<
+ * 							ms.DEVICE_INFO["doorlock"] = doorlock_time
+ * 
+ */
+            /*else*/ {
+              __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_config); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 352, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_2);
+              __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_config); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 352, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_3);
+              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+              __pyx_t_2 = NULL;
+              if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+                __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+                if (likely(__pyx_t_2)) {
+                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+                  __Pyx_INCREF(__pyx_t_2);
+                  __Pyx_INCREF(function);
+                  __Pyx_DECREF_SET(__pyx_t_3, function);
+                }
+              }
+              __pyx_t_7 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_kp_s_root_config_ini) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_kp_s_root_config_ini);
+              __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+              if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 352, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_7);
+              __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+              __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_get); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 352, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_3);
+              __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+              __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 352, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_7);
+              __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+              __Pyx_XDECREF_SET(__pyx_v_doorlock_time, __pyx_t_7);
+              __pyx_t_7 = 0;
+
+              /* "mqtt.py":353
+ * 						else:
+ * 							doorlock_time = config.config("/root/config.ini").get("DOORLOCK", "OPEN_TIME")
  * 							ms.DEVICE_INFO["doorlock"] = doorlock_time             # <<<<<<<<<<<<<<
  * 
  * 						current = os.popen("cat /tmp/current_network").read().split('\n')[0]
  */
-            /*else*/ {
-              if (unlikely(!__pyx_v_doorlock_time)) { __Pyx_RaiseUnboundLocalError("doorlock_time"); __PYX_ERR(0, 354, __pyx_L5_error) }
-              __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_ms); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 354, __pyx_L5_error)
-              __Pyx_GOTREF(__pyx_t_1);
-              __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_DEVICE_INFO); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 354, __pyx_L5_error)
+              __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_ms); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 353, __pyx_L5_error)
               __Pyx_GOTREF(__pyx_t_7);
-              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-              if (unlikely(PyObject_SetItem(__pyx_t_7, __pyx_n_s_doorlock, __pyx_v_doorlock_time) < 0)) __PYX_ERR(0, 354, __pyx_L5_error)
+              __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_DEVICE_INFO); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 353, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_3);
               __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+              if (unlikely(PyObject_SetItem(__pyx_t_3, __pyx_n_s_doorlock, __pyx_v_doorlock_time) < 0)) __PYX_ERR(0, 353, __pyx_L5_error)
+              __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
             }
             __pyx_L48:;
 
-            /* "mqtt.py":356
+            /* "mqtt.py":355
  * 							ms.DEVICE_INFO["doorlock"] = doorlock_time
  * 
  * 						current = os.popen("cat /tmp/current_network").read().split('\n')[0]             # <<<<<<<<<<<<<<
  * 						ms.DEVICE_INFO["current"] = current
  * 
  */
-            __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 356, __pyx_L5_error)
+            __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_os); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 355, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_popen); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 355, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_12);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __pyx_t_1 = NULL;
+            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_12))) {
+              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_12);
+              if (likely(__pyx_t_1)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
+                __Pyx_INCREF(__pyx_t_1);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_12, function);
+              }
+            }
+            __pyx_t_2 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_1, __pyx_kp_s_cat_tmp_current_network) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_kp_s_cat_tmp_current_network);
+            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 355, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_2);
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_popen); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 356, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_read); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 355, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
             __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
             __pyx_t_2 = NULL;
-            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_12))) {
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_12))) {
               __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_12);
               if (likely(__pyx_t_2)) {
                 PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
@@ -10717,141 +10740,123 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
                 __Pyx_DECREF_SET(__pyx_t_12, function);
               }
             }
-            __pyx_t_3 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_2, __pyx_kp_s_cat_tmp_current_network) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_kp_s_cat_tmp_current_network);
+            __pyx_t_7 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_12);
             __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 356, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_read); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 356, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __pyx_t_3 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_12))) {
-              __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_12);
-              if (likely(__pyx_t_3)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
-                __Pyx_INCREF(__pyx_t_3);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_12, function);
-              }
-            }
-            __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_12);
-            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 356, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_1);
-            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_split); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 356, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            __pyx_t_1 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_12))) {
-              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_12);
-              if (likely(__pyx_t_1)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
-                __Pyx_INCREF(__pyx_t_1);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_12, function);
-              }
-            }
-            __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_1, __pyx_kp_s__3) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_kp_s__3);
-            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 356, __pyx_L5_error)
+            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 355, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_7);
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __pyx_t_12 = __Pyx_GetItemInt(__pyx_t_7, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 356, __pyx_L5_error)
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_split); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 355, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
             __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+            __pyx_t_7 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_12))) {
+              __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_12);
+              if (likely(__pyx_t_7)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
+                __Pyx_INCREF(__pyx_t_7);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_12, function);
+              }
+            }
+            __pyx_t_3 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_7, __pyx_kp_s__3) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_kp_s__3);
+            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 355, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+            __pyx_t_12 = __Pyx_GetItemInt(__pyx_t_3, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 355, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_12);
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
             __Pyx_XDECREF_SET(__pyx_v_current, __pyx_t_12);
             __pyx_t_12 = 0;
 
-            /* "mqtt.py":357
+            /* "mqtt.py":356
  * 
  * 						current = os.popen("cat /tmp/current_network").read().split('\n')[0]
  * 						ms.DEVICE_INFO["current"] = current             # <<<<<<<<<<<<<<
  * 
  * 						cmd1="ifconfig {} | grep 'inet addr' ".format(current)
  */
-            __Pyx_GetModuleGlobalName(__pyx_t_12, __pyx_n_s_ms); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 357, __pyx_L5_error)
+            __Pyx_GetModuleGlobalName(__pyx_t_12, __pyx_n_s_ms); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 356, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
-            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_DEVICE_INFO); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 357, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
+            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_DEVICE_INFO); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 356, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            if (unlikely(PyObject_SetItem(__pyx_t_7, __pyx_n_s_current, __pyx_v_current) < 0)) __PYX_ERR(0, 357, __pyx_L5_error)
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+            if (unlikely(PyObject_SetItem(__pyx_t_3, __pyx_n_s_current, __pyx_v_current) < 0)) __PYX_ERR(0, 356, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-            /* "mqtt.py":359
+            /* "mqtt.py":358
  * 						ms.DEVICE_INFO["current"] = current
  * 
  * 						cmd1="ifconfig {} | grep 'inet addr' ".format(current)             # <<<<<<<<<<<<<<
  * 						cmd2 = "{}{}{}{}".format(" | awk -F\" \" ", "'{", "print $2", "}'")
  * 						cmd3 = "{}{}{}{}".format(" | awk -F\":\" ", "'{", "print $2", "}'")
  */
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_ifconfig_grep_inet_addr, __pyx_n_s_format); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 359, __pyx_L5_error)
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_ifconfig_grep_inet_addr, __pyx_n_s_format); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 358, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
-            __pyx_t_1 = NULL;
+            __pyx_t_7 = NULL;
             if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_12))) {
-              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_12);
-              if (likely(__pyx_t_1)) {
+              __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_12);
+              if (likely(__pyx_t_7)) {
                 PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
-                __Pyx_INCREF(__pyx_t_1);
+                __Pyx_INCREF(__pyx_t_7);
                 __Pyx_INCREF(function);
                 __Pyx_DECREF_SET(__pyx_t_12, function);
               }
             }
-            __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_1, __pyx_v_current) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_v_current);
-            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 359, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
+            __pyx_t_3 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_7, __pyx_v_current) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_v_current);
+            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 358, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __Pyx_XDECREF_SET(__pyx_v_cmd1, __pyx_t_7);
-            __pyx_t_7 = 0;
+            __Pyx_XDECREF_SET(__pyx_v_cmd1, __pyx_t_3);
+            __pyx_t_3 = 0;
 
-            /* "mqtt.py":360
+            /* "mqtt.py":359
  * 
  * 						cmd1="ifconfig {} | grep 'inet addr' ".format(current)
  * 						cmd2 = "{}{}{}{}".format(" | awk -F\" \" ", "'{", "print $2", "}'")             # <<<<<<<<<<<<<<
  * 						cmd3 = "{}{}{}{}".format(" | awk -F\":\" ", "'{", "print $2", "}'")
  * 						cmd = "{}{}{}".format(cmd1, cmd2, cmd3)
  */
-            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s__14, __pyx_n_s_format); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 360, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 360, __pyx_L5_error)
+            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s__14, __pyx_n_s_format); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 359, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 359, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
             __Pyx_XDECREF_SET(__pyx_v_cmd2, __pyx_t_12);
             __pyx_t_12 = 0;
 
-            /* "mqtt.py":361
+            /* "mqtt.py":360
  * 						cmd1="ifconfig {} | grep 'inet addr' ".format(current)
  * 						cmd2 = "{}{}{}{}".format(" | awk -F\" \" ", "'{", "print $2", "}'")
  * 						cmd3 = "{}{}{}{}".format(" | awk -F\":\" ", "'{", "print $2", "}'")             # <<<<<<<<<<<<<<
  * 						cmd = "{}{}{}".format(cmd1, cmd2, cmd3)
  * 						ip = os.popen(cmd).read().split('\n')[0]
  */
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s__14, __pyx_n_s_format); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 361, __pyx_L5_error)
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s__14, __pyx_n_s_format); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 360, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
-            __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_tuple__18, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 361, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
+            __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_tuple__18, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 360, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __Pyx_XDECREF_SET(__pyx_v_cmd3, __pyx_t_7);
-            __pyx_t_7 = 0;
+            __Pyx_XDECREF_SET(__pyx_v_cmd3, __pyx_t_3);
+            __pyx_t_3 = 0;
 
-            /* "mqtt.py":362
+            /* "mqtt.py":361
  * 						cmd2 = "{}{}{}{}".format(" | awk -F\" \" ", "'{", "print $2", "}'")
  * 						cmd3 = "{}{}{}{}".format(" | awk -F\":\" ", "'{", "print $2", "}'")
  * 						cmd = "{}{}{}".format(cmd1, cmd2, cmd3)             # <<<<<<<<<<<<<<
  * 						ip = os.popen(cmd).read().split('\n')[0]
  * 						ms.DEVICE_INFO["ip"] = ip
  */
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s__19, __pyx_n_s_format); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 362, __pyx_L5_error)
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s__19, __pyx_n_s_format); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 361, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
-            __pyx_t_1 = NULL;
+            __pyx_t_7 = NULL;
             __pyx_t_11 = 0;
             if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_12))) {
-              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_12);
-              if (likely(__pyx_t_1)) {
+              __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_12);
+              if (likely(__pyx_t_7)) {
                 PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
-                __Pyx_INCREF(__pyx_t_1);
+                __Pyx_INCREF(__pyx_t_7);
                 __Pyx_INCREF(function);
                 __Pyx_DECREF_SET(__pyx_t_12, function);
                 __pyx_t_11 = 1;
@@ -10859,204 +10864,204 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
             }
             #if CYTHON_FAST_PYCALL
             if (PyFunction_Check(__pyx_t_12)) {
-              PyObject *__pyx_temp[4] = {__pyx_t_1, __pyx_v_cmd1, __pyx_v_cmd2, __pyx_v_cmd3};
-              __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_12, __pyx_temp+1-__pyx_t_11, 3+__pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 362, __pyx_L5_error)
-              __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-              __Pyx_GOTREF(__pyx_t_7);
+              PyObject *__pyx_temp[4] = {__pyx_t_7, __pyx_v_cmd1, __pyx_v_cmd2, __pyx_v_cmd3};
+              __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_12, __pyx_temp+1-__pyx_t_11, 3+__pyx_t_11); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 361, __pyx_L5_error)
+              __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+              __Pyx_GOTREF(__pyx_t_3);
             } else
             #endif
             #if CYTHON_FAST_PYCCALL
             if (__Pyx_PyFastCFunction_Check(__pyx_t_12)) {
-              PyObject *__pyx_temp[4] = {__pyx_t_1, __pyx_v_cmd1, __pyx_v_cmd2, __pyx_v_cmd3};
-              __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_12, __pyx_temp+1-__pyx_t_11, 3+__pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 362, __pyx_L5_error)
-              __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-              __Pyx_GOTREF(__pyx_t_7);
+              PyObject *__pyx_temp[4] = {__pyx_t_7, __pyx_v_cmd1, __pyx_v_cmd2, __pyx_v_cmd3};
+              __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_12, __pyx_temp+1-__pyx_t_11, 3+__pyx_t_11); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 361, __pyx_L5_error)
+              __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+              __Pyx_GOTREF(__pyx_t_3);
             } else
             #endif
             {
-              __pyx_t_3 = PyTuple_New(3+__pyx_t_11); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 362, __pyx_L5_error)
-              __Pyx_GOTREF(__pyx_t_3);
-              if (__pyx_t_1) {
-                __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1); __pyx_t_1 = NULL;
+              __pyx_t_2 = PyTuple_New(3+__pyx_t_11); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 361, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_2);
+              if (__pyx_t_7) {
+                __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_7); __pyx_t_7 = NULL;
               }
               __Pyx_INCREF(__pyx_v_cmd1);
               __Pyx_GIVEREF(__pyx_v_cmd1);
-              PyTuple_SET_ITEM(__pyx_t_3, 0+__pyx_t_11, __pyx_v_cmd1);
+              PyTuple_SET_ITEM(__pyx_t_2, 0+__pyx_t_11, __pyx_v_cmd1);
               __Pyx_INCREF(__pyx_v_cmd2);
               __Pyx_GIVEREF(__pyx_v_cmd2);
-              PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_11, __pyx_v_cmd2);
+              PyTuple_SET_ITEM(__pyx_t_2, 1+__pyx_t_11, __pyx_v_cmd2);
               __Pyx_INCREF(__pyx_v_cmd3);
               __Pyx_GIVEREF(__pyx_v_cmd3);
-              PyTuple_SET_ITEM(__pyx_t_3, 2+__pyx_t_11, __pyx_v_cmd3);
-              __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_3, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 362, __pyx_L5_error)
-              __Pyx_GOTREF(__pyx_t_7);
-              __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+              PyTuple_SET_ITEM(__pyx_t_2, 2+__pyx_t_11, __pyx_v_cmd3);
+              __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 361, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_3);
+              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
             }
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __Pyx_XDECREF_SET(__pyx_v_cmd, __pyx_t_7);
-            __pyx_t_7 = 0;
+            __Pyx_XDECREF_SET(__pyx_v_cmd, __pyx_t_3);
+            __pyx_t_3 = 0;
 
-            /* "mqtt.py":363
+            /* "mqtt.py":362
  * 						cmd3 = "{}{}{}{}".format(" | awk -F\":\" ", "'{", "print $2", "}'")
  * 						cmd = "{}{}{}".format(cmd1, cmd2, cmd3)
  * 						ip = os.popen(cmd).read().split('\n')[0]             # <<<<<<<<<<<<<<
  * 						ms.DEVICE_INFO["ip"] = ip
  * 						sendmsg = json.dumps(ms.DEVICE_INFO)
  */
-            __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_os); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 363, __pyx_L5_error)
+            __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_os); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 362, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_7);
+            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_popen); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 362, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_1);
-            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_popen); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 363, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+            __pyx_t_7 = NULL;
+            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
+              __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_1);
+              if (likely(__pyx_t_7)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                __Pyx_INCREF(__pyx_t_7);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_1, function);
+              }
+            }
+            __pyx_t_2 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_7, __pyx_v_cmd) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_v_cmd);
+            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 362, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_2);
             __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            __pyx_t_1 = NULL;
-            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
-              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-              if (likely(__pyx_t_1)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-                __Pyx_INCREF(__pyx_t_1);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_2, function);
-              }
-            }
-            __pyx_t_3 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1, __pyx_v_cmd) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_cmd);
-            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 363, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
+            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_read); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 362, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
             __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_read); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 363, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __pyx_t_3 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-              __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
-              if (likely(__pyx_t_3)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-                __Pyx_INCREF(__pyx_t_3);
+            __pyx_t_2 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+              __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
+              if (likely(__pyx_t_2)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                __Pyx_INCREF(__pyx_t_2);
                 __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_2, function);
+                __Pyx_DECREF_SET(__pyx_t_1, function);
               }
             }
-            __pyx_t_12 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
-            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 363, __pyx_L5_error)
+            __pyx_t_12 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_1);
+            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 362, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_split); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 363, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_2);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_split); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 362, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
             __pyx_t_12 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-              __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_2);
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+              __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_1);
               if (likely(__pyx_t_12)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
                 __Pyx_INCREF(__pyx_t_12);
                 __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_2, function);
+                __Pyx_DECREF_SET(__pyx_t_1, function);
               }
             }
-            __pyx_t_7 = (__pyx_t_12) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_12, __pyx_kp_s__3) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_kp_s__3);
+            __pyx_t_3 = (__pyx_t_12) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_12, __pyx_kp_s__3) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_kp_s__3);
             __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 363, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_7, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 363, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_XDECREF_SET(__pyx_v_ip, __pyx_t_2);
-            __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 362, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_3, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 362, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __Pyx_XDECREF_SET(__pyx_v_ip, __pyx_t_1);
+            __pyx_t_1 = 0;
 
-            /* "mqtt.py":364
+            /* "mqtt.py":363
  * 						cmd = "{}{}{}".format(cmd1, cmd2, cmd3)
  * 						ip = os.popen(cmd).read().split('\n')[0]
  * 						ms.DEVICE_INFO["ip"] = ip             # <<<<<<<<<<<<<<
  * 						sendmsg = json.dumps(ms.DEVICE_INFO)
  * 						self.publish_queue.put({"topic":ms.DEVICE_INFO_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
  */
-            __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 364, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_DEVICE_INFO); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 364, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            if (unlikely(PyObject_SetItem(__pyx_t_7, __pyx_n_s_ip, __pyx_v_ip) < 0)) __PYX_ERR(0, 364, __pyx_L5_error)
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+            __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_ms); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 363, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_DEVICE_INFO); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 363, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            if (unlikely(PyObject_SetItem(__pyx_t_3, __pyx_n_s_ip, __pyx_v_ip) < 0)) __PYX_ERR(0, 363, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-            /* "mqtt.py":365
+            /* "mqtt.py":364
  * 						ip = os.popen(cmd).read().split('\n')[0]
  * 						ms.DEVICE_INFO["ip"] = ip
  * 						sendmsg = json.dumps(ms.DEVICE_INFO)             # <<<<<<<<<<<<<<
  * 						self.publish_queue.put({"topic":ms.DEVICE_INFO_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
  * 						pass
  */
-            __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_json); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 365, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_dumps); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 365, __pyx_L5_error)
+            __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_json); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 364, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_dumps); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 364, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 365, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_ms); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 364, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_DEVICE_INFO); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 364, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_2);
-            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_DEVICE_INFO); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 365, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __pyx_t_2 = NULL;
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __pyx_t_1 = NULL;
             if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_12))) {
-              __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_12);
-              if (likely(__pyx_t_2)) {
+              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_12);
+              if (likely(__pyx_t_1)) {
                 PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
-                __Pyx_INCREF(__pyx_t_2);
+                __Pyx_INCREF(__pyx_t_1);
                 __Pyx_INCREF(function);
                 __Pyx_DECREF_SET(__pyx_t_12, function);
               }
             }
-            __pyx_t_7 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_t_3);
-            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 365, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
+            __pyx_t_3 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_1, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_t_2);
+            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 364, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __Pyx_XDECREF_SET(__pyx_v_sendmsg, __pyx_t_7);
-            __pyx_t_7 = 0;
+            __Pyx_XDECREF_SET(__pyx_v_sendmsg, __pyx_t_3);
+            __pyx_t_3 = 0;
 
-            /* "mqtt.py":366
+            /* "mqtt.py":365
  * 						ms.DEVICE_INFO["ip"] = ip
  * 						sendmsg = json.dumps(ms.DEVICE_INFO)
  * 						self.publish_queue.put({"topic":ms.DEVICE_INFO_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})             # <<<<<<<<<<<<<<
  * 						pass
  * 					elif topic == ms.WLAN_CONFIG_TOPIC:
  */
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_publish_queue); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 366, __pyx_L5_error)
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_publish_queue); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 365, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
-            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_put); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 366, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __pyx_t_12 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 366, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 366, __pyx_L5_error)
+            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_put); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 365, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_2);
-            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_DEVICE_INFO_RESP_TOPIC); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 366, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+            __pyx_t_12 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 365, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_12);
+            __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_ms); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 365, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_1);
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_topic, __pyx_t_1) < 0) __PYX_ERR(0, 366, __pyx_L5_error)
+            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_DEVICE_INFO_RESP_TOPIC); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 365, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_7);
             __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_payload, __pyx_v_sendmsg) < 0) __PYX_ERR(0, 366, __pyx_L5_error)
-            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 366, __pyx_L5_error)
-            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_retain, Py_False) < 0) __PYX_ERR(0, 366, __pyx_L5_error)
-            __pyx_t_1 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
-              if (likely(__pyx_t_1)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-                __Pyx_INCREF(__pyx_t_1);
+            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_topic, __pyx_t_7) < 0) __PYX_ERR(0, 365, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_payload, __pyx_v_sendmsg) < 0) __PYX_ERR(0, 365, __pyx_L5_error)
+            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 365, __pyx_L5_error)
+            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_retain, Py_False) < 0) __PYX_ERR(0, 365, __pyx_L5_error)
+            __pyx_t_7 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+              __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_2);
+              if (likely(__pyx_t_7)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+                __Pyx_INCREF(__pyx_t_7);
                 __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_3, function);
+                __Pyx_DECREF_SET(__pyx_t_2, function);
               }
             }
-            __pyx_t_7 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_t_12) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_12);
-            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __pyx_t_3 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_7, __pyx_t_12) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_12);
+            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 366, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 365, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
             __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
             /* "mqtt.py":340
  * 						self.publish_queue.put({"topic":ms.OPENSSH_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
@@ -11068,244 +11073,199 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
             goto __pyx_L25;
           }
 
-          /* "mqtt.py":368
+          /* "mqtt.py":367
  * 						self.publish_queue.put({"topic":ms.DEVICE_INFO_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
  * 						pass
  * 					elif topic == ms.WLAN_CONFIG_TOPIC:             # <<<<<<<<<<<<<<
  * 						ssid = json_msg["wlan"]["ssid"]
  * 						psk = json_msg["wlan"]["psk"]
  */
-          __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_ms); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 368, __pyx_L5_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_WLAN_CONFIG_TOPIC); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 368, __pyx_L5_error)
+          __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ms); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 367, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __pyx_t_7 = PyObject_RichCompare(__pyx_v_topic, __pyx_t_3, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 368, __pyx_L5_error)
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_WLAN_CONFIG_TOPIC); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 367, __pyx_L5_error)
+          __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 368, __pyx_L5_error)
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __pyx_t_3 = PyObject_RichCompare(__pyx_v_topic, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 367, __pyx_L5_error)
+          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+          __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 367, __pyx_L5_error)
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
           if (__pyx_t_9) {
 
-            /* "mqtt.py":369
+            /* "mqtt.py":368
  * 						pass
  * 					elif topic == ms.WLAN_CONFIG_TOPIC:
  * 						ssid = json_msg["wlan"]["ssid"]             # <<<<<<<<<<<<<<
  * 						psk = json_msg["wlan"]["psk"]
  * 						ms.WLAN_CONFIG_RESP_INFO["device_sn"] = self.device_sn
  */
-            __pyx_t_7 = __Pyx_PyObject_Dict_GetItem(__pyx_v_json_msg, __pyx_n_s_wlan); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 369, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_t_7, __pyx_n_s_ssid); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 369, __pyx_L5_error)
+            __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v_json_msg, __pyx_n_s_wlan); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 368, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_XDECREF_SET(__pyx_v_ssid, __pyx_t_3);
-            __pyx_t_3 = 0;
+            __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_t_3, __pyx_n_s_ssid); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 368, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __Pyx_XDECREF_SET(__pyx_v_ssid, __pyx_t_2);
+            __pyx_t_2 = 0;
 
-            /* "mqtt.py":370
+            /* "mqtt.py":369
  * 					elif topic == ms.WLAN_CONFIG_TOPIC:
  * 						ssid = json_msg["wlan"]["ssid"]
  * 						psk = json_msg["wlan"]["psk"]             # <<<<<<<<<<<<<<
  * 						ms.WLAN_CONFIG_RESP_INFO["device_sn"] = self.device_sn
  * 						ms.WLAN_CONFIG_RESP_INFO["rtime"] = int(time.time())
  */
-            __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v_json_msg, __pyx_n_s_wlan); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 370, __pyx_L5_error)
+            __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_v_json_msg, __pyx_n_s_wlan); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 369, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_t_2, __pyx_n_s_psk); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 369, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_3);
-            __pyx_t_7 = __Pyx_PyObject_Dict_GetItem(__pyx_t_3, __pyx_n_s_psk); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 370, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_XDECREF_SET(__pyx_v_psk, __pyx_t_7);
-            __pyx_t_7 = 0;
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            __Pyx_XDECREF_SET(__pyx_v_psk, __pyx_t_3);
+            __pyx_t_3 = 0;
 
-            /* "mqtt.py":371
+            /* "mqtt.py":370
  * 						ssid = json_msg["wlan"]["ssid"]
  * 						psk = json_msg["wlan"]["psk"]
  * 						ms.WLAN_CONFIG_RESP_INFO["device_sn"] = self.device_sn             # <<<<<<<<<<<<<<
  * 						ms.WLAN_CONFIG_RESP_INFO["rtime"] = int(time.time())
  * 						ms.WLAN_CONFIG_RESP_INFO["status"] = 0
  */
-            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_device_sn); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 371, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ms); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 371, __pyx_L5_error)
+            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_device_sn); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 370, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_3);
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_WLAN_CONFIG_RESP_INFO); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 371, __pyx_L5_error)
+            __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 370, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_WLAN_CONFIG_RESP_INFO); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 370, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (unlikely(PyObject_SetItem(__pyx_t_12, __pyx_n_s_device_sn, __pyx_t_7) < 0)) __PYX_ERR(0, 371, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(PyObject_SetItem(__pyx_t_12, __pyx_n_s_device_sn, __pyx_t_3) < 0)) __PYX_ERR(0, 370, __pyx_L5_error)
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-            /* "mqtt.py":372
+            /* "mqtt.py":371
  * 						psk = json_msg["wlan"]["psk"]
  * 						ms.WLAN_CONFIG_RESP_INFO["device_sn"] = self.device_sn
  * 						ms.WLAN_CONFIG_RESP_INFO["rtime"] = int(time.time())             # <<<<<<<<<<<<<<
  * 						ms.WLAN_CONFIG_RESP_INFO["status"] = 0
  * 
  */
-            __Pyx_GetModuleGlobalName(__pyx_t_12, __pyx_n_s_time); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 372, __pyx_L5_error)
+            __Pyx_GetModuleGlobalName(__pyx_t_12, __pyx_n_s_time); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 371, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
-            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_time); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 372, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
+            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 371, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
             __pyx_t_12 = NULL;
-            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
-              __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_3);
+            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
+              __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_2);
               if (likely(__pyx_t_12)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
                 __Pyx_INCREF(__pyx_t_12);
                 __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_3, function);
+                __Pyx_DECREF_SET(__pyx_t_2, function);
               }
             }
-            __pyx_t_7 = (__pyx_t_12) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_12) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
+            __pyx_t_3 = (__pyx_t_12) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_12) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
             __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 372, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __pyx_t_3 = __Pyx_PyNumber_Int(__pyx_t_7); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 372, __pyx_L5_error)
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 371, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_ms); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 372, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_WLAN_CONFIG_RESP_INFO); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 372, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            if (unlikely(PyObject_SetItem(__pyx_t_12, __pyx_n_s_rtime, __pyx_t_3) < 0)) __PYX_ERR(0, 372, __pyx_L5_error)
-            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            __pyx_t_2 = __Pyx_PyNumber_Int(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 371, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
             __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ms); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 371, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_WLAN_CONFIG_RESP_INFO); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 371, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_12);
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            if (unlikely(PyObject_SetItem(__pyx_t_12, __pyx_n_s_rtime, __pyx_t_2) < 0)) __PYX_ERR(0, 371, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-            /* "mqtt.py":373
+            /* "mqtt.py":372
  * 						ms.WLAN_CONFIG_RESP_INFO["device_sn"] = self.device_sn
  * 						ms.WLAN_CONFIG_RESP_INFO["rtime"] = int(time.time())
  * 						ms.WLAN_CONFIG_RESP_INFO["status"] = 0             # <<<<<<<<<<<<<<
  * 
  * 						shellcmd = "/root/set_current_wifi.sh wlan {} {}".format(ssid, psk)
  */
-            __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ms); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 373, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_WLAN_CONFIG_RESP_INFO); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 373, __pyx_L5_error)
+            __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 372, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_WLAN_CONFIG_RESP_INFO); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 372, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (unlikely(PyObject_SetItem(__pyx_t_12, __pyx_n_s_status, __pyx_int_0) < 0)) __PYX_ERR(0, 373, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(PyObject_SetItem(__pyx_t_12, __pyx_n_s_status, __pyx_int_0) < 0)) __PYX_ERR(0, 372, __pyx_L5_error)
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
 
-            /* "mqtt.py":375
+            /* "mqtt.py":374
  * 						ms.WLAN_CONFIG_RESP_INFO["status"] = 0
  * 
  * 						shellcmd = "/root/set_current_wifi.sh wlan {} {}".format(ssid, psk)             # <<<<<<<<<<<<<<
  * 						self.logger.info("set wlan:cmd={}".format(shellcmd))
  * 						os.system(shellcmd)
  */
-            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_root_set_current_wifi_sh_wlan, __pyx_n_s_format); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 375, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __pyx_t_7 = NULL;
+            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_root_set_current_wifi_sh_wlan, __pyx_n_s_format); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 374, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __pyx_t_3 = NULL;
             __pyx_t_11 = 0;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-              __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_3);
-              if (likely(__pyx_t_7)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-                __Pyx_INCREF(__pyx_t_7);
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+              __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+              if (likely(__pyx_t_3)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+                __Pyx_INCREF(__pyx_t_3);
                 __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_3, function);
+                __Pyx_DECREF_SET(__pyx_t_2, function);
                 __pyx_t_11 = 1;
               }
             }
             #if CYTHON_FAST_PYCALL
-            if (PyFunction_Check(__pyx_t_3)) {
-              PyObject *__pyx_temp[3] = {__pyx_t_7, __pyx_v_ssid, __pyx_v_psk};
-              __pyx_t_12 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_11, 2+__pyx_t_11); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 375, __pyx_L5_error)
-              __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+            if (PyFunction_Check(__pyx_t_2)) {
+              PyObject *__pyx_temp[3] = {__pyx_t_3, __pyx_v_ssid, __pyx_v_psk};
+              __pyx_t_12 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_11, 2+__pyx_t_11); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 374, __pyx_L5_error)
+              __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
               __Pyx_GOTREF(__pyx_t_12);
             } else
             #endif
             #if CYTHON_FAST_PYCCALL
-            if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
-              PyObject *__pyx_temp[3] = {__pyx_t_7, __pyx_v_ssid, __pyx_v_psk};
-              __pyx_t_12 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_11, 2+__pyx_t_11); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 375, __pyx_L5_error)
-              __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+            if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
+              PyObject *__pyx_temp[3] = {__pyx_t_3, __pyx_v_ssid, __pyx_v_psk};
+              __pyx_t_12 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_11, 2+__pyx_t_11); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 374, __pyx_L5_error)
+              __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
               __Pyx_GOTREF(__pyx_t_12);
             } else
             #endif
             {
-              __pyx_t_1 = PyTuple_New(2+__pyx_t_11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 375, __pyx_L5_error)
-              __Pyx_GOTREF(__pyx_t_1);
-              if (__pyx_t_7) {
-                __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_7); __pyx_t_7 = NULL;
+              __pyx_t_7 = PyTuple_New(2+__pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 374, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_7);
+              if (__pyx_t_3) {
+                __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_3); __pyx_t_3 = NULL;
               }
               __Pyx_INCREF(__pyx_v_ssid);
               __Pyx_GIVEREF(__pyx_v_ssid);
-              PyTuple_SET_ITEM(__pyx_t_1, 0+__pyx_t_11, __pyx_v_ssid);
+              PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_11, __pyx_v_ssid);
               __Pyx_INCREF(__pyx_v_psk);
               __Pyx_GIVEREF(__pyx_v_psk);
-              PyTuple_SET_ITEM(__pyx_t_1, 1+__pyx_t_11, __pyx_v_psk);
-              __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_1, NULL); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 375, __pyx_L5_error)
+              PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_11, __pyx_v_psk);
+              __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_7, NULL); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 374, __pyx_L5_error)
               __Pyx_GOTREF(__pyx_t_12);
-              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+              __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
             }
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
             __Pyx_XDECREF_SET(__pyx_v_shellcmd, __pyx_t_12);
             __pyx_t_12 = 0;
 
-            /* "mqtt.py":376
+            /* "mqtt.py":375
  * 
  * 						shellcmd = "/root/set_current_wifi.sh wlan {} {}".format(ssid, psk)
  * 						self.logger.info("set wlan:cmd={}".format(shellcmd))             # <<<<<<<<<<<<<<
  * 						os.system(shellcmd)
  * 						retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]
  */
-            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_logger); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 376, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_info); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 376, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_1);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_set_wlan_cmd, __pyx_n_s_format); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 376, __pyx_L5_error)
+            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_logger); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 375, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_info); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 375, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_7);
-            __pyx_t_2 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
-              __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_7);
-              if (likely(__pyx_t_2)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-                __Pyx_INCREF(__pyx_t_2);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_7, function);
-              }
-            }
-            __pyx_t_3 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_2, __pyx_v_shellcmd) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_v_shellcmd);
-            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 376, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_set_wlan_cmd, __pyx_n_s_format); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 375, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __pyx_t_7 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
-              __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_1);
-              if (likely(__pyx_t_7)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-                __Pyx_INCREF(__pyx_t_7);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_1, function);
-              }
-            }
-            __pyx_t_12 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_7, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_3);
-            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 376, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-
-            /* "mqtt.py":377
- * 						shellcmd = "/root/set_current_wifi.sh wlan {} {}".format(ssid, psk)
- * 						self.logger.info("set wlan:cmd={}".format(shellcmd))
- * 						os.system(shellcmd)             # <<<<<<<<<<<<<<
- * 						retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]
- * 						retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]
- */
-            __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_os); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 377, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_1);
-            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_system); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 377, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
             __pyx_t_1 = NULL;
-            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
               __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
               if (likely(__pyx_t_1)) {
                 PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
@@ -11314,23 +11274,39 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
                 __Pyx_DECREF_SET(__pyx_t_3, function);
               }
             }
-            __pyx_t_12 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_v_shellcmd) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_shellcmd);
+            __pyx_t_2 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_v_shellcmd) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_shellcmd);
             __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 377, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_12);
+            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 375, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
             __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __pyx_t_3 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
+              __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_7);
+              if (likely(__pyx_t_3)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+                __Pyx_INCREF(__pyx_t_3);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_7, function);
+              }
+            }
+            __pyx_t_12 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_3, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_2);
+            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 375, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_12);
+            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
 
-            /* "mqtt.py":378
+            /* "mqtt.py":376
+ * 						shellcmd = "/root/set_current_wifi.sh wlan {} {}".format(ssid, psk)
  * 						self.logger.info("set wlan:cmd={}".format(shellcmd))
- * 						os.system(shellcmd)
- * 						retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]             # <<<<<<<<<<<<<<
+ * 						os.system(shellcmd)             # <<<<<<<<<<<<<<
+ * 						retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]
  * 						retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]
- * 						if retssid == ssid and retpsk == psk:
  */
-            __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_os); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 378, __pyx_L5_error)
+            __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_os); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 376, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_7);
-            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_popen); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 378, __pyx_L5_error)
+            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_system); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 376, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_2);
             __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
             __pyx_t_7 = NULL;
@@ -11343,271 +11319,43 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
                 __Pyx_DECREF_SET(__pyx_t_2, function);
               }
             }
-            __pyx_t_1 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_7, __pyx_kp_s_cat_root_net_conf_grep_ssid_awk) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_kp_s_cat_root_net_conf_grep_ssid_awk);
+            __pyx_t_12 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_7, __pyx_v_shellcmd) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_shellcmd);
             __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 378, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_1);
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_read); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 378, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            __pyx_t_1 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-              if (likely(__pyx_t_1)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-                __Pyx_INCREF(__pyx_t_1);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_2, function);
-              }
-            }
-            __pyx_t_3 = (__pyx_t_1) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_1) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
-            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 378, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_split); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 378, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __pyx_t_3 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-              __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
-              if (likely(__pyx_t_3)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-                __Pyx_INCREF(__pyx_t_3);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_2, function);
-              }
-            }
-            __pyx_t_12 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_kp_s__3) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_kp_s__3);
-            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 378, __pyx_L5_error)
+            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 376, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_12);
             __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_12, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 378, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_2);
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __Pyx_XDECREF_SET(__pyx_v_retssid, __pyx_t_2);
-            __pyx_t_2 = 0;
 
-            /* "mqtt.py":379
+            /* "mqtt.py":377
+ * 						self.logger.info("set wlan:cmd={}".format(shellcmd))
  * 						os.system(shellcmd)
- * 						retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]
- * 						retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]             # <<<<<<<<<<<<<<
+ * 						retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]             # <<<<<<<<<<<<<<
+ * 						retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]
  * 						if retssid == ssid and retpsk == psk:
- * 							ms.WLAN_CONFIG_RESP_INFO["status"] = 1
  */
-            __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_os); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 379, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_1);
-            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_popen); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 379, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            __pyx_t_1 = NULL;
-            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_7))) {
-              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_7);
-              if (likely(__pyx_t_1)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-                __Pyx_INCREF(__pyx_t_1);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_7, function);
-              }
-            }
-            __pyx_t_3 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_1, __pyx_kp_s_cat_root_net_conf_grep_psk_awk_F) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_kp_s_cat_root_net_conf_grep_psk_awk_F);
-            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 379, __pyx_L5_error)
+            __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 377, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_read); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 379, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
+            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_popen); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 377, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
             __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
             __pyx_t_3 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
-              __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_7);
+            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
+              __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_1);
               if (likely(__pyx_t_3)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
                 __Pyx_INCREF(__pyx_t_3);
                 __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_7, function);
+                __Pyx_DECREF_SET(__pyx_t_1, function);
               }
             }
-            __pyx_t_12 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_7);
+            __pyx_t_7 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_3, __pyx_kp_s_cat_root_net_conf_grep_ssid_awk) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_kp_s_cat_root_net_conf_grep_ssid_awk);
             __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 379, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_split); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 379, __pyx_L5_error)
+            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 377, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_7);
-            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __pyx_t_12 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
-              __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_7);
-              if (likely(__pyx_t_12)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-                __Pyx_INCREF(__pyx_t_12);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_7, function);
-              }
-            }
-            __pyx_t_2 = (__pyx_t_12) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_12, __pyx_kp_s__3) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_kp_s__3);
-            __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 379, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_2, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 379, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __Pyx_XDECREF_SET(__pyx_v_retpsk, __pyx_t_7);
-            __pyx_t_7 = 0;
-
-            /* "mqtt.py":380
- * 						retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]
- * 						retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]
- * 						if retssid == ssid and retpsk == psk:             # <<<<<<<<<<<<<<
- * 							ms.WLAN_CONFIG_RESP_INFO["status"] = 1
- * 						sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)
- */
-            __pyx_t_7 = PyObject_RichCompare(__pyx_v_retssid, __pyx_v_ssid, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 380, __pyx_L5_error)
-            __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 380, __pyx_L5_error)
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            if (__pyx_t_10) {
-            } else {
-              __pyx_t_9 = __pyx_t_10;
-              goto __pyx_L51_bool_binop_done;
-            }
-            __pyx_t_7 = PyObject_RichCompare(__pyx_v_retpsk, __pyx_v_psk, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 380, __pyx_L5_error)
-            __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 380, __pyx_L5_error)
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __pyx_t_9 = __pyx_t_10;
-            __pyx_L51_bool_binop_done:;
-            if (__pyx_t_9) {
-
-              /* "mqtt.py":381
- * 						retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]
- * 						if retssid == ssid and retpsk == psk:
- * 							ms.WLAN_CONFIG_RESP_INFO["status"] = 1             # <<<<<<<<<<<<<<
- * 						sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)
- * 						self.publish_queue.put({"topic":ms.WLAN_CONFIG_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
- */
-              __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_ms); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 381, __pyx_L5_error)
-              __Pyx_GOTREF(__pyx_t_7);
-              __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_WLAN_CONFIG_RESP_INFO); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 381, __pyx_L5_error)
-              __Pyx_GOTREF(__pyx_t_2);
-              __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-              if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_n_s_status, __pyx_int_1) < 0)) __PYX_ERR(0, 381, __pyx_L5_error)
-              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-
-              /* "mqtt.py":380
- * 						retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]
- * 						retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]
- * 						if retssid == ssid and retpsk == psk:             # <<<<<<<<<<<<<<
- * 							ms.WLAN_CONFIG_RESP_INFO["status"] = 1
- * 						sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)
- */
-            }
-
-            /* "mqtt.py":382
- * 						if retssid == ssid and retpsk == psk:
- * 							ms.WLAN_CONFIG_RESP_INFO["status"] = 1
- * 						sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)             # <<<<<<<<<<<<<<
- * 						self.publish_queue.put({"topic":ms.WLAN_CONFIG_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
- * 					else:
- */
-            __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_json); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 382, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_dumps); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 382, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_ms); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 382, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_WLAN_CONFIG_RESP_INFO); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 382, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __pyx_t_7 = NULL;
-            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_12))) {
-              __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_12);
-              if (likely(__pyx_t_7)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
-                __Pyx_INCREF(__pyx_t_7);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_12, function);
-              }
-            }
-            __pyx_t_2 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_7, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_t_3);
-            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 382, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __Pyx_XDECREF_SET(__pyx_v_sendmsg, __pyx_t_2);
-            __pyx_t_2 = 0;
-
-            /* "mqtt.py":383
- * 							ms.WLAN_CONFIG_RESP_INFO["status"] = 1
- * 						sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)
- * 						self.publish_queue.put({"topic":ms.WLAN_CONFIG_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})             # <<<<<<<<<<<<<<
- * 					else:
- * 						self.logger.info("invaild topic = {}".format(topic))
- */
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_publish_queue); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 383, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_12);
-            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_put); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 383, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __pyx_t_12 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 383, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_ms); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 383, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_WLAN_CONFIG_RESP_TOPIC); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 383, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_1);
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_topic, __pyx_t_1) < 0) __PYX_ERR(0, 383, __pyx_L5_error)
             __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_payload, __pyx_v_sendmsg) < 0) __PYX_ERR(0, 383, __pyx_L5_error)
-            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 383, __pyx_L5_error)
-            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_retain, Py_False) < 0) __PYX_ERR(0, 383, __pyx_L5_error)
-            __pyx_t_1 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
-              if (likely(__pyx_t_1)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-                __Pyx_INCREF(__pyx_t_1);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_3, function);
-              }
-            }
-            __pyx_t_2 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_t_12) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_12);
-            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 383, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-
-            /* "mqtt.py":368
- * 						self.publish_queue.put({"topic":ms.DEVICE_INFO_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
- * 						pass
- * 					elif topic == ms.WLAN_CONFIG_TOPIC:             # <<<<<<<<<<<<<<
- * 						ssid = json_msg["wlan"]["ssid"]
- * 						psk = json_msg["wlan"]["psk"]
- */
-            goto __pyx_L25;
-          }
-
-          /* "mqtt.py":385
- * 						self.publish_queue.put({"topic":ms.WLAN_CONFIG_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
- * 					else:
- * 						self.logger.info("invaild topic = {}".format(topic))             # <<<<<<<<<<<<<<
- * 						#send response failed
- * 			except Exception as e:
- */
-          /*else*/ {
-            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_logger); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 385, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_info); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 385, __pyx_L5_error)
-            __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_invaild_topic, __pyx_n_s_format); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 385, __pyx_L5_error)
+            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_read); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 377, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
             __pyx_t_7 = NULL;
             if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
               __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_1);
@@ -11618,28 +11366,285 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
                 __Pyx_DECREF_SET(__pyx_t_1, function);
               }
             }
-            __pyx_t_3 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_7, __pyx_v_topic) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_v_topic);
+            __pyx_t_2 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_1);
             __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 385, __pyx_L5_error)
+            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 377, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_split); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 377, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            __pyx_t_2 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+              __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
+              if (likely(__pyx_t_2)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                __Pyx_INCREF(__pyx_t_2);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_1, function);
+              }
+            }
+            __pyx_t_12 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_2, __pyx_kp_s__3) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_kp_s__3);
+            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 377, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_12);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_12, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 377, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+            __Pyx_XDECREF_SET(__pyx_v_retssid, __pyx_t_1);
+            __pyx_t_1 = 0;
+
+            /* "mqtt.py":378
+ * 						os.system(shellcmd)
+ * 						retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]
+ * 						retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]             # <<<<<<<<<<<<<<
+ * 						if retssid == ssid and retpsk == psk:
+ * 							ms.WLAN_CONFIG_RESP_INFO["status"] = 1
+ */
+            __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_os); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 378, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_7);
+            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_popen); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 378, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+            __pyx_t_7 = NULL;
+            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+              __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_3);
+              if (likely(__pyx_t_7)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+                __Pyx_INCREF(__pyx_t_7);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_3, function);
+              }
+            }
+            __pyx_t_2 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_7, __pyx_kp_s_cat_root_net_conf_grep_psk_awk_F) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_kp_s_cat_root_net_conf_grep_psk_awk_F);
+            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 378, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_read); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 378, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            __pyx_t_2 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
+              __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+              if (likely(__pyx_t_2)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+                __Pyx_INCREF(__pyx_t_2);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_3, function);
+              }
+            }
+            __pyx_t_12 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
+            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 378, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_12);
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_split); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 378, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+            __pyx_t_12 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
+              __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_3);
+              if (likely(__pyx_t_12)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+                __Pyx_INCREF(__pyx_t_12);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_3, function);
+              }
+            }
+            __pyx_t_1 = (__pyx_t_12) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_12, __pyx_kp_s__3) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_kp_s__3);
+            __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
+            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 378, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_1, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 378, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_3);
             __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            __pyx_t_1 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_12))) {
-              __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_12);
-              if (likely(__pyx_t_1)) {
+            __Pyx_XDECREF_SET(__pyx_v_retpsk, __pyx_t_3);
+            __pyx_t_3 = 0;
+
+            /* "mqtt.py":379
+ * 						retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]
+ * 						retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]
+ * 						if retssid == ssid and retpsk == psk:             # <<<<<<<<<<<<<<
+ * 							ms.WLAN_CONFIG_RESP_INFO["status"] = 1
+ * 						sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)
+ */
+            __pyx_t_3 = PyObject_RichCompare(__pyx_v_retssid, __pyx_v_ssid, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 379, __pyx_L5_error)
+            __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 379, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            if (__pyx_t_10) {
+            } else {
+              __pyx_t_9 = __pyx_t_10;
+              goto __pyx_L51_bool_binop_done;
+            }
+            __pyx_t_3 = PyObject_RichCompare(__pyx_v_retpsk, __pyx_v_psk, Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 379, __pyx_L5_error)
+            __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 379, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __pyx_t_9 = __pyx_t_10;
+            __pyx_L51_bool_binop_done:;
+            if (__pyx_t_9) {
+
+              /* "mqtt.py":380
+ * 						retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]
+ * 						if retssid == ssid and retpsk == psk:
+ * 							ms.WLAN_CONFIG_RESP_INFO["status"] = 1             # <<<<<<<<<<<<<<
+ * 						sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)
+ * 						self.publish_queue.put({"topic":ms.WLAN_CONFIG_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+ */
+              __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ms); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 380, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_3);
+              __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_WLAN_CONFIG_RESP_INFO); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 380, __pyx_L5_error)
+              __Pyx_GOTREF(__pyx_t_1);
+              __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+              if (unlikely(PyObject_SetItem(__pyx_t_1, __pyx_n_s_status, __pyx_int_1) < 0)) __PYX_ERR(0, 380, __pyx_L5_error)
+              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+              /* "mqtt.py":379
+ * 						retssid = os.popen("cat /root/net.conf | grep ssid | awk -F\"=\" '{print $2}'").read().split('\n')[0]
+ * 						retpsk = os.popen("cat /root/net.conf | grep psk | awk -F\"=\" '{print $2}'").read().split('\n')[0]
+ * 						if retssid == ssid and retpsk == psk:             # <<<<<<<<<<<<<<
+ * 							ms.WLAN_CONFIG_RESP_INFO["status"] = 1
+ * 						sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)
+ */
+            }
+
+            /* "mqtt.py":381
+ * 						if retssid == ssid and retpsk == psk:
+ * 							ms.WLAN_CONFIG_RESP_INFO["status"] = 1
+ * 						sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)             # <<<<<<<<<<<<<<
+ * 						self.publish_queue.put({"topic":ms.WLAN_CONFIG_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+ * 					else:
+ */
+            __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_json); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 381, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_dumps); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 381, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_12);
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ms); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 381, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_WLAN_CONFIG_RESP_INFO); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 381, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __pyx_t_3 = NULL;
+            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_12))) {
+              __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_12);
+              if (likely(__pyx_t_3)) {
                 PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
-                __Pyx_INCREF(__pyx_t_1);
+                __Pyx_INCREF(__pyx_t_3);
                 __Pyx_INCREF(function);
                 __Pyx_DECREF_SET(__pyx_t_12, function);
               }
             }
-            __pyx_t_2 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_1, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_t_3);
-            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 385, __pyx_L5_error)
+            __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_3, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_t_2);
+            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 381, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+            __Pyx_XDECREF_SET(__pyx_v_sendmsg, __pyx_t_1);
+            __pyx_t_1 = 0;
+
+            /* "mqtt.py":382
+ * 							ms.WLAN_CONFIG_RESP_INFO["status"] = 1
+ * 						sendmsg = json.dumps(ms.WLAN_CONFIG_RESP_INFO)
+ * 						self.publish_queue.put({"topic":ms.WLAN_CONFIG_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})             # <<<<<<<<<<<<<<
+ * 					else:
+ * 						self.logger.info("invaild topic = {}".format(topic))
+ */
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_publish_queue); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 382, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_12);
+            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_put); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 382, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_2);
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+            __pyx_t_12 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 382, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_12);
+            __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ms); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 382, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_WLAN_CONFIG_RESP_TOPIC); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 382, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_7);
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_topic, __pyx_t_7) < 0) __PYX_ERR(0, 382, __pyx_L5_error)
+            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_payload, __pyx_v_sendmsg) < 0) __PYX_ERR(0, 382, __pyx_L5_error)
+            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 382, __pyx_L5_error)
+            if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_retain, Py_False) < 0) __PYX_ERR(0, 382, __pyx_L5_error)
+            __pyx_t_7 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+              __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_2);
+              if (likely(__pyx_t_7)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+                __Pyx_INCREF(__pyx_t_7);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_2, function);
+              }
+            }
+            __pyx_t_1 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_7, __pyx_t_12) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_12);
+            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 382, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
             __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+            /* "mqtt.py":367
+ * 						self.publish_queue.put({"topic":ms.DEVICE_INFO_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+ * 						pass
+ * 					elif topic == ms.WLAN_CONFIG_TOPIC:             # <<<<<<<<<<<<<<
+ * 						ssid = json_msg["wlan"]["ssid"]
+ * 						psk = json_msg["wlan"]["psk"]
+ */
+            goto __pyx_L25;
+          }
+
+          /* "mqtt.py":384
+ * 						self.publish_queue.put({"topic":ms.WLAN_CONFIG_RESP_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+ * 					else:
+ * 						self.logger.info("invaild topic = {}".format(topic))             # <<<<<<<<<<<<<<
+ * 						#send response failed
+ * 			except Exception as e:
+ */
+          /*else*/ {
+            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_logger); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 384, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_info); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 384, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_12);
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_invaild_topic, __pyx_n_s_format); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 384, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_7);
+            __pyx_t_3 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
+              __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_7);
+              if (likely(__pyx_t_3)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+                __Pyx_INCREF(__pyx_t_3);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_7, function);
+              }
+            }
+            __pyx_t_2 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_3, __pyx_v_topic) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_v_topic);
+            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 384, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_2);
+            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+            __pyx_t_7 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_12))) {
+              __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_12);
+              if (likely(__pyx_t_7)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
+                __Pyx_INCREF(__pyx_t_7);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_12, function);
+              }
+            }
+            __pyx_t_1 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_7, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_t_2);
+            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 384, __pyx_L5_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           }
           __pyx_L25:;
         }
@@ -11664,7 +11669,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "mqtt.py":387
+      /* "mqtt.py":386
  * 						self.logger.info("invaild topic = {}".format(topic))
  * 						#send response failed
  * 			except Exception as e:             # <<<<<<<<<<<<<<
@@ -11674,26 +11679,26 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
       __pyx_t_11 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])));
       if (__pyx_t_11) {
         __Pyx_AddTraceback("mqtt.mqtt_client.do_hardware_work", __pyx_clineno, __pyx_lineno, __pyx_filename);
-        if (__Pyx_GetException(&__pyx_t_2, &__pyx_t_12, &__pyx_t_3) < 0) __PYX_ERR(0, 387, __pyx_L7_except_error)
-        __Pyx_GOTREF(__pyx_t_2);
+        if (__Pyx_GetException(&__pyx_t_1, &__pyx_t_12, &__pyx_t_2) < 0) __PYX_ERR(0, 386, __pyx_L7_except_error)
+        __Pyx_GOTREF(__pyx_t_1);
         __Pyx_GOTREF(__pyx_t_12);
-        __Pyx_GOTREF(__pyx_t_3);
+        __Pyx_GOTREF(__pyx_t_2);
         __Pyx_INCREF(__pyx_t_12);
         __Pyx_XDECREF_SET(__pyx_v_e, __pyx_t_12);
 
-        /* "mqtt.py":388
+        /* "mqtt.py":387
  * 						#send response failed
  * 			except Exception as e:
  * 				self.logger.info("do hardware work except:{}".format(e))             # <<<<<<<<<<<<<<
  * 
  * 	def start_other_thread(self):
  */
-        __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_logger); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 388, __pyx_L7_except_error)
-        __Pyx_GOTREF(__pyx_t_7);
-        __pyx_t_18 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_info); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 388, __pyx_L7_except_error)
+        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_logger); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 387, __pyx_L7_except_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_18 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_info); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 387, __pyx_L7_except_error)
         __Pyx_GOTREF(__pyx_t_18);
-        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __pyx_t_19 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_do_hardware_work_except, __pyx_n_s_format); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 388, __pyx_L7_except_error)
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __pyx_t_19 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_do_hardware_work_except, __pyx_n_s_format); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 387, __pyx_L7_except_error)
         __Pyx_GOTREF(__pyx_t_19);
         __pyx_t_20 = NULL;
         if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_19))) {
@@ -11705,10 +11710,10 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
             __Pyx_DECREF_SET(__pyx_t_19, function);
           }
         }
-        __pyx_t_7 = (__pyx_t_20) ? __Pyx_PyObject_Call2Args(__pyx_t_19, __pyx_t_20, __pyx_v_e) : __Pyx_PyObject_CallOneArg(__pyx_t_19, __pyx_v_e);
+        __pyx_t_3 = (__pyx_t_20) ? __Pyx_PyObject_Call2Args(__pyx_t_19, __pyx_t_20, __pyx_v_e) : __Pyx_PyObject_CallOneArg(__pyx_t_19, __pyx_v_e);
         __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
-        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 388, __pyx_L7_except_error)
-        __Pyx_GOTREF(__pyx_t_7);
+        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 387, __pyx_L7_except_error)
+        __Pyx_GOTREF(__pyx_t_3);
         __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
         __pyx_t_19 = NULL;
         if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_18))) {
@@ -11720,16 +11725,16 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
             __Pyx_DECREF_SET(__pyx_t_18, function);
           }
         }
-        __pyx_t_1 = (__pyx_t_19) ? __Pyx_PyObject_Call2Args(__pyx_t_18, __pyx_t_19, __pyx_t_7) : __Pyx_PyObject_CallOneArg(__pyx_t_18, __pyx_t_7);
+        __pyx_t_7 = (__pyx_t_19) ? __Pyx_PyObject_Call2Args(__pyx_t_18, __pyx_t_19, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_18, __pyx_t_3);
         __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 388, __pyx_L7_except_error)
-        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 387, __pyx_L7_except_error)
+        __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
         __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
         goto __pyx_L6_exception_handled;
       }
       goto __pyx_L7_except_error;
@@ -11799,7 +11804,6 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
   __Pyx_XDECREF(__pyx_v_enable);
   __Pyx_XDECREF(__pyx_v_opentime);
   __Pyx_XDECREF(__pyx_v_cmd);
-  __Pyx_XDECREF(__pyx_v_c);
   __Pyx_XDECREF(__pyx_v_doorlock_time);
   __Pyx_XDECREF(__pyx_v_current);
   __Pyx_XDECREF(__pyx_v_cmd1);
@@ -11817,7 +11821,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_24do_hardware_work(CYTHON_UNUSED P
   return __pyx_r;
 }
 
-/* "mqtt.py":390
+/* "mqtt.py":389
  * 				self.logger.info("do hardware work except:{}".format(e))
  * 
  * 	def start_other_thread(self):             # <<<<<<<<<<<<<<
@@ -11856,25 +11860,25 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_26start_other_thread(CYTHON_UNUSED
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("start_other_thread", 0);
 
-  /* "mqtt.py":391
+  /* "mqtt.py":390
  * 
  * 	def start_other_thread(self):
  * 		self.exit_flag = False             # <<<<<<<<<<<<<<
  * 		self.exit_signal = int(config.config("/root/config.ini").get("SIGNAL", "EXITFLAG"))
  * 		signal.signal(self.exit_signal, self.exit_handler)
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_exit_flag, Py_False) < 0) __PYX_ERR(0, 391, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_exit_flag, Py_False) < 0) __PYX_ERR(0, 390, __pyx_L1_error)
 
-  /* "mqtt.py":392
+  /* "mqtt.py":391
  * 	def start_other_thread(self):
  * 		self.exit_flag = False
  * 		self.exit_signal = int(config.config("/root/config.ini").get("SIGNAL", "EXITFLAG"))             # <<<<<<<<<<<<<<
  * 		signal.signal(self.exit_signal, self.exit_handler)
  * 		work_thread = threading.Thread(target = self.do_hardware_work)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_config); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 392, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_config); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_config); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 392, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_config); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -11889,36 +11893,36 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_26start_other_thread(CYTHON_UNUSED
   }
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_kp_s_root_config_ini) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_kp_s_root_config_ini);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 392, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_get); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 392, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_get); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__20, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 392, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__20, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyNumber_Int(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 392, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyNumber_Int(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_exit_signal, __pyx_t_3) < 0) __PYX_ERR(0, 392, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_exit_signal, __pyx_t_3) < 0) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "mqtt.py":393
+  /* "mqtt.py":392
  * 		self.exit_flag = False
  * 		self.exit_signal = int(config.config("/root/config.ini").get("SIGNAL", "EXITFLAG"))
  * 		signal.signal(self.exit_signal, self.exit_handler)             # <<<<<<<<<<<<<<
  * 		work_thread = threading.Thread(target = self.do_hardware_work)
  * 		work_thread.setDaemon(False)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_signal); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_signal); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 392, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_signal); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_signal); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 392, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_exit_signal); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_exit_signal); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 392, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_exit_handler); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_exit_handler); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 392, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_5 = NULL;
   __pyx_t_6 = 0;
@@ -11935,7 +11939,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_26start_other_thread(CYTHON_UNUSED
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_t_1, __pyx_t_4};
-    __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 393, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 392, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -11945,7 +11949,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_26start_other_thread(CYTHON_UNUSED
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[3] = {__pyx_t_5, __pyx_t_1, __pyx_t_4};
-    __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 393, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 2+__pyx_t_6); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 392, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -11953,7 +11957,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_26start_other_thread(CYTHON_UNUSED
   } else
   #endif
   {
-    __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 393, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 392, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     if (__pyx_t_5) {
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5); __pyx_t_5 = NULL;
@@ -11964,46 +11968,46 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_26start_other_thread(CYTHON_UNUSED
     PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_6, __pyx_t_4);
     __pyx_t_1 = 0;
     __pyx_t_4 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_7, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 393, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_7, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 392, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "mqtt.py":394
+  /* "mqtt.py":393
  * 		self.exit_signal = int(config.config("/root/config.ini").get("SIGNAL", "EXITFLAG"))
  * 		signal.signal(self.exit_signal, self.exit_handler)
  * 		work_thread = threading.Thread(target = self.do_hardware_work)             # <<<<<<<<<<<<<<
  * 		work_thread.setDaemon(False)
  * 		work_thread.start()
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_threading); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 394, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_threading); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 393, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_Thread); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 394, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_Thread); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 393, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 394, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 393, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_do_hardware_work); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 394, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_do_hardware_work); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 393, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_target, __pyx_t_7) < 0) __PYX_ERR(0, 394, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_target, __pyx_t_7) < 0) __PYX_ERR(0, 393, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 394, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 393, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_work_thread = __pyx_t_7;
   __pyx_t_7 = 0;
 
-  /* "mqtt.py":395
+  /* "mqtt.py":394
  * 		signal.signal(self.exit_signal, self.exit_handler)
  * 		work_thread = threading.Thread(target = self.do_hardware_work)
  * 		work_thread.setDaemon(False)             # <<<<<<<<<<<<<<
  * 		work_thread.start()
  * 		publish_thread = threading.Thread(target = self.publish_threading)
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_work_thread, __pyx_n_s_setDaemon); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 395, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_work_thread, __pyx_n_s_setDaemon); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 394, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_2 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -12017,19 +12021,19 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_26start_other_thread(CYTHON_UNUSED
   }
   __pyx_t_7 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, Py_False) : __Pyx_PyObject_CallOneArg(__pyx_t_3, Py_False);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 395, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 394, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "mqtt.py":396
+  /* "mqtt.py":395
  * 		work_thread = threading.Thread(target = self.do_hardware_work)
  * 		work_thread.setDaemon(False)
  * 		work_thread.start()             # <<<<<<<<<<<<<<
  * 		publish_thread = threading.Thread(target = self.publish_threading)
  * 		publish_thread.setDaemon(False)
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_work_thread, __pyx_n_s_start); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 396, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_work_thread, __pyx_n_s_start); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_2 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -12043,44 +12047,44 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_26start_other_thread(CYTHON_UNUSED
   }
   __pyx_t_7 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 396, __pyx_L1_error)
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "mqtt.py":397
+  /* "mqtt.py":396
  * 		work_thread.setDaemon(False)
  * 		work_thread.start()
  * 		publish_thread = threading.Thread(target = self.publish_threading)             # <<<<<<<<<<<<<<
  * 		publish_thread.setDaemon(False)
  * 		publish_thread.start()
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_threading); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 397, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_threading); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 396, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_Thread); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 397, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_Thread); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 396, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_7 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 397, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 396, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_publish_threading); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 397, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_publish_threading); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 396, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_target, __pyx_t_2) < 0) __PYX_ERR(0, 397, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_target, __pyx_t_2) < 0) __PYX_ERR(0, 396, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_empty_tuple, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 397, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_empty_tuple, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 396, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_v_publish_thread = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "mqtt.py":398
+  /* "mqtt.py":397
  * 		work_thread.start()
  * 		publish_thread = threading.Thread(target = self.publish_threading)
  * 		publish_thread.setDaemon(False)             # <<<<<<<<<<<<<<
  * 		publish_thread.start()
  * 
  */
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_publish_thread, __pyx_n_s_setDaemon); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 398, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_publish_thread, __pyx_n_s_setDaemon); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
@@ -12094,19 +12098,19 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_26start_other_thread(CYTHON_UNUSED
   }
   __pyx_t_2 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_3, Py_False) : __Pyx_PyObject_CallOneArg(__pyx_t_7, Py_False);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 398, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "mqtt.py":399
+  /* "mqtt.py":398
  * 		publish_thread = threading.Thread(target = self.publish_threading)
  * 		publish_thread.setDaemon(False)
  * 		publish_thread.start()             # <<<<<<<<<<<<<<
  * 
  * 	def exit_handler(self):
  */
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_publish_thread, __pyx_n_s_start); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 399, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_publish_thread, __pyx_n_s_start); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 398, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
@@ -12120,12 +12124,12 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_26start_other_thread(CYTHON_UNUSED
   }
   __pyx_t_2 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 399, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 398, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "mqtt.py":390
+  /* "mqtt.py":389
  * 				self.logger.info("do hardware work except:{}".format(e))
  * 
  * 	def start_other_thread(self):             # <<<<<<<<<<<<<<
@@ -12153,7 +12157,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_26start_other_thread(CYTHON_UNUSED
   return __pyx_r;
 }
 
-/* "mqtt.py":401
+/* "mqtt.py":400
  * 		publish_thread.start()
  * 
  * 	def exit_handler(self):             # <<<<<<<<<<<<<<
@@ -12183,16 +12187,16 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_28exit_handler(CYTHON_UNUSED PyObj
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("exit_handler", 0);
 
-  /* "mqtt.py":402
+  /* "mqtt.py":401
  * 
  * 	def exit_handler(self):
  * 		self.exit_flag = True             # <<<<<<<<<<<<<<
  * 
  * 	def run_mqtt(self, host=None, port=1883, keepalive=60):
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_exit_flag, Py_True) < 0) __PYX_ERR(0, 402, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_exit_flag, Py_True) < 0) __PYX_ERR(0, 401, __pyx_L1_error)
 
-  /* "mqtt.py":401
+  /* "mqtt.py":400
  * 		publish_thread.start()
  * 
  * 	def exit_handler(self):             # <<<<<<<<<<<<<<
@@ -12212,7 +12216,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_28exit_handler(CYTHON_UNUSED PyObj
   return __pyx_r;
 }
 
-/* "mqtt.py":404
+/* "mqtt.py":403
  * 		self.exit_flag = True
  * 
  * 	def run_mqtt(self, host=None, port=1883, keepalive=60):             # <<<<<<<<<<<<<<
@@ -12280,7 +12284,7 @@ static PyObject *__pyx_pw_4mqtt_11mqtt_client_31run_mqtt(PyObject *__pyx_self, P
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "run_mqtt") < 0)) __PYX_ERR(0, 404, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "run_mqtt") < 0)) __PYX_ERR(0, 403, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -12302,7 +12306,7 @@ static PyObject *__pyx_pw_4mqtt_11mqtt_client_31run_mqtt(PyObject *__pyx_self, P
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("run_mqtt", 0, 1, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 404, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("run_mqtt", 0, 1, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 403, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("mqtt.mqtt_client.run_mqtt", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -12337,7 +12341,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("run_mqtt", 0);
 
-  /* "mqtt.py":405
+  /* "mqtt.py":404
  * 
  * 	def run_mqtt(self, host=None, port=1883, keepalive=60):
  * 		try:             # <<<<<<<<<<<<<<
@@ -12353,31 +12357,31 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "mqtt.py":406
+      /* "mqtt.py":405
  * 	def run_mqtt(self, host=None, port=1883, keepalive=60):
  * 		try:
  * 			ms.DEVICE_STATUS["status"] = 0             # <<<<<<<<<<<<<<
  * 			ms.DEVICE_STATUS["rtime"] = int(time.time())
  * 			respjson = json.dumps(ms.DEVICE_STATUS)
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_ms); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 406, __pyx_L3_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_ms); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 405, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_DEVICE_STATUS); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 406, __pyx_L3_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_DEVICE_STATUS); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 405, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(PyObject_SetItem(__pyx_t_5, __pyx_n_s_status, __pyx_int_0) < 0)) __PYX_ERR(0, 406, __pyx_L3_error)
+      if (unlikely(PyObject_SetItem(__pyx_t_5, __pyx_n_s_status, __pyx_int_0) < 0)) __PYX_ERR(0, 405, __pyx_L3_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "mqtt.py":407
+      /* "mqtt.py":406
  * 		try:
  * 			ms.DEVICE_STATUS["status"] = 0
  * 			ms.DEVICE_STATUS["rtime"] = int(time.time())             # <<<<<<<<<<<<<<
  * 			respjson = json.dumps(ms.DEVICE_STATUS)
  * 			self.will_set(topic=self.status_topic, payload=respjson, qos=0, retain=True)
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_time); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 407, __pyx_L3_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_time); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 406, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_time); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 407, __pyx_L3_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_time); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 406, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_t_4 = NULL;
@@ -12392,36 +12396,36 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
       }
       __pyx_t_5 = (__pyx_t_4) ? __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_4) : __Pyx_PyObject_CallNoArg(__pyx_t_6);
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 407, __pyx_L3_error)
+      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 406, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __pyx_t_6 = __Pyx_PyNumber_Int(__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 407, __pyx_L3_error)
+      __pyx_t_6 = __Pyx_PyNumber_Int(__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 406, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_ms); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 407, __pyx_L3_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_ms); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 406, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_DEVICE_STATUS); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 407, __pyx_L3_error)
+      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_DEVICE_STATUS); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 406, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (unlikely(PyObject_SetItem(__pyx_t_4, __pyx_n_s_rtime, __pyx_t_6) < 0)) __PYX_ERR(0, 407, __pyx_L3_error)
+      if (unlikely(PyObject_SetItem(__pyx_t_4, __pyx_n_s_rtime, __pyx_t_6) < 0)) __PYX_ERR(0, 406, __pyx_L3_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-      /* "mqtt.py":408
+      /* "mqtt.py":407
  * 			ms.DEVICE_STATUS["status"] = 0
  * 			ms.DEVICE_STATUS["rtime"] = int(time.time())
  * 			respjson = json.dumps(ms.DEVICE_STATUS)             # <<<<<<<<<<<<<<
  * 			self.will_set(topic=self.status_topic, payload=respjson, qos=0, retain=True)
  * 			self.reconnect_delay_set(min_delay=10, max_delay=60)
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_json); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 408, __pyx_L3_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_json); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 407, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_dumps); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 408, __pyx_L3_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_dumps); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 407, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_ms); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 408, __pyx_L3_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_ms); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 407, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_DEVICE_STATUS); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 408, __pyx_L3_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_DEVICE_STATUS); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 407, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_t_4 = NULL;
@@ -12437,63 +12441,63 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
       __pyx_t_6 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_4, __pyx_t_7) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_7);
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 408, __pyx_L3_error)
+      if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 407, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __pyx_v_respjson = __pyx_t_6;
       __pyx_t_6 = 0;
 
-      /* "mqtt.py":409
+      /* "mqtt.py":408
  * 			ms.DEVICE_STATUS["rtime"] = int(time.time())
  * 			respjson = json.dumps(ms.DEVICE_STATUS)
  * 			self.will_set(topic=self.status_topic, payload=respjson, qos=0, retain=True)             # <<<<<<<<<<<<<<
  * 			self.reconnect_delay_set(min_delay=10, max_delay=60)
  * 			#logging.basicConfig(level=logging.INFO)
  */
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_will_set); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 409, __pyx_L3_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_will_set); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 408, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 409, __pyx_L3_error)
+      __pyx_t_5 = __Pyx_PyDict_NewPresized(4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 408, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_status_topic); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 409, __pyx_L3_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_status_topic); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 408, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_7);
-      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_7) < 0) __PYX_ERR(0, 409, __pyx_L3_error)
+      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_7) < 0) __PYX_ERR(0, 408, __pyx_L3_error)
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_payload, __pyx_v_respjson) < 0) __PYX_ERR(0, 409, __pyx_L3_error)
-      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 409, __pyx_L3_error)
-      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_retain, Py_True) < 0) __PYX_ERR(0, 409, __pyx_L3_error)
-      __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 409, __pyx_L3_error)
+      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_payload, __pyx_v_respjson) < 0) __PYX_ERR(0, 408, __pyx_L3_error)
+      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 408, __pyx_L3_error)
+      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_retain, Py_True) < 0) __PYX_ERR(0, 408, __pyx_L3_error)
+      __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 408, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "mqtt.py":410
+      /* "mqtt.py":409
  * 			respjson = json.dumps(ms.DEVICE_STATUS)
  * 			self.will_set(topic=self.status_topic, payload=respjson, qos=0, retain=True)
  * 			self.reconnect_delay_set(min_delay=10, max_delay=60)             # <<<<<<<<<<<<<<
  * 			#logging.basicConfig(level=logging.INFO)
  * 			#self.logger = logging.getLogger(__name__)
  */
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_reconnect_delay_set); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 410, __pyx_L3_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_reconnect_delay_set); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 409, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 410, __pyx_L3_error)
+      __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 409, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_5);
-      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_min_delay, __pyx_int_10) < 0) __PYX_ERR(0, 410, __pyx_L3_error)
-      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_max_delay, __pyx_int_60) < 0) __PYX_ERR(0, 410, __pyx_L3_error)
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 410, __pyx_L3_error)
+      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_min_delay, __pyx_int_10) < 0) __PYX_ERR(0, 409, __pyx_L3_error)
+      if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_max_delay, __pyx_int_60) < 0) __PYX_ERR(0, 409, __pyx_L3_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 409, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-      /* "mqtt.py":413
+      /* "mqtt.py":412
  * 			#logging.basicConfig(level=logging.INFO)
  * 			#self.logger = logging.getLogger(__name__)
  * 			self.connect(host, port, keepalive)             # <<<<<<<<<<<<<<
  * 			'''
  * 			for topic, qos in self.sub_topic_list:
  */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_connect); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 413, __pyx_L3_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_connect); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 412, __pyx_L3_error)
       __Pyx_GOTREF(__pyx_t_5);
       __pyx_t_7 = NULL;
       __pyx_t_8 = 0;
@@ -12510,7 +12514,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_5)) {
         PyObject *__pyx_temp[4] = {__pyx_t_7, __pyx_v_host, __pyx_v_port, __pyx_v_keepalive};
-        __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 413, __pyx_L3_error)
+        __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 412, __pyx_L3_error)
         __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_GOTREF(__pyx_t_6);
       } else
@@ -12518,13 +12522,13 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
         PyObject *__pyx_temp[4] = {__pyx_t_7, __pyx_v_host, __pyx_v_port, __pyx_v_keepalive};
-        __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 413, __pyx_L3_error)
+        __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 412, __pyx_L3_error)
         __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_GOTREF(__pyx_t_6);
       } else
       #endif
       {
-        __pyx_t_4 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 413, __pyx_L3_error)
+        __pyx_t_4 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 412, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_4);
         if (__pyx_t_7) {
           __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_7); __pyx_t_7 = NULL;
@@ -12538,14 +12542,14 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
         __Pyx_INCREF(__pyx_v_keepalive);
         __Pyx_GIVEREF(__pyx_v_keepalive);
         PyTuple_SET_ITEM(__pyx_t_4, 2+__pyx_t_8, __pyx_v_keepalive);
-        __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_4, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 413, __pyx_L3_error)
+        __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_4, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 412, __pyx_L3_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       }
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-      /* "mqtt.py":419
+      /* "mqtt.py":418
  * 				self.subscribe(topic, qos)
  * 			'''
  * 			return True             # <<<<<<<<<<<<<<
@@ -12557,7 +12561,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
       __pyx_r = Py_True;
       goto __pyx_L7_try_return;
 
-      /* "mqtt.py":405
+      /* "mqtt.py":404
  * 
  * 	def run_mqtt(self, host=None, port=1883, keepalive=60):
  * 		try:             # <<<<<<<<<<<<<<
@@ -12571,7 +12575,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "mqtt.py":420
+    /* "mqtt.py":419
  * 			'''
  * 			return True
  * 		except Exception as e:             # <<<<<<<<<<<<<<
@@ -12581,26 +12585,26 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
     __pyx_t_8 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])));
     if (__pyx_t_8) {
       __Pyx_AddTraceback("mqtt.mqtt_client.run_mqtt", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_6, &__pyx_t_5, &__pyx_t_4) < 0) __PYX_ERR(0, 420, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_6, &__pyx_t_5, &__pyx_t_4) < 0) __PYX_ERR(0, 419, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_5);
       __pyx_v_e = __pyx_t_5;
 
-      /* "mqtt.py":421
+      /* "mqtt.py":420
  * 			return True
  * 		except Exception as e:
  * 			self.logger.error("run error:{}".format(e))             # <<<<<<<<<<<<<<
  * 			return False
  * 
  */
-      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_logger); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 421, __pyx_L5_except_error)
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_logger); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 420, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_error); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 421, __pyx_L5_except_error)
+      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_error); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 420, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_run_error, __pyx_n_s_format); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 421, __pyx_L5_except_error)
+      __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_run_error, __pyx_n_s_format); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 420, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_11);
       __pyx_t_12 = NULL;
       if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_11))) {
@@ -12614,7 +12618,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
       }
       __pyx_t_9 = (__pyx_t_12) ? __Pyx_PyObject_Call2Args(__pyx_t_11, __pyx_t_12, __pyx_v_e) : __Pyx_PyObject_CallOneArg(__pyx_t_11, __pyx_v_e);
       __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-      if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 421, __pyx_L5_except_error)
+      if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 420, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __pyx_t_11 = NULL;
@@ -12630,12 +12634,12 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
       __pyx_t_7 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_10, __pyx_t_11, __pyx_t_9) : __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_9);
       __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 421, __pyx_L5_except_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 420, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "mqtt.py":422
+      /* "mqtt.py":421
  * 		except Exception as e:
  * 			self.logger.error("run error:{}".format(e))
  * 			return False             # <<<<<<<<<<<<<<
@@ -12653,7 +12657,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "mqtt.py":405
+    /* "mqtt.py":404
  * 
  * 	def run_mqtt(self, host=None, port=1883, keepalive=60):
  * 		try:             # <<<<<<<<<<<<<<
@@ -12679,7 +12683,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
     goto __pyx_L0;
   }
 
-  /* "mqtt.py":404
+  /* "mqtt.py":403
  * 		self.exit_flag = True
  * 
  * 	def run_mqtt(self, host=None, port=1883, keepalive=60):             # <<<<<<<<<<<<<<
@@ -12707,7 +12711,7 @@ static PyObject *__pyx_pf_4mqtt_11mqtt_client_30run_mqtt(CYTHON_UNUSED PyObject 
   return __pyx_r;
 }
 
-/* "mqtt.py":425
+/* "mqtt.py":424
  * 
  * 
  * def client_start():             # <<<<<<<<<<<<<<
@@ -12754,99 +12758,99 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("client_start", 0);
 
-  /* "mqtt.py":434
+  /* "mqtt.py":433
  * 	transport="tcp" or "websockets"
  * 	'''
- * 	if len(sys.argv) < 2:             # <<<<<<<<<<<<<<
- * 		print("paramter must be 2")
+ * 	if len(sys.argv) < 3:             # <<<<<<<<<<<<<<
+ * 		print("paramter must be 3")
  * 		exit(1)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_sys); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 434, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_sys); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 433, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_argv); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 434, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_argv); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 433, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 434, __pyx_L1_error)
+  __pyx_t_3 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 433, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = ((__pyx_t_3 < 2) != 0);
+  __pyx_t_4 = ((__pyx_t_3 < 3) != 0);
   if (__pyx_t_4) {
 
-    /* "mqtt.py":435
+    /* "mqtt.py":434
  * 	'''
- * 	if len(sys.argv) < 2:
- * 		print("paramter must be 2")             # <<<<<<<<<<<<<<
+ * 	if len(sys.argv) < 3:
+ * 		print("paramter must be 3")             # <<<<<<<<<<<<<<
  * 		exit(1)
  * 	device_sn = sys.argv[1]
  */
-    if (__Pyx_PrintOne(0, __pyx_kp_s_paramter_must_be_2) < 0) __PYX_ERR(0, 435, __pyx_L1_error)
+    if (__Pyx_PrintOne(0, __pyx_kp_s_paramter_must_be_3) < 0) __PYX_ERR(0, 434, __pyx_L1_error)
 
-    /* "mqtt.py":436
- * 	if len(sys.argv) < 2:
- * 		print("paramter must be 2")
+    /* "mqtt.py":435
+ * 	if len(sys.argv) < 3:
+ * 		print("paramter must be 3")
  * 		exit(1)             # <<<<<<<<<<<<<<
  * 	device_sn = sys.argv[1]
  * 	zywlstart_pid = int(sys.argv[2])
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_exit, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 436, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_exit, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 435, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "mqtt.py":434
+    /* "mqtt.py":433
  * 	transport="tcp" or "websockets"
  * 	'''
- * 	if len(sys.argv) < 2:             # <<<<<<<<<<<<<<
- * 		print("paramter must be 2")
+ * 	if len(sys.argv) < 3:             # <<<<<<<<<<<<<<
+ * 		print("paramter must be 3")
  * 		exit(1)
  */
   }
 
-  /* "mqtt.py":437
- * 		print("paramter must be 2")
+  /* "mqtt.py":436
+ * 		print("paramter must be 3")
  * 		exit(1)
  * 	device_sn = sys.argv[1]             # <<<<<<<<<<<<<<
  * 	zywlstart_pid = int(sys.argv[2])
  * 
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_sys); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 437, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_sys); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 436, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_argv); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 437, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_argv); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 436, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_1, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 437, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_1, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 436, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_device_sn = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "mqtt.py":438
+  /* "mqtt.py":437
  * 		exit(1)
  * 	device_sn = sys.argv[1]
  * 	zywlstart_pid = int(sys.argv[2])             # <<<<<<<<<<<<<<
  * 
  * 	LoggingConsumer()
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_sys); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 438, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_sys); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 437, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_argv); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 438, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_argv); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 437, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_1, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 438, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_1, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 437, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyNumber_Int(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 438, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyNumber_Int(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 437, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_zywlstart_pid = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "mqtt.py":440
+  /* "mqtt.py":439
  * 	zywlstart_pid = int(sys.argv[2])
  * 
  * 	LoggingConsumer()             # <<<<<<<<<<<<<<
  * 	logger = LoggingProducer().getlogger()
  * 
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_LoggingConsumer); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 440, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_LoggingConsumer); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 439, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_5 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -12860,19 +12864,19 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   }
   __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 440, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 439, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mqtt.py":441
+  /* "mqtt.py":440
  * 
  * 	LoggingConsumer()
  * 	logger = LoggingProducer().getlogger()             # <<<<<<<<<<<<<<
  * 
  * 	#c = config.config("/root/config.ini")
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_LoggingProducer); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 441, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_LoggingProducer); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 440, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_6 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_5))) {
@@ -12886,10 +12890,10 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   }
   __pyx_t_2 = (__pyx_t_6) ? __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_6) : __Pyx_PyObject_CallNoArg(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 441, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 440, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_getlogger); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 441, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_getlogger); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 440, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -12904,13 +12908,13 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   }
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 441, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 440, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_logger = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "mqtt.py":450
+  /* "mqtt.py":449
  * 	#cafile = c.get("MQTT", "CAFILE")
  * 
  * 	host="mqtt.iotwonderful.cn"             # <<<<<<<<<<<<<<
@@ -12920,7 +12924,7 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   __Pyx_INCREF(__pyx_kp_s_mqtt_iotwonderful_cn);
   __pyx_v_host = __pyx_kp_s_mqtt_iotwonderful_cn;
 
-  /* "mqtt.py":451
+  /* "mqtt.py":450
  * 
  * 	host="mqtt.iotwonderful.cn"
  * 	port=8883             # <<<<<<<<<<<<<<
@@ -12929,7 +12933,7 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
  */
   __pyx_v_port = 0x22B3;
 
-  /* "mqtt.py":452
+  /* "mqtt.py":451
  * 	host="mqtt.iotwonderful.cn"
  * 	port=8883
  * 	user="test_001"             # <<<<<<<<<<<<<<
@@ -12939,7 +12943,7 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   __Pyx_INCREF(__pyx_n_s_test_001);
   __pyx_v_user = __pyx_n_s_test_001;
 
-  /* "mqtt.py":453
+  /* "mqtt.py":452
  * 	port=8883
  * 	user="test_001"
  * 	passwd="NjBlNjY3ZWRlZ"             # <<<<<<<<<<<<<<
@@ -12949,7 +12953,7 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   __Pyx_INCREF(__pyx_n_s_NjBlNjY3ZWRlZ);
   __pyx_v_passwd = __pyx_n_s_NjBlNjY3ZWRlZ;
 
-  /* "mqtt.py":454
+  /* "mqtt.py":453
  * 	user="test_001"
  * 	passwd="NjBlNjY3ZWRlZ"
  * 	cafile="/root/crtfile/mqtt.iotwonderful.cn.crt"             # <<<<<<<<<<<<<<
@@ -12959,75 +12963,75 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   __Pyx_INCREF(__pyx_kp_s_root_crtfile_mqtt_iotwonderful);
   __pyx_v_cafile = __pyx_kp_s_root_crtfile_mqtt_iotwonderful;
 
-  /* "mqtt.py":457
+  /* "mqtt.py":456
  * 
  * 	#logger.info("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
  * 	mc = mqtt_client(   client_id = device_sn,             # <<<<<<<<<<<<<<
  * 			clean_session = True,
  * 			userdata = None,
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_mqtt_client); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 457, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_mqtt_client); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 456, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 457, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 456, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_client_id, __pyx_v_device_sn) < 0) __PYX_ERR(0, 457, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_client_id, __pyx_v_device_sn) < 0) __PYX_ERR(0, 456, __pyx_L1_error)
 
-  /* "mqtt.py":458
+  /* "mqtt.py":457
  * 	#logger.info("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
  * 	mc = mqtt_client(   client_id = device_sn,
  * 			clean_session = True,             # <<<<<<<<<<<<<<
  * 			userdata = None,
  * 			protocol = mqtt.MQTTv31,
  */
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_clean_session, Py_True) < 0) __PYX_ERR(0, 457, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_clean_session, Py_True) < 0) __PYX_ERR(0, 456, __pyx_L1_error)
 
-  /* "mqtt.py":459
+  /* "mqtt.py":458
  * 	mc = mqtt_client(   client_id = device_sn,
  * 			clean_session = True,
  * 			userdata = None,             # <<<<<<<<<<<<<<
  * 			protocol = mqtt.MQTTv31,
  * 			transport = 'tcp')
  */
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_userdata, Py_None) < 0) __PYX_ERR(0, 457, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_userdata, Py_None) < 0) __PYX_ERR(0, 456, __pyx_L1_error)
 
-  /* "mqtt.py":460
+  /* "mqtt.py":459
  * 			clean_session = True,
  * 			userdata = None,
  * 			protocol = mqtt.MQTTv31,             # <<<<<<<<<<<<<<
  * 			transport = 'tcp')
  * 	mc.set_logger(logger)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_mqtt); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 460, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_mqtt); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 459, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_MQTTv31); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 460, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_MQTTv31); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 459, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_protocol, __pyx_t_6) < 0) __PYX_ERR(0, 457, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_protocol, __pyx_t_6) < 0) __PYX_ERR(0, 456, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_transport, __pyx_n_s_tcp) < 0) __PYX_ERR(0, 457, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_transport, __pyx_n_s_tcp) < 0) __PYX_ERR(0, 456, __pyx_L1_error)
 
-  /* "mqtt.py":457
+  /* "mqtt.py":456
  * 
  * 	#logger.info("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
  * 	mc = mqtt_client(   client_id = device_sn,             # <<<<<<<<<<<<<<
  * 			clean_session = True,
  * 			userdata = None,
  */
-  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 457, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 456, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_mc = __pyx_t_6;
   __pyx_t_6 = 0;
 
-  /* "mqtt.py":462
+  /* "mqtt.py":461
  * 			protocol = mqtt.MQTTv31,
  * 			transport = 'tcp')
  * 	mc.set_logger(logger)             # <<<<<<<<<<<<<<
  * 	mc.set_device_sn(device_sn, zywlstart_pid)
  * 	mc.setsubscribe(topic=ms.OPENDOOR_TOPIC, qos=0)
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_set_logger); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 462, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_set_logger); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 461, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_5))) {
@@ -13041,19 +13045,19 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   }
   __pyx_t_6 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_1, __pyx_v_logger) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_logger);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 462, __pyx_L1_error)
+  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 461, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "mqtt.py":463
+  /* "mqtt.py":462
  * 			transport = 'tcp')
  * 	mc.set_logger(logger)
  * 	mc.set_device_sn(device_sn, zywlstart_pid)             # <<<<<<<<<<<<<<
  * 	mc.setsubscribe(topic=ms.OPENDOOR_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.QR_TOPIC, qos=0)
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_set_device_sn); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 463, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_set_device_sn); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 462, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_1 = NULL;
   __pyx_t_7 = 0;
@@ -13070,7 +13074,7 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_5)) {
     PyObject *__pyx_temp[3] = {__pyx_t_1, __pyx_v_device_sn, __pyx_v_zywlstart_pid};
-    __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 463, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 462, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_GOTREF(__pyx_t_6);
   } else
@@ -13078,13 +13082,13 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
     PyObject *__pyx_temp[3] = {__pyx_t_1, __pyx_v_device_sn, __pyx_v_zywlstart_pid};
-    __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 463, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 462, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_GOTREF(__pyx_t_6);
   } else
   #endif
   {
-    __pyx_t_2 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 463, __pyx_L1_error)
+    __pyx_t_2 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 462, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     if (__pyx_t_1) {
       __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1); __pyx_t_1 = NULL;
@@ -13095,171 +13099,171 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
     __Pyx_INCREF(__pyx_v_zywlstart_pid);
     __Pyx_GIVEREF(__pyx_v_zywlstart_pid);
     PyTuple_SET_ITEM(__pyx_t_2, 1+__pyx_t_7, __pyx_v_zywlstart_pid);
-    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_2, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 463, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_2, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 462, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "mqtt.py":464
+  /* "mqtt.py":463
  * 	mc.set_logger(logger)
  * 	mc.set_device_sn(device_sn, zywlstart_pid)
  * 	mc.setsubscribe(topic=ms.OPENDOOR_TOPIC, qos=0)             # <<<<<<<<<<<<<<
  * 	mc.setsubscribe(topic=ms.QR_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.DEVICE_INFO_TOPIC, qos=0)
  */
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_setsubscribe); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 464, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_setsubscribe); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 463, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 464, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 463, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 464, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 463, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_OPENDOOR_TOPIC); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 464, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_OPENDOOR_TOPIC); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 463, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_1) < 0) __PYX_ERR(0, 464, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_1) < 0) __PYX_ERR(0, 463, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 464, __pyx_L1_error)
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 464, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 463, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 463, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mqtt.py":465
+  /* "mqtt.py":464
  * 	mc.set_device_sn(device_sn, zywlstart_pid)
  * 	mc.setsubscribe(topic=ms.OPENDOOR_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.QR_TOPIC, qos=0)             # <<<<<<<<<<<<<<
  * 	mc.setsubscribe(topic=ms.DEVICE_INFO_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.UPDATE_TOPIC, qos=0)
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_setsubscribe); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 465, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_setsubscribe); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 464, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 465, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 464, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_ms); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 465, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_ms); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 464, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_QR_TOPIC); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 465, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_QR_TOPIC); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 464, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_2) < 0) __PYX_ERR(0, 465, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_2) < 0) __PYX_ERR(0, 464, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 465, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 465, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 464, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 464, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "mqtt.py":466
+  /* "mqtt.py":465
  * 	mc.setsubscribe(topic=ms.OPENDOOR_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.QR_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.DEVICE_INFO_TOPIC, qos=0)             # <<<<<<<<<<<<<<
  * 	mc.setsubscribe(topic=ms.UPDATE_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.OPENSSH_TOPIC, qos=0)
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_setsubscribe); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 466, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_setsubscribe); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 465, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 466, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 465, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_ms); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 466, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_ms); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 465, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_DEVICE_INFO_TOPIC); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 466, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_DEVICE_INFO_TOPIC); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 465, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_6) < 0) __PYX_ERR(0, 466, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_6) < 0) __PYX_ERR(0, 465, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 466, __pyx_L1_error)
-  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 466, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 465, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 465, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "mqtt.py":467
+  /* "mqtt.py":466
  * 	mc.setsubscribe(topic=ms.QR_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.DEVICE_INFO_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.UPDATE_TOPIC, qos=0)             # <<<<<<<<<<<<<<
  * 	mc.setsubscribe(topic=ms.OPENSSH_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.WLAN_CONFIG_TOPIC, qos=0)
  */
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_setsubscribe); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 467, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_setsubscribe); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 466, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 467, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 466, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 467, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 466, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_UPDATE_TOPIC); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 467, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_UPDATE_TOPIC); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 466, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_1) < 0) __PYX_ERR(0, 467, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_1) < 0) __PYX_ERR(0, 466, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 467, __pyx_L1_error)
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 467, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 466, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 466, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mqtt.py":468
+  /* "mqtt.py":467
  * 	mc.setsubscribe(topic=ms.DEVICE_INFO_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.UPDATE_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.OPENSSH_TOPIC, qos=0)             # <<<<<<<<<<<<<<
  * 	mc.setsubscribe(topic=ms.WLAN_CONFIG_TOPIC, qos=0)
  * 	mc.set_user_and_password(user, passwd)
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_setsubscribe); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 468, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_setsubscribe); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 468, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_ms); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 468, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_ms); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_OPENSSH_TOPIC); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 468, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_OPENSSH_TOPIC); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_2) < 0) __PYX_ERR(0, 468, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_2) < 0) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 468, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 468, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 467, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "mqtt.py":469
+  /* "mqtt.py":468
  * 	mc.setsubscribe(topic=ms.UPDATE_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.OPENSSH_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.WLAN_CONFIG_TOPIC, qos=0)             # <<<<<<<<<<<<<<
  * 	mc.set_user_and_password(user, passwd)
  * 	if mc.set_cafile(cafile) == False:
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_setsubscribe); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 469, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_setsubscribe); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 468, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 469, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 468, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_ms); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 469, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_ms); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 468, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_WLAN_CONFIG_TOPIC); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 469, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_WLAN_CONFIG_TOPIC); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 468, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_6) < 0) __PYX_ERR(0, 469, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_topic, __pyx_t_6) < 0) __PYX_ERR(0, 468, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 469, __pyx_L1_error)
-  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 469, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_qos, __pyx_int_0) < 0) __PYX_ERR(0, 468, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 468, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "mqtt.py":470
+  /* "mqtt.py":469
  * 	mc.setsubscribe(topic=ms.OPENSSH_TOPIC, qos=0)
  * 	mc.setsubscribe(topic=ms.WLAN_CONFIG_TOPIC, qos=0)
  * 	mc.set_user_and_password(user, passwd)             # <<<<<<<<<<<<<<
  * 	if mc.set_cafile(cafile) == False:
  * 		exit(1)
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_set_user_and_password); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 470, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_set_user_and_password); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 469, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_2 = NULL;
   __pyx_t_7 = 0;
@@ -13276,7 +13280,7 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_5)) {
     PyObject *__pyx_temp[3] = {__pyx_t_2, __pyx_v_user, __pyx_v_passwd};
-    __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 470, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 469, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_6);
   } else
@@ -13284,13 +13288,13 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
     PyObject *__pyx_temp[3] = {__pyx_t_2, __pyx_v_user, __pyx_v_passwd};
-    __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 470, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 469, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_6);
   } else
   #endif
   {
-    __pyx_t_1 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 470, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 469, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (__pyx_t_2) {
       __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_2); __pyx_t_2 = NULL;
@@ -13301,21 +13305,21 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
     __Pyx_INCREF(__pyx_v_passwd);
     __Pyx_GIVEREF(__pyx_v_passwd);
     PyTuple_SET_ITEM(__pyx_t_1, 1+__pyx_t_7, __pyx_v_passwd);
-    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_1, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 470, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_1, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 469, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "mqtt.py":471
+  /* "mqtt.py":470
  * 	mc.setsubscribe(topic=ms.WLAN_CONFIG_TOPIC, qos=0)
  * 	mc.set_user_and_password(user, passwd)
  * 	if mc.set_cafile(cafile) == False:             # <<<<<<<<<<<<<<
  * 		exit(1)
  * 	time.sleep(0.2)
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_set_cafile); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 471, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_set_cafile); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 470, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_5))) {
@@ -13329,27 +13333,27 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   }
   __pyx_t_6 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_1, __pyx_v_cafile) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_cafile);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 471, __pyx_L1_error)
+  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 470, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = PyObject_RichCompare(__pyx_t_6, Py_False, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 471, __pyx_L1_error)
+  __pyx_t_5 = PyObject_RichCompare(__pyx_t_6, Py_False, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 470, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 471, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 470, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   if (__pyx_t_4) {
 
-    /* "mqtt.py":472
+    /* "mqtt.py":471
  * 	mc.set_user_and_password(user, passwd)
  * 	if mc.set_cafile(cafile) == False:
  * 		exit(1)             # <<<<<<<<<<<<<<
  * 	time.sleep(0.2)
  * 	if mc.run_mqtt(host=host, port=port, keepalive=10) == False:
  */
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_exit, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 472, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_exit, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 471, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-    /* "mqtt.py":471
+    /* "mqtt.py":470
  * 	mc.setsubscribe(topic=ms.WLAN_CONFIG_TOPIC, qos=0)
  * 	mc.set_user_and_password(user, passwd)
  * 	if mc.set_cafile(cafile) == False:             # <<<<<<<<<<<<<<
@@ -13358,16 +13362,16 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
  */
   }
 
-  /* "mqtt.py":473
+  /* "mqtt.py":472
  * 	if mc.set_cafile(cafile) == False:
  * 		exit(1)
  * 	time.sleep(0.2)             # <<<<<<<<<<<<<<
  * 	if mc.run_mqtt(host=host, port=port, keepalive=10) == False:
  * 		exit(1)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_time); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 473, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_time); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 472, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_sleep); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 473, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_sleep); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 472, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_t_6 = NULL;
@@ -13382,50 +13386,50 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   }
   __pyx_t_5 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_6, __pyx_float_0_2) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_float_0_2);
   __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 473, __pyx_L1_error)
+  if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 472, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "mqtt.py":474
+  /* "mqtt.py":473
  * 		exit(1)
  * 	time.sleep(0.2)
  * 	if mc.run_mqtt(host=host, port=port, keepalive=10) == False:             # <<<<<<<<<<<<<<
  * 		exit(1)
  * 	mc.start_other_thread()
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_run_mqtt); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 474, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_run_mqtt); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 473, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 474, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 473, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_host, __pyx_v_host) < 0) __PYX_ERR(0, 474, __pyx_L1_error)
-  __pyx_t_6 = __Pyx_PyInt_From_long(__pyx_v_port); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 474, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_host, __pyx_v_host) < 0) __PYX_ERR(0, 473, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyInt_From_long(__pyx_v_port); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 473, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_port, __pyx_t_6) < 0) __PYX_ERR(0, 474, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_port, __pyx_t_6) < 0) __PYX_ERR(0, 473, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_keepalive, __pyx_int_10) < 0) __PYX_ERR(0, 474, __pyx_L1_error)
-  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 474, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_keepalive, __pyx_int_10) < 0) __PYX_ERR(0, 473, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 473, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyObject_RichCompare(__pyx_t_6, Py_False, Py_EQ); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 474, __pyx_L1_error)
+  __pyx_t_1 = PyObject_RichCompare(__pyx_t_6, Py_False, Py_EQ); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 473, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 474, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 473, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_4) {
 
-    /* "mqtt.py":475
+    /* "mqtt.py":474
  * 	time.sleep(0.2)
  * 	if mc.run_mqtt(host=host, port=port, keepalive=10) == False:
  * 		exit(1)             # <<<<<<<<<<<<<<
  * 	mc.start_other_thread()
  * 	mc.loop_forever()
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_exit, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 475, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_exit, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 474, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "mqtt.py":474
+    /* "mqtt.py":473
  * 		exit(1)
  * 	time.sleep(0.2)
  * 	if mc.run_mqtt(host=host, port=port, keepalive=10) == False:             # <<<<<<<<<<<<<<
@@ -13434,13 +13438,37 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
  */
   }
 
-  /* "mqtt.py":476
+  /* "mqtt.py":475
  * 	if mc.run_mqtt(host=host, port=port, keepalive=10) == False:
  * 		exit(1)
  * 	mc.start_other_thread()             # <<<<<<<<<<<<<<
  * 	mc.loop_forever()
  */
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_start_other_thread); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 476, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_start_other_thread); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 475, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __pyx_t_5 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_6))) {
+    __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_6);
+    if (likely(__pyx_t_5)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+      __Pyx_INCREF(__pyx_t_5);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_6, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 475, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "mqtt.py":476
+ * 		exit(1)
+ * 	mc.start_other_thread()
+ * 	mc.loop_forever()             # <<<<<<<<<<<<<<
+ */
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_loop_forever); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 476, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __pyx_t_5 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_6))) {
@@ -13459,31 +13487,7 @@ static PyObject *__pyx_pf_4mqtt_client_start(CYTHON_UNUSED PyObject *__pyx_self)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mqtt.py":477
- * 		exit(1)
- * 	mc.start_other_thread()
- * 	mc.loop_forever()             # <<<<<<<<<<<<<<
- */
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_mc, __pyx_n_s_loop_forever); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 477, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_5 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_6))) {
-    __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_6);
-    if (likely(__pyx_t_5)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
-      __Pyx_INCREF(__pyx_t_5);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_6, function);
-    }
-  }
-  __pyx_t_1 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 477, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-  /* "mqtt.py":425
+  /* "mqtt.py":424
  * 
  * 
  * def client_start():             # <<<<<<<<<<<<<<
@@ -13628,7 +13632,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_argv, __pyx_k_argv, sizeof(__pyx_k_argv), 0, 0, 1, 1},
   {&__pyx_kp_s_awk_F, __pyx_k_awk_F, sizeof(__pyx_k_awk_F), 0, 0, 1, 0},
   {&__pyx_kp_s_awk_F_2, __pyx_k_awk_F_2, sizeof(__pyx_k_awk_F_2), 0, 0, 1, 0},
-  {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
   {&__pyx_n_s_ca_certs, __pyx_k_ca_certs, sizeof(__pyx_k_ca_certs), 0, 0, 1, 1},
   {&__pyx_n_s_cafile, __pyx_k_cafile, sizeof(__pyx_k_cafile), 0, 0, 1, 1},
   {&__pyx_kp_s_cafile_is_not_exists, __pyx_k_cafile_is_not_exists, sizeof(__pyx_k_cafile_is_not_exists), 0, 0, 1, 0},
@@ -13771,7 +13774,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_os, __pyx_k_os, sizeof(__pyx_k_os), 0, 0, 1, 1},
   {&__pyx_n_s_packetsize, __pyx_k_packetsize, sizeof(__pyx_k_packetsize), 0, 0, 1, 1},
   {&__pyx_n_s_paho_mqtt_client, __pyx_k_paho_mqtt_client, sizeof(__pyx_k_paho_mqtt_client), 0, 0, 1, 1},
-  {&__pyx_kp_s_paramter_must_be_2, __pyx_k_paramter_must_be_2, sizeof(__pyx_k_paramter_must_be_2), 0, 0, 1, 0},
+  {&__pyx_kp_s_paramter_must_be_3, __pyx_k_paramter_must_be_3, sizeof(__pyx_k_paramter_must_be_3), 0, 0, 1, 0},
   {&__pyx_n_s_passwd, __pyx_k_passwd, sizeof(__pyx_k_passwd), 0, 0, 1, 1},
   {&__pyx_n_s_password, __pyx_k_password, sizeof(__pyx_k_password), 0, 0, 1, 1},
   {&__pyx_n_s_path, __pyx_k_path, sizeof(__pyx_k_path), 0, 0, 1, 1},
@@ -14000,36 +14003,36 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__13);
   __Pyx_GIVEREF(__pyx_tuple__13);
 
-  /* "mqtt.py":360
+  /* "mqtt.py":359
  * 
  * 						cmd1="ifconfig {} | grep 'inet addr' ".format(current)
  * 						cmd2 = "{}{}{}{}".format(" | awk -F\" \" ", "'{", "print $2", "}'")             # <<<<<<<<<<<<<<
  * 						cmd3 = "{}{}{}{}".format(" | awk -F\":\" ", "'{", "print $2", "}'")
  * 						cmd = "{}{}{}".format(cmd1, cmd2, cmd3)
  */
-  __pyx_tuple__17 = PyTuple_Pack(4, __pyx_kp_s_awk_F, __pyx_kp_s__15, __pyx_kp_s_print_2, __pyx_kp_s__16); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 360, __pyx_L1_error)
+  __pyx_tuple__17 = PyTuple_Pack(4, __pyx_kp_s_awk_F, __pyx_kp_s__15, __pyx_kp_s_print_2, __pyx_kp_s__16); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 359, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__17);
   __Pyx_GIVEREF(__pyx_tuple__17);
 
-  /* "mqtt.py":361
+  /* "mqtt.py":360
  * 						cmd1="ifconfig {} | grep 'inet addr' ".format(current)
  * 						cmd2 = "{}{}{}{}".format(" | awk -F\" \" ", "'{", "print $2", "}'")
  * 						cmd3 = "{}{}{}{}".format(" | awk -F\":\" ", "'{", "print $2", "}'")             # <<<<<<<<<<<<<<
  * 						cmd = "{}{}{}".format(cmd1, cmd2, cmd3)
  * 						ip = os.popen(cmd).read().split('\n')[0]
  */
-  __pyx_tuple__18 = PyTuple_Pack(4, __pyx_kp_s_awk_F_2, __pyx_kp_s__15, __pyx_kp_s_print_2, __pyx_kp_s__16); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 361, __pyx_L1_error)
+  __pyx_tuple__18 = PyTuple_Pack(4, __pyx_kp_s_awk_F_2, __pyx_kp_s__15, __pyx_kp_s_print_2, __pyx_kp_s__16); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 360, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__18);
   __Pyx_GIVEREF(__pyx_tuple__18);
 
-  /* "mqtt.py":392
+  /* "mqtt.py":391
  * 	def start_other_thread(self):
  * 		self.exit_flag = False
  * 		self.exit_signal = int(config.config("/root/config.ini").get("SIGNAL", "EXITFLAG"))             # <<<<<<<<<<<<<<
  * 		signal.signal(self.exit_signal, self.exit_handler)
  * 		work_thread = threading.Thread(target = self.do_hardware_work)
  */
-  __pyx_tuple__20 = PyTuple_Pack(2, __pyx_n_s_SIGNAL, __pyx_n_s_EXITFLAG); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 392, __pyx_L1_error)
+  __pyx_tuple__20 = PyTuple_Pack(2, __pyx_n_s_SIGNAL, __pyx_n_s_EXITFLAG); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__20);
   __Pyx_GIVEREF(__pyx_tuple__20);
 
@@ -14187,61 +14190,61 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 		DEVICE_UPDATE_SIG = int(config.config("/root/config.ini").get("SIGNAL", "DEVICEUPDATE"))
  * 		DOORLOCK_TIME = int(config.config("/root/config.ini").get("DOORLOCK", "OPEN_TIME"))
  */
-  __pyx_tuple__47 = PyTuple_Pack(34, __pyx_n_s_self, __pyx_n_s_DEVICE_UPDATE_SIG, __pyx_n_s_DOORLOCK_TIME, __pyx_n_s_topic, __pyx_n_s_json_msg, __pyx_n_s_gpio_val, __pyx_n_s_close_door_timer, __pyx_n_s_sendmsg, __pyx_n_s_filepath, __pyx_n_s_ret, __pyx_n_s_version, __pyx_n_s_update_version, __pyx_n_s_packetsize, __pyx_n_s_md5str, __pyx_n_s_download_url, __pyx_n_s_filename, __pyx_n_s_f, __pyx_n_s_update_message, __pyx_n_s_enable, __pyx_n_s_opentime, __pyx_n_s_cmd, __pyx_n_s_c, __pyx_n_s_doorlock_time, __pyx_n_s_current, __pyx_n_s_cmd1, __pyx_n_s_cmd2, __pyx_n_s_cmd3, __pyx_n_s_ip, __pyx_n_s_ssid, __pyx_n_s_psk, __pyx_n_s_shellcmd, __pyx_n_s_retssid, __pyx_n_s_retpsk, __pyx_n_s_e); if (unlikely(!__pyx_tuple__47)) __PYX_ERR(0, 214, __pyx_L1_error)
+  __pyx_tuple__47 = PyTuple_Pack(33, __pyx_n_s_self, __pyx_n_s_DEVICE_UPDATE_SIG, __pyx_n_s_DOORLOCK_TIME, __pyx_n_s_topic, __pyx_n_s_json_msg, __pyx_n_s_gpio_val, __pyx_n_s_close_door_timer, __pyx_n_s_sendmsg, __pyx_n_s_filepath, __pyx_n_s_ret, __pyx_n_s_version, __pyx_n_s_update_version, __pyx_n_s_packetsize, __pyx_n_s_md5str, __pyx_n_s_download_url, __pyx_n_s_filename, __pyx_n_s_f, __pyx_n_s_update_message, __pyx_n_s_enable, __pyx_n_s_opentime, __pyx_n_s_cmd, __pyx_n_s_doorlock_time, __pyx_n_s_current, __pyx_n_s_cmd1, __pyx_n_s_cmd2, __pyx_n_s_cmd3, __pyx_n_s_ip, __pyx_n_s_ssid, __pyx_n_s_psk, __pyx_n_s_shellcmd, __pyx_n_s_retssid, __pyx_n_s_retpsk, __pyx_n_s_e); if (unlikely(!__pyx_tuple__47)) __PYX_ERR(0, 214, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__47);
   __Pyx_GIVEREF(__pyx_tuple__47);
-  __pyx_codeobj__48 = (PyObject*)__Pyx_PyCode_New(1, 0, 34, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__47, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mqtt_mqtt_py, __pyx_n_s_do_hardware_work, 214, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__48)) __PYX_ERR(0, 214, __pyx_L1_error)
+  __pyx_codeobj__48 = (PyObject*)__Pyx_PyCode_New(1, 0, 33, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__47, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mqtt_mqtt_py, __pyx_n_s_do_hardware_work, 214, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__48)) __PYX_ERR(0, 214, __pyx_L1_error)
 
-  /* "mqtt.py":390
+  /* "mqtt.py":389
  * 				self.logger.info("do hardware work except:{}".format(e))
  * 
  * 	def start_other_thread(self):             # <<<<<<<<<<<<<<
  * 		self.exit_flag = False
  * 		self.exit_signal = int(config.config("/root/config.ini").get("SIGNAL", "EXITFLAG"))
  */
-  __pyx_tuple__49 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_work_thread, __pyx_n_s_publish_thread); if (unlikely(!__pyx_tuple__49)) __PYX_ERR(0, 390, __pyx_L1_error)
+  __pyx_tuple__49 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_work_thread, __pyx_n_s_publish_thread); if (unlikely(!__pyx_tuple__49)) __PYX_ERR(0, 389, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__49);
   __Pyx_GIVEREF(__pyx_tuple__49);
-  __pyx_codeobj__50 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__49, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mqtt_mqtt_py, __pyx_n_s_start_other_thread, 390, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__50)) __PYX_ERR(0, 390, __pyx_L1_error)
+  __pyx_codeobj__50 = (PyObject*)__Pyx_PyCode_New(1, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__49, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mqtt_mqtt_py, __pyx_n_s_start_other_thread, 389, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__50)) __PYX_ERR(0, 389, __pyx_L1_error)
 
-  /* "mqtt.py":401
+  /* "mqtt.py":400
  * 		publish_thread.start()
  * 
  * 	def exit_handler(self):             # <<<<<<<<<<<<<<
  * 		self.exit_flag = True
  * 
  */
-  __pyx_tuple__51 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__51)) __PYX_ERR(0, 401, __pyx_L1_error)
+  __pyx_tuple__51 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__51)) __PYX_ERR(0, 400, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__51);
   __Pyx_GIVEREF(__pyx_tuple__51);
-  __pyx_codeobj__52 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__51, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mqtt_mqtt_py, __pyx_n_s_exit_handler, 401, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__52)) __PYX_ERR(0, 401, __pyx_L1_error)
+  __pyx_codeobj__52 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__51, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mqtt_mqtt_py, __pyx_n_s_exit_handler, 400, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__52)) __PYX_ERR(0, 400, __pyx_L1_error)
 
-  /* "mqtt.py":404
+  /* "mqtt.py":403
  * 		self.exit_flag = True
  * 
  * 	def run_mqtt(self, host=None, port=1883, keepalive=60):             # <<<<<<<<<<<<<<
  * 		try:
  * 			ms.DEVICE_STATUS["status"] = 0
  */
-  __pyx_tuple__53 = PyTuple_Pack(6, __pyx_n_s_self, __pyx_n_s_host, __pyx_n_s_port, __pyx_n_s_keepalive, __pyx_n_s_respjson, __pyx_n_s_e); if (unlikely(!__pyx_tuple__53)) __PYX_ERR(0, 404, __pyx_L1_error)
+  __pyx_tuple__53 = PyTuple_Pack(6, __pyx_n_s_self, __pyx_n_s_host, __pyx_n_s_port, __pyx_n_s_keepalive, __pyx_n_s_respjson, __pyx_n_s_e); if (unlikely(!__pyx_tuple__53)) __PYX_ERR(0, 403, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__53);
   __Pyx_GIVEREF(__pyx_tuple__53);
-  __pyx_codeobj__54 = (PyObject*)__Pyx_PyCode_New(4, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__53, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mqtt_mqtt_py, __pyx_n_s_run_mqtt, 404, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__54)) __PYX_ERR(0, 404, __pyx_L1_error)
-  __pyx_tuple__55 = PyTuple_Pack(3, ((PyObject *)Py_None), ((PyObject *)__pyx_int_1883), ((PyObject *)__pyx_int_60)); if (unlikely(!__pyx_tuple__55)) __PYX_ERR(0, 404, __pyx_L1_error)
+  __pyx_codeobj__54 = (PyObject*)__Pyx_PyCode_New(4, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__53, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mqtt_mqtt_py, __pyx_n_s_run_mqtt, 403, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__54)) __PYX_ERR(0, 403, __pyx_L1_error)
+  __pyx_tuple__55 = PyTuple_Pack(3, ((PyObject *)Py_None), ((PyObject *)__pyx_int_1883), ((PyObject *)__pyx_int_60)); if (unlikely(!__pyx_tuple__55)) __PYX_ERR(0, 403, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__55);
   __Pyx_GIVEREF(__pyx_tuple__55);
 
-  /* "mqtt.py":425
+  /* "mqtt.py":424
  * 
  * 
  * def client_start():             # <<<<<<<<<<<<<<
  * 	'''
  * 	client_id:  id,None,id,Noneclean_sessionTrue
  */
-  __pyx_tuple__56 = PyTuple_Pack(9, __pyx_n_s_device_sn, __pyx_n_s_zywlstart_pid, __pyx_n_s_logger, __pyx_n_s_host, __pyx_n_s_port, __pyx_n_s_user, __pyx_n_s_passwd, __pyx_n_s_cafile, __pyx_n_s_mc); if (unlikely(!__pyx_tuple__56)) __PYX_ERR(0, 425, __pyx_L1_error)
+  __pyx_tuple__56 = PyTuple_Pack(9, __pyx_n_s_device_sn, __pyx_n_s_zywlstart_pid, __pyx_n_s_logger, __pyx_n_s_host, __pyx_n_s_port, __pyx_n_s_user, __pyx_n_s_passwd, __pyx_n_s_cafile, __pyx_n_s_mc); if (unlikely(!__pyx_tuple__56)) __PYX_ERR(0, 424, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__56);
   __Pyx_GIVEREF(__pyx_tuple__56);
-  __pyx_codeobj__57 = (PyObject*)__Pyx_PyCode_New(0, 0, 9, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__56, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mqtt_mqtt_py, __pyx_n_s_client_start, 425, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__57)) __PYX_ERR(0, 425, __pyx_L1_error)
+  __pyx_codeobj__57 = (PyObject*)__Pyx_PyCode_New(0, 0, 9, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__56, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mqtt_mqtt_py, __pyx_n_s_client_start, 424, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__57)) __PYX_ERR(0, 424, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -15098,41 +15101,41 @@ if (!__Pyx_RefNanny) {
   if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_do_hardware_work, __pyx_t_5) < 0) __PYX_ERR(0, 214, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "mqtt.py":390
+  /* "mqtt.py":389
  * 				self.logger.info("do hardware work except:{}".format(e))
  * 
  * 	def start_other_thread(self):             # <<<<<<<<<<<<<<
  * 		self.exit_flag = False
  * 		self.exit_signal = int(config.config("/root/config.ini").get("SIGNAL", "EXITFLAG"))
  */
-  __pyx_t_5 = __Pyx_CyFunction_New(&__pyx_mdef_4mqtt_11mqtt_client_27start_other_thread, 0, __pyx_n_s_mqtt_client_start_other_thread, NULL, __pyx_n_s_mqtt, __pyx_d, ((PyObject *)__pyx_codeobj__50)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 390, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_CyFunction_New(&__pyx_mdef_4mqtt_11mqtt_client_27start_other_thread, 0, __pyx_n_s_mqtt_client_start_other_thread, NULL, __pyx_n_s_mqtt, __pyx_d, ((PyObject *)__pyx_codeobj__50)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 389, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_start_other_thread, __pyx_t_5) < 0) __PYX_ERR(0, 390, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_start_other_thread, __pyx_t_5) < 0) __PYX_ERR(0, 389, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "mqtt.py":401
+  /* "mqtt.py":400
  * 		publish_thread.start()
  * 
  * 	def exit_handler(self):             # <<<<<<<<<<<<<<
  * 		self.exit_flag = True
  * 
  */
-  __pyx_t_5 = __Pyx_CyFunction_New(&__pyx_mdef_4mqtt_11mqtt_client_29exit_handler, 0, __pyx_n_s_mqtt_client_exit_handler, NULL, __pyx_n_s_mqtt, __pyx_d, ((PyObject *)__pyx_codeobj__52)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 401, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_CyFunction_New(&__pyx_mdef_4mqtt_11mqtt_client_29exit_handler, 0, __pyx_n_s_mqtt_client_exit_handler, NULL, __pyx_n_s_mqtt, __pyx_d, ((PyObject *)__pyx_codeobj__52)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 400, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_exit_handler, __pyx_t_5) < 0) __PYX_ERR(0, 401, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_exit_handler, __pyx_t_5) < 0) __PYX_ERR(0, 400, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "mqtt.py":404
+  /* "mqtt.py":403
  * 		self.exit_flag = True
  * 
  * 	def run_mqtt(self, host=None, port=1883, keepalive=60):             # <<<<<<<<<<<<<<
  * 		try:
  * 			ms.DEVICE_STATUS["status"] = 0
  */
-  __pyx_t_5 = __Pyx_CyFunction_New(&__pyx_mdef_4mqtt_11mqtt_client_31run_mqtt, 0, __pyx_n_s_mqtt_client_run_mqtt, NULL, __pyx_n_s_mqtt, __pyx_d, ((PyObject *)__pyx_codeobj__54)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 404, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_CyFunction_New(&__pyx_mdef_4mqtt_11mqtt_client_31run_mqtt, 0, __pyx_n_s_mqtt_client_run_mqtt, NULL, __pyx_n_s_mqtt, __pyx_d, ((PyObject *)__pyx_codeobj__54)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 403, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_5, __pyx_tuple__55);
-  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_run_mqtt, __pyx_t_5) < 0) __PYX_ERR(0, 404, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_3, __pyx_n_s_run_mqtt, __pyx_t_5) < 0) __PYX_ERR(0, 403, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
   /* "mqtt.py":25
@@ -15150,16 +15153,16 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "mqtt.py":425
+  /* "mqtt.py":424
  * 
  * 
  * def client_start():             # <<<<<<<<<<<<<<
  * 	'''
  * 	client_id:  id,None,id,Noneclean_sessionTrue
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_4mqtt_1client_start, 0, __pyx_n_s_client_start, NULL, __pyx_n_s_mqtt, __pyx_d, ((PyObject *)__pyx_codeobj__57)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 425, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_4mqtt_1client_start, 0, __pyx_n_s_client_start, NULL, __pyx_n_s_mqtt, __pyx_d, ((PyObject *)__pyx_codeobj__57)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 424, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_client_start, __pyx_t_2) < 0) __PYX_ERR(0, 425, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_client_start, __pyx_t_2) < 0) __PYX_ERR(0, 424, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "mqtt.py":1
@@ -16659,11 +16662,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_NeObjC(PyObject *op1, PyObject *op2, 
     }
     return (
         PyObject_RichCompare(op1, op2, Py_NE));
-}
-
-/* None */
-static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname) {
-    PyErr_Format(PyExc_UnboundLocalError, "local variable '%s' referenced before assignment", varname);
 }
 
 /* Import */

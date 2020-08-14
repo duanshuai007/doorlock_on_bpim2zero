@@ -45,7 +45,7 @@ class mqtt_client(mqtt.Client):
 		self.status_topic = "{}/{}".format(ms.DEVICE_STATUS_TOPIC, sn)
 		self.work_queue = queue.Queue(32)
 		self.publish_queue = queue.Queue(32)
-		self.wx2vcode = wx.wx_2vcode()
+		self.wx2vcode = wx.wx_2vcode(sn)
 		self.screen = sc.screen()
 
 	def set_logger(self, logger):
@@ -342,15 +342,14 @@ class mqtt_client(mqtt.Client):
 						#doorlock  = 0: get doorlock time
 						#doorlock != 0: set doorlock time
 						if json_msg["doorlock"] != 0:
-							c = config.config("/root/config.ini")
-							ret = c.set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
+							ret = config.config("/root/config.ini").set("DOORLOCK", "OPEN_TIME", str(json_msg["doorlock"]))
 							if ret == False:
 								ms.DEVICE_INFO["doorlock"] = "failed"
 							else:
-								doorlock_time = int(json_msg["doorlock"])
 								ms.DEVICE_INFO["doorlock"] = "success"
 							pass
 						else:
+							doorlock_time = config.config("/root/config.ini").get("DOORLOCK", "OPEN_TIME")
 							ms.DEVICE_INFO["doorlock"] = doorlock_time
 								
 						current = os.popen("cat /tmp/current_network").read().split('\n')[0]
@@ -431,8 +430,8 @@ def client_start():
 	protocol=MQTTv311 or MQTTv31
 	transport="tcp" or "websockets"
 	'''
-	if len(sys.argv) < 2:
-		print("paramter must be 2")
+	if len(sys.argv) < 3:
+		print("paramter must be 3")
 		exit(1)
 	device_sn = sys.argv[1]
 	zywlstart_pid = int(sys.argv[2])

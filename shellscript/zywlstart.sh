@@ -8,18 +8,18 @@ LOG_FILE="/var/log/zywllog"
 UPDATESTATUS="/home/ubuntu/update_status"
 UPDATE_END="/home/ubuntu/update_end"
 MACFILE="/tmp/eth0macaddr"
-#WATCHDOGSCRIPT="/home/watchdog/feed.py"
 SIGFIL="/root/signal.conf"
+CONFIG="/root/config.ini"
 
 EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
-GSMSERIAL_SIGNAL=$(cat /root/config.ini | grep -w GSMSERIALOK | awk -F"=" '{print $2}')
-GSMSIMNOTINSERTED_SIGNAL=$(cat /root/config.ini | grep -w GSMSIMNOTINSERTED | awk -F"=" '{print $2}')
-GSMSIMMODULEERROR_SIGNAL=$(cat /root/config.ini | grep -w GSMSIMMODULEERROR | awk -F"=" '{print $2}')
-NET_GOOD_SIG=$(cat ${SIGFIL} | grep -w NETWORKOK | awk -F"=" '{print $2}')
-NET_BAD_SIG=$(cat ${SIGFIL} | grep -w NETWORKBAD | awk -F"=" '{print $2}')
-MQTT_CONN_OK_SIG=$(cat /root/config.ini | grep -w MQTTCONNOK | awk -F"=" '{print $2}')
-MQTT_CONN_BAD_SIG=$(cat /root/config.ini | grep -w MQTTCONNBAD | awk -F"=" '{print $2}')
-DEVICE_UPFATE_SIG=$(cat /root/config.ini | grep -w DEVICEUPDATE | awk -F"=" '{print $2}')
+NET_GOOD_SIGNAL=$(cat ${SIGFIL} | grep -w NETWORKOK | awk -F"=" '{print $2}')
+
+GSMSERIAL_SIGNAL=$(cat ${CONFIG} | grep -w gsmserialok | awk -F"=" '{print $2}')
+GSMSIMNOTINSERTED_SIGNAL=$(cat ${CONFIG} | grep -w gsmsimnotinserted | awk -F"=" '{print $2}')
+GSMSIMMODULEERROR_SIGNAL=$(cat ${CONFIG} | grep -w gsmsimmoduleerror | awk -F"=" '{print $2}')
+MQTT_CONN_OK_SIGNAL=$(cat ${CONFIG} | grep -w mqttconnok | awk -F"=" '{print $2}')
+MQTT_CONN_BAD_SIGNAL=$(cat ${CONFIG} | grep -w mqttconnbad | awk -F"=" '{print $2}')
+DEVICE_UPFATE_SIGNAL=$(cat ${CONFIG} | grep -w deviceupdate | awk -F"=" '{print $2}')
 
 CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
 echo "${CUR_TIME}:$0 start work!" >> ${LOG_FILE}
@@ -61,25 +61,17 @@ check_temp_time=0
 pppd_wait_count=0
 gsmserial_status=0
 network_status=0
-sim_not_insert=0
 sim_module_error=0
 check_pppd_cycle=0
 mqtt_conn_status=0
 monitor_close=0
 mqtt_run_status=0
 firmware_update_flag=0
+pppd_not_have_online_func_count=0
 exit_flag=0
 
 thread_exit() {
 	exit_flag=1
-}
-
-gsmserial_status_is_ok() {
-	echo "gsm serial is ok" >> ${LOG_FILE}
-	gsmserial_status=1
-	sim_not_insert=0
-	sim_module_error=0
-	systemctl stop zywlpppd
 }
 
 network_status_is_ok(){
@@ -87,23 +79,28 @@ network_status_is_ok(){
 	network_status=1
 }
 
-network_status_is_bad(){
-	echo "network is bad" >> ${LOG_FILE}
-	network_status=0
+#sim module运行正常,可以启动pppd程序
+gsmserial_status_is_ok() {
+	echo "gsm serial is ok" >> ${LOG_FILE}
+	gsmserial_status=1
+	sim_module_error=0
+	systemctl stop zywlpppd
 }
-
+#sim module检测到没有sim card
 gsm_sim_not_inserted() {
 	systemctl stop zywlpppd
 	echo "sim card not inserted" >> ${LOG_FILE}
-	sim_not_insert=1
+	sim_module_error=1
+	gsmserial_status=0
 	pppd_stop
 }
-
+#sim module检测到有sim卡，但是sim卡不能注册到网络
 gsm_sim_module_error() {
 	systemctl stop zywlpppd
-	echo "sim module error!" >> ${LOG_FILE}
-	pppd_stop
+	echo "sim card can't register!" >> ${LOG_FILE}
 	sim_module_error=1
+	gsmserial_status=0
+	pppd_stop
 }
 
 mqtt_connect_status_is_bad(){
@@ -121,13 +118,12 @@ device_will_update(){
 
 trap "thread_exit" ${EXIT_SIGNAL}
 trap "gsmserial_status_is_ok" ${GSMSERIAL_SIGNAL}
-trap "network_status_is_ok" ${NET_GOOD_SIG}
-trap "network_status_is_bad" ${NET_BAD_SIG}
+trap "network_status_is_ok" ${NET_GOOD_SIGNAL}
 trap "gsm_sim_not_inserted" ${GSMSIMNOTINSERTED_SIGNAL}
 trap "gsm_sim_module_error" ${GSMSIMMODULEERROR_SIGNAL}
-trap "mqtt_connect_status_is_bad" ${MQTT_CONN_BAD_SIG}
-trap "mqtt_connect_status_is_ok" ${MQTT_CONN_OK_SIG}
-trap "device_will_update" ${DEVICE_UPFATE_SIG}
+trap "mqtt_connect_status_is_bad" ${MQTT_CONN_BAD_SIGNAL}
+trap "mqtt_connect_status_is_ok" ${MQTT_CONN_OK_SIGNAL}
+trap "device_will_update" ${DEVICE_UPFATE_SIGNAL}
 
 python3 /root/showimage.py 1
 
@@ -151,7 +147,7 @@ monitor_thread_exit(){
 monitor_thread_start(){
 	ps -ef | grep zywlmonitor | grep -v grep > /dev/null
 	if [ $? -ne 0 ];then
-		/root/zywlmonitor.sh &
+		/root/zywlmonitor.sh $$ &
 	fi
 }
 
@@ -180,6 +176,7 @@ do
 		if [ ${monitor_close} -eq 0 ];then
 			monitor_close=1
 			monitor_thread_start
+			network_status=0
 		fi
 	fi
 
@@ -237,13 +234,9 @@ do
 			if [ $? -ne 0 ];then
 				if [ ${gsmserial_status} -eq 1 ];then
 					cat /dev/null > /var/log/ppplogfile
-					#systemctl stop zywlpppd
-					#sleep 2
 					${PPPD} call myapp &
 				else
-					if [ ${sim_not_insert} -eq 0 ];then
-						systemctl start zywlpppd
-					fi
+					systemctl start zywlpppd
 				fi
 			else
 				cat /var/log/ppplogfile | grep "Connect script failed" > /dev/null
@@ -258,27 +251,27 @@ do
 					if [ $? -ne 0 ];then
 						gsmserial_status=0
 						pppd_wait_count=$(expr ${pppd_wait_count} + 1)
+						pppd_not_have_online_func_count=$(expr ${pppd_not_have_online_func_count} + 1)
+					else
+						pppd_not_have_online_func_count=0
 					fi
 				else
 					gsmserial_status=0
 					pppd_wait_count=$(expr ${pppd_wait_count} + 1)
 				fi
-				if [ ${pppd_wait_count} -ge 3 ];then
+				if [ ${pppd_wait_count} -ge 2 ];then
 					pppd_wait_count=0
 					pppd_stop
-					if [ ${sim_not_insert} -eq 0 ];then
-						systemctl start zywlpppd
-					fi
-				fi	
+					systemctl start zywlpppd
+				fi
+				if [ ${pppd_not_have_online_func_count} -ge 3 ];then
+					systemctl stop zywlpppd
+					pppd_stop
+					sim_module_error=1
+				fi
 			fi
 		fi
 	fi
-
-#	feedcount=$(expr ${feedcount} + 1)
-#	if [ ${feedcount} -ge 5 ];then
-#		feedcount=0
-#		python3 ${WATCHDOGSCRIPT}
-#	fi  
 
 	if [ ${firmware_update_flag} -eq 1 ];then
 		if [ -f "${UPDATESTATUS}" ];then

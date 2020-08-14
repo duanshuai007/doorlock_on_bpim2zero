@@ -7,6 +7,7 @@ import sys
 import json
 from urllib import request, parse
 from tempfile import TemporaryFile
+import requests
 
 import LoggingQueue
 import checkfiletype as check
@@ -16,33 +17,21 @@ class wx_2vcode():
 
 	wx_token_url = "https://api.weixin.qq.com/cgi-bin/token"
 	wx_2vcode_url="https://api.weixin.qq.com/wxa/getwxacodeunlimit"
-	server_token_url = "https://acstest.iotwonderful.cn/access/token"
+	server_token_url = "https://acstest.iotwonderful.cn/api/access/token"
 
 	message = {
 		"scene" : "n=1",
 		"page" : "",
 		"width" : 280,
 	}
-	
-	get_token_msg = {
-		"grant_type" : "client_credential",
-		"appid" : "wxd459af37673abbd6", #wx appid
-		"secret" : "ee3b7bc1a4eed49b99e574794acaf51c", #wx secret
+
+	token_paramters = {
+		"device_sn" : "",
 	}
-
-#token_temp_file = None
-#	token_len = 0
-
-	def __init__(self):
+	
+	def __init__(self, device_sn):
 		self.logger = LoggingQueue.LoggingProducer().getlogger()
-		'''
-		self.token_temp_file = TemporaryFile()
-		wx_accesstoken = self.__get_token_from_server(self.server_token_url)
-		self.token_temp_file.seek(0)
-		bytetoken = bytes(wx_accesstoken, encoding='utf-8')
-		self.token_len = len(bytetoken)
-		self.token_temp_file.write(bytetoken)
-		'''
+		self.token_paramters["device_sn"] = device_sn
 
 #	def __get_accesstoken(self, url:str, msg:dict):
 #		try:
@@ -99,14 +88,13 @@ class wx_2vcode():
 #			return None
 	
 	#从正源物联服务器获取微信接口的token
-	def __get_token_from_server(self, url:str):
+	def __get_token_from_server(self, url:str, paramters:dict):
 		try:
-			ret = None
-			with request.urlopen(url) as resp:
-				page = resp.read()
-				if page is not None and page != False and page != "false" and page != "False":
-					ret = str(page, encoding="utf-8")
-			return ret
+			req = requests.post(url, params=paramters)
+			data = json.loads(req.text)
+			if data['status'] == 0:
+				return data['data']
+			return None
 		except Exception as e:
 			self.logger.error("__get_token_from_server error:{}".format(e))
 			return None
@@ -149,11 +137,13 @@ class wx_2vcode():
 		if ret == "retry":
 			ret = self.__get_ex_2vcode(self.wx_2vcode_url, self.message, self.wx_accesstoken)
 		'''
-		accesstoken = self.__get_token_from_server(self.server_token_url)
-		ret = self.__get_ex_2vcode_byservertoken(self.wx_2vcode_url, self.message, accesstoken)
-		return ret
+		accesstoken = self.__get_token_from_server(self.server_token_url, self.token_paramters)
+		if accesstoken is not None:
+			ret = self.__get_ex_2vcode_byservertoken(self.wx_2vcode_url, self.message, accesstoken)
+			return ret
+		return None
 
 if __name__ == "__main__":
-	ss = wx_2vcode()
+	ss = wx_2vcode("dsadsadas")
 	ret = ss.get_token()
 	print(ret)

@@ -157,16 +157,12 @@ class check_ttys2isok():
 		if self.soft_reset_gsm_module() == False:
 			os.kill(self.zywlstart_pid, self.gsm_sim_not_inserted_sig)
 			print("not find sim card,i will exit")
-			sim_card_not_insert = 1
+			exit(1)
 
 		while True:
 			try:
 				if self.exit_flag == True:
 					exit(1)
-
-				if sim_card_not_insert == 1:
-					time.sleep(2)
-					continue
 
 				if status == 0:	
 					ret = self.send_atcmd_and_wait_response("AT\r\n", 3)
@@ -194,13 +190,16 @@ class check_ttys2isok():
 						if "+CPIN: READY" in ret:
 							status = 3
 						elif "+CME ERROR: SIM busy":
-							time.sleep(2)
+							time.sleep(1)
 						elif "ERROR" in ret:
 							if "CFUN state is 0 or 4" in ret or "SIM not inserted" in ret:
-								status = 0
-								sim_card_not_insert = 1
-								os.kill(self.zywlstart_pid, self.gsm_sim_not_inserted_sig)
-								time.sleep(2)
+								if sim_card_not_insert == 0:
+									self.soft_reset_gsm_module()
+									sim_card_not_insert = 1
+									status = 0
+								else:
+									os.kill(self.zywlstart_pid, self.gsm_sim_not_inserted_sig)
+									time.sleep(2)
 				if status == 3:
 					ret = self.send_atcmd_and_wait_response("AT+CREG?\r\n", 3)
 					if "AT+CREG?" in ret:
