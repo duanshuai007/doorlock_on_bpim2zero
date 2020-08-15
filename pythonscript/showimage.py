@@ -14,9 +14,10 @@ def initialization():
 	spilcd_api.on()
 	screen = sc.screen()
 	screen.show_logo()
-	close_door_level = int(config.config("/root/config.ini").get("DOORLOCK", "CLOSE_LEVEL"))
+	cfg = config.config("/root/config.ini")
+	close_door_level = int(cfg.get("DOORLOCK", "CLOSE_LEVEL"))
 	spilcd_api.set_doorlock(close_door_level)
-	wdten = config.config("/root/config.ini").get("WATCHDOG", "ENABLE")
+	wdten = cfg.get("WATCHDOG", "ENABLE")
 	if wdten == "true":
 		wdtfile = "/home/watchdog/feed.py"
 		enablewdt = False
@@ -34,15 +35,15 @@ def initialization():
 			watchdog.open()
 
 #显示出错标志
-def show_error_icon():
+def display_error_image():
 	screen = sc.screen()
 	screen.show_erroricon()
 #显示设备logo
-def show_space():
+def display_logo_image():
 	screen = sc.screen()
 	screen.show_logo()
 #显示设备升级
-def show_update():
+def display_update_image():
 	screen = sc.screen()
 	screen.show_update()
 
@@ -51,15 +52,15 @@ if __name__ == "__main__":
 		print("showimage.py need 1 paramters")
 		exit(1)
 	
-	p = int(sys.argv[1])
+	p = sys.argv[1]
 	#print("p={}".format(p))
-	if p == 1:
+	if p == "init":
 		initialization()
-	elif p == 2:
-		show_error_icon()
-	elif p == 3:
-		show_space()
-	elif p == 4:
-		show_update()
+	elif p == "error":
+		display_error_image()
+	elif p == "logo":
+		display_logo_image()
+	elif p == "update":
+		display_update_image()
 	else:
 		pass

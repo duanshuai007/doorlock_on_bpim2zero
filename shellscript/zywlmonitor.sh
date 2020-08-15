@@ -14,29 +14,28 @@ SIGFIL="/root/signal.conf"
 CONFIG="/root/config.ini"
 
 start_pid=$1
-WIFI_CONFIG=$(cat ${CONFIG} | grep -w wifi | awk -F"=" '{print $2}')
-ETH_CONFIG=$(cat ${CONFIG} | grep  -w eth | awk -F"=" '{print $2}')
-SIM_CONFIG=$(cat ${CONFIG} | grep  -w sim | awk -F"=" '{print $2}')
-
 wifi_enable=0
 eth_enable=0
 sim_enable=0
 
-if [ "${WIFI_CONFIG}" == " enable" ];then
+cat ${CONFIG} | grep -w wifi | grep -w enable > /dev/null
+if [ $? -eq 0 ];then
 	echo "wifi enable" >> ${LOGFILE}
 	wifi_enable=1
 	WLAN_GOOD_SIG=$(cat ${SIGFIL} | grep -w WLANGOODSIG | awk -F"=" '{print $2}')
 	WLAN_BAD_SIG=$(cat ${SIGFIL} | grep -w WLANBADSIG | awk -F"=" '{print $2}')
 fi
 
-if [ "${ETH_CONFIG}" == " enable" ];then
+cat ${CONFIG} | grep -w eth | grep -w enable > /dev/null
+if [ $? -eq 0 ];then
 	echo "eth enable" >> ${LOGFILE}
 	eth_enable=1
 	ETH_GOOD_SIG=$(cat ${SIGFIL} | grep -w ETHGOODSIG | awk -F"=" '{print $2}')
 	ETH_BAD_SIG=$(cat ${SIGFIL} | grep -w ETHBADSIG | awk -F"=" '{print $2}')
 fi
 
-if [ "${SIM_CONFIG}" == " enable" ];then
+cat ${CONFIG} | grep  -w sim | grep -w enable > /dev/null
+if [ $? -eq 0 ];then
 	echo "ppp enable" >> ${LOGFILE}
 	sim_enable=1
 	PPP_GOOD_SIG=$(cat ${SIGFIL} | grep -w PPPGOODSIG | awk -F"=" '{print $2}')
@@ -48,7 +47,6 @@ NET_GOOD_SIG=$(cat ${SIGFIL} | grep -w NETWORKOK | awk -F"=" '{print $2}')
 
 count=0
 net_state=0
-fail_count=0
 default_net_is_ok=0
 network_status=0
 network_is_bad=0
@@ -61,7 +59,8 @@ get_gateway() {
 	net=$1
 	if [ -f /run/resolvconf/interface/${net}.dhclient ]
 	then	
-		iphead=$(ifconfig ${net} | grep "inet addr" | awk -F" " '{print $2}' | awk -F":" '{print $2}' | awk -F"." '{print $1"\."$2"\."$3"\."}')
+		#iphead=$(ifconfig ${net} | grep "inet addr" | awk -F" " '{print $2}' | awk -F":" '{print $2}' | awk -F"." '{print $1"\."$2"\."$3"\."}')
+		iphead=$(ip addr | grep ${net} | grep inet | awk -F" " '{print $2}' | awk -F"/" '{print $1}' | awk -F"." '{print $1"\."$2"\."$3"\."}')
 		if [ -n "iphead" ]
 		then 
 			gateway=$(cat /run/resolvconf/interface/${net}.dhclient | grep -w nameserver | grep "${iphead}" | awk -F" " '{print $2}')
@@ -73,8 +72,8 @@ get_gateway() {
 }
 
 setCurrentRoute() {
-	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 	echo $1 > /tmp/current_network
+	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 	echo "${GET_TIMESTAMP}:set $1 as current route" >> ${LOGFILE}
 	errcount=0
 	add_ppp_errcount=0
@@ -286,16 +285,15 @@ do
 		
 		net_state=$(get_netstatus ${CURRENT_NET})
 		if [ ${net_state} -eq 1 ];then
-			#equl 0 mean network is fine
-			fail_count=0
+			#equl 1 mean network is fine
 			if [ ${network_status} -eq 0 ];then
+				network_status=1
 				setCurrentRoute ${CURRENT_NET}
 				if [ ${network_is_bad} -eq 1 ]
 				then
-					python3 /root/showimage.py 3
+					python3 /root/showimage.py logo
 					network_is_bad=0
 				fi
-				network_status=1
 				kill -${NET_GOOD_SIG} ${start_pid}
 				echo ${CURRENT_NET} > ${CURRENTNET}
 			else
@@ -311,33 +309,26 @@ do
 				fi
 			fi
 		else
-			fail_count=$(expr ${fail_count} + 1)
-			if [ ${fail_count} -ge 3 ]
+			network_status=0
+			GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+			echo "${GET_TIMESTAMP}:network[${CURRENT_NET}] is bad" >> ${LOGFILE}
+			vail_net=$(get_vaild_network)
+			if [ -n "${vail_net}" ]
 			then
-				fail_count=0
-				GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-				echo "${GET_TIMESTAMP}:network[${CURRENT_NET}] is bad" >> ${LOGFILE}
-				vail_net=$(get_vaild_network)
-				if [ -n "${vail_net}" ]
-				then
-					#发现其他可用的网络，切换到可用网络
-					echo "${GET_TIMESTAMP}:find vaild network[${vail_net}], switch" >> ${LOGFILE}
-					CURRENT_NET=${vail_net}
-					#delete default route
-					net=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $8}')	
-					ip route | grep default > /dev/null
-					if [ $? -eq 0 ];then
-						route del default
-					fi
-				else
-					if [ ${network_is_bad} -eq 0 ];then
-						network_is_bad=1
-						echo "${GET_TIMESTAMP}:not find vaild network" >> ${LOGFILE}
-						python3 /root/showimage.py 2
-						if [ ${network_status} -eq 1 ];then
-							network_status=0
-						fi
-					fi
+				#发现其他可用的网络，切换到可用网络
+				echo "${GET_TIMESTAMP}:find vaild network[${vail_net}], switch" >> ${LOGFILE}
+				CURRENT_NET=${vail_net}
+				#delete default route
+				net=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $8}')	
+				ip route | grep default > /dev/null
+				if [ $? -eq 0 ];then
+					route del default
+				fi
+			else
+				if [ ${network_is_bad} -eq 0 ];then
+					network_is_bad=1
+					echo "${GET_TIMESTAMP}:not find vaild network" >> ${LOGFILE}
+					python3 /root/showimage.py error
 				fi
 			fi
 		fi

@@ -125,7 +125,7 @@ trap "mqtt_connect_status_is_bad" ${MQTT_CONN_BAD_SIGNAL}
 trap "mqtt_connect_status_is_ok" ${MQTT_CONN_OK_SIGNAL}
 trap "device_will_update" ${DEVICE_UPFATE_SIGNAL}
 
-python3 /root/showimage.py 1
+python3 /root/showimage.py init
 
 time_sync() {
 	ps -ef | grep ntpd | grep -v grep > /dev/null
@@ -295,8 +295,6 @@ do
 					ps -ef | grep update_firmware | grep -v grep > /dev/null
 					if [ $? -ne 0 ]
 					then
-						#feedcount=0
-						#python3 ${WATCHDOGSCRIPT}
 						/root/update_firmware.sh &
 					fi
 				else

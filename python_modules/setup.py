@@ -21,7 +21,8 @@ setup(
 			"generate_pillow_buffer/generate_pillow_buffer.py",
 			"downloadfile/downloadfile.py",
 			"checkfiletype/checkfiletype.py",
-			"uncompressfirmware/uncompressfirmware.py"
+			"uncompressfirmware/uncompressfirmware.py",
+			"checkserial/checkserial.py"
 		])
 	  )
 

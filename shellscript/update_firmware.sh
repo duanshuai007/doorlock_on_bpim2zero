@@ -58,7 +58,7 @@ resume_all_file() {
 }
 
 tarfile() {
-	python3 /root/showimage.py 4
+	python3 /root/showimage.py update
 	if [ -d "${DOWNLOADDIR}.back" ]
 	then 
 		rm -rf "${DOWNLOADDIR}.back"

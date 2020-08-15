@@ -6,7 +6,8 @@ EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
 pppd_start() {
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 	echo "${GET_TIMESTAMP}:zywl pppd service start!" >> /var/log/zywllog
-	python3 /root/check_tty.py
+	pid=$(ps -ef | grep zywlstart | grep -v grep | awk -F" " '{print $2}')
+	python3 /root/check_tty.py ${pid}
 }
 
 pppd_stop() {
