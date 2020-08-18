@@ -10,7 +10,6 @@ import paho.mqtt.client as mqtt
 import queue
 import threading
 import time
-import config
 import json
 
 class mqtt_client(mqtt.Client):

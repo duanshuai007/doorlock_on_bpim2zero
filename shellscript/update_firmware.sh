@@ -179,6 +179,9 @@ update_clear() {
 	if [ ! -f /usr/bin/zywlmqtt ];then
 		ln -s /root/watchmqtt.sh /usr/bin/zywlmqtt
 	fi
+	if [ ! -f /usr/bin/zywlwdt ];then
+		ln -s /root/watchwdt.sh /usr/bin/zywlwdt
+	fi
 
 	/root/set_config.sh "version " " ${version}"
 	/root/set_config.sh "VERSION" "${version}"

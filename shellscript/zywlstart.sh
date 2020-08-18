@@ -13,13 +13,15 @@ CONFIG="/root/config.ini"
 
 EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
 NET_GOOD_SIGNAL=$(cat ${SIGFIL} | grep -w NETWORKOK | awk -F"=" '{print $2}')
+FEEDWDT_SIGNAL=$(cat ${SIGFIL} | grep -w FEEDWDT | awk -F"=" '{print $2}')
 
-GSMSERIAL_SIGNAL=$(cat ${CONFIG} | grep -w gsmserialok | awk -F"=" '{print $2}')
-GSMSIMNOTINSERTED_SIGNAL=$(cat ${CONFIG} | grep -w gsmsimnotinserted | awk -F"=" '{print $2}')
-GSMSIMMODULEERROR_SIGNAL=$(cat ${CONFIG} | grep -w gsmsimmoduleerror | awk -F"=" '{print $2}')
-MQTT_CONN_OK_SIGNAL=$(cat ${CONFIG} | grep -w mqttconnok | awk -F"=" '{print $2}')
-MQTT_CONN_BAD_SIGNAL=$(cat ${CONFIG} | grep -w mqttconnbad | awk -F"=" '{print $2}')
-DEVICE_UPFATE_SIGNAL=$(cat ${CONFIG} | grep -w deviceupdate | awk -F"=" '{print $2}')
+GSMSERIAL_SIGNAL=$(cat ${CONFIG} | grep -w gsmserialok | awk -F" = " '{print $2}')
+GSMSIMNOTINSERTED_SIGNAL=$(cat ${CONFIG} | grep -w gsmsimnotinserted | awk -F" = " '{print $2}')
+GSMSIMMODULEERROR_SIGNAL=$(cat ${CONFIG} | grep -w gsmsimmoduleerror | awk -F" = " '{print $2}')
+MQTT_CONN_OK_SIGNAL=$(cat ${CONFIG} | grep -w mqttconnok | awk -F" = " '{print $2}')
+MQTT_CONN_BAD_SIGNAL=$(cat ${CONFIG} | grep -w mqttconnbad | awk -F" = " '{print $2}')
+DEVICE_UPFATE_SIGNAL=$(cat ${CONFIG} | grep -w deviceupdate | awk -F" = " '{print $2}')
+WDT_ENABLE=$(cat ${CONFIG} | grep -w watchdog | awk -F" = " '{print $2}')
 
 CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
 echo "${CUR_TIME}:$0 start work!" >> ${LOG_FILE}
@@ -68,6 +70,7 @@ monitor_close=0
 mqtt_run_status=0
 firmware_update_flag=0
 pppd_not_have_online_func_count=0
+watchdog_count=0
 exit_flag=0
 
 thread_exit() {
@@ -151,6 +154,19 @@ monitor_thread_start(){
 	fi
 }
 
+feed_watchdog(){
+	pid=$(cat /tmp/zywlwdt.pid)
+	if [ -n "${pid}" ];then
+		kill -${FEEDWDT_SIGNAL} ${pid}
+	else
+		pid=$(ps -ef | grep feed | grep -v grep | awk -F" " '{print $2}')
+		if [ -n "$pid" ];then
+			echo ${pid} > /tmp/zywlwdt.pid
+			kill -${FEEDWDT_SIGNAL} ${pid}
+		fi
+	fi	
+}
+
 if [ -f "${UPDATE_END}" ];then
 	network_status=1
 fi
@@ -159,12 +175,27 @@ if [ -f "${UPDATESTATUS}" ];then
 	firmware_update_flag=1
 fi
 
+if [ "${WDT_ENABLE}" == "enable" ];then
+	systemctl start zywlwdt
+fi
+
 while true
 do
 	sleep 1
 
 	if [ ${exit_flag} -eq 1 ];then
+		if [ "${WDT_ENABLE}" == "enable" ];then
+			systemctl stop zywlwdt
+		fi
 		exit
+	fi
+
+	if [ "${WDT_ENABLE}" == "enable" ];then
+		watchdog_count=$(expr ${watchdog_count} + 1)
+		if [ ${watchdog_count} -ge 10 ];then
+			watchdog_count=0
+			feed_watchdog
+		fi
 	fi
 
 	if [ ${mqtt_conn_status} -eq 1 ];then
@@ -275,6 +306,9 @@ do
 
 	if [ ${firmware_update_flag} -eq 1 ];then
 		if [ -f "${UPDATESTATUS}" ];then
+			if [ "${WDT_ENABLE}" == "enable" ];then
+				systemctl stop zywlwdt
+			fi
 			sta=$(cat ${UPDATESTATUS} | awk -F":" '{print $1}')
 			if [ -n "${sta}" ];then
 				if [ "${sta}" == "done" ];then
@@ -311,6 +345,9 @@ do
 #			for var in $(systemctl list-unit-files | grep \.service | awk '{print $1}')
 #				ret=$(systemctl status $var 2>&1 | grep "changed on disk")
 		else
+			if [ "${WDT_ENABLE}" == "enable" ];then
+				systemctl start zywlwdt
+			fi
 			firmware_update_flag=0
 		fi
 	fi
@@ -318,7 +355,9 @@ do
 	if [ ${network_status} -eq 1 ];then
 		if [ ${mqtt_run_status} -eq 0 ];then
 			mqtt_run_status=1
+			feed_watchdog
 			/root/update_time.sh
+			feed_watchdog
 			systemctl start zywlmqtt
 		fi
 	else

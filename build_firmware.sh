@@ -109,6 +109,8 @@ cp zywlpppd.service ${target}/systemd
 echo "systemd/zywlpppd.service:/lib/systemd/system/zywlpppd.service" >> ${BUILDFILE}
 cp zywlmqtt.service ${target}/systemd
 echo "systemd/zywlmqtt.service:/lib/systemd/system/zywlmqtt.service" >> ${BUILDFILE}
+cp zywlwdt.service ${target}/systemd
+echo "systemd/zywlwdt.service:/lib/systemd/system/zywlwdt.service" >> ${BUILDFILE}
 
 cp frp/frpc.ini	${target}/frp
 echo "frp/frpc.ini:/etc/frp/frpc.ini" >> ${BUILDFILE}
@@ -166,9 +168,9 @@ do
 done
 cd ${sourcedir}
 
-wlan_enable=$(cat config.ini | grep -w wifi | awk -F"=" '{print $2}')
-eth_enable=$(cat config.ini | grep -w eth | awk -F"=" '{print $2}')
-sim_enable=$(cat config.ini | grep -w sim | awk -F"=" '{print $2}')
+wlan_enable=$(cat config.ini | grep -w wifi | awk -F" = " '{print $2}')
+eth_enable=$(cat config.ini | grep -w eth | awk -F" = " '{print $2}')
+sim_enable=$(cat config.ini | grep -w sim | awk -F" = " '{print $2}')
 read -p "echo do you sure wlan:${wlan_enable} eth:${eth_enable} ppp=${sim_enable}?[Yy/Nn]: " yes 
 if [ -n "${yes}" ]
 then
@@ -182,11 +184,11 @@ else
 	exit
 fi
 
-if [ "${wlan_enable}" == " enable" ];then
+if [ "${wlan_enable}" == "enable" ];then
 	./set_current_wifi.sh choice eth0
-elif [ "${eth_enable}" == " enable" ];then
+elif [ "${eth_enable}" == "enable" ];then
 	./set_current_wifi.sh choice wlan0
-elif [ "${sim_enable}" == " enable" ];then
+elif [ "${sim_enable}" == "enable" ];then
 	./set_current_wifi.sh choice ppp0
 else
 	echo "至少要有一个可用的网络,请修改config.ini文件的对应选项"

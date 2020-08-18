@@ -44,7 +44,23 @@ def testTimer():
 	s1.setDaemon(False)
 	s1.start()
 
+def test_whileTimer():
+	while True:
+		s = Timer(3, testTask)
+		s.setDaemon(False)
+		s.start()
+		time.sleep(1)
+		if s.isAlive() == True:
+			print("timer alive")
+		s.cancel()
+		s.join()
+		if s.isAlive() == False:
+			print("timer dead")
+	
+		print("dsadsadsadas")
+
 if __name__ == "__main__":
 #t = test_queue()
 #	t.run()
-	testTimer()
+#	testTimer()
+	test_whileTimer()

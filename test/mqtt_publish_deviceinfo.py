@@ -11,7 +11,6 @@ import queue
 import threading
 import time
 import json
-import message_struct as ms
 
 class mqtt_client(mqtt.Client):
 

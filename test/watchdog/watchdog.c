@@ -9,14 +9,10 @@
 #include <linux/watchdog.h>
 #include "Python.h"
 
-/*
- *	set watchdog timeout
- *	can set min:0.5s max:16s
- */
 static PyObject * watchdog_set_timeout(PyObject *self,PyObject *args)
 {
 	int fd;
-	int val;
+	int val= 45;
 	PyObject *value = NULL;
 
 	fd = open("/dev/watchdog", O_RDWR);
@@ -27,9 +23,13 @@ static PyObject * watchdog_set_timeout(PyObject *self,PyObject *args)
 		Py_RETURN_FALSE;
 	}
 
-	val = (int)PyLong_AsLong(value);
+	//val = (int)PyLong_AsLong(value);
 
-	ioctl(fd, WDIOC_SETTIMEOUT, &val);
+	if (ioctl(fd, WDIOC_SETTIMEOUT, &val) != 0) {
+		printf("set watchdog timeout error!\n");
+		close(fd);
+		Py_RETURN_FALSE;
+	}
 	printf("set watchdog timeout:%d\n", val);
 
 	close(fd);
@@ -45,7 +45,11 @@ static PyObject * watchdog_get_timeout(PyObject *self,PyObject *args)
 	if (fd < 0)
 		Py_RETURN_FALSE;
 
-	ioctl(fd, WDIOC_GETTIMEOUT, &val);
+	if (ioctl(fd, WDIOC_GETTIMEOUT, &val) != 0) {
+		printf("get watchdog timeout error\n");
+		close(fd);
+		Py_RETURN_FALSE;
+	}
 	printf("get watchdog timeout:%d\n", val);
 
 	close(fd);

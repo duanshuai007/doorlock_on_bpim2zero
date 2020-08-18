@@ -35,6 +35,7 @@ class mqtt_client(mqtt.Client):
 	status = None
 	exit_flag = False
 	update_flag = False
+	close_door_timer = None
 	
 	update_status_file = "/home/ubuntu/update_status"
 	update_end_file = "/home/ubuntu/update_end"
@@ -188,7 +189,7 @@ class mqtt_client(mqtt.Client):
 	def setsubscribe(self, topic=None, qos=0):
 		self.sub_topic_list.append((topic, qos))
 
-	def timer_for_doorlockctl(self):
+	def __timer_for_doorlockctl(self):
 		spilcd_api.set_doorlock(self.DOORLOCK_LEVEL)
 		self.logger.info("door lock close!")
 
@@ -211,9 +212,13 @@ class mqtt_client(mqtt.Client):
 			except Exception as e:
 				self.logger.error("publish_threading error:{}".format(e))
 
+	def __start_door_close_timer(self, wait:int):
+		self.close_door_timer = Timer(wait, self.__timer_for_doorlockctl)
+		self.close_door_timer.setDaemon(False)
+		self.close_door_timer.start()
+
 	def do_hardware_work(self):
 		DEVICE_UPDATE_SIG = int(config.config("/root/config.ini").get("SIGNAL", "DEVICEUPDATE"))
-		DOORLOCK_TIME = int(config.config("/root/config.ini").get("DOORLOCK", "OPEN_TIME"))
 		self.DOORLOCK_LEVEL = int(config.config("/root/config.ini").get("DOORLOCK", "CLOSE_LEVEL"))
 		spilcd_api.on()
 		while True:
@@ -226,9 +231,12 @@ class mqtt_client(mqtt.Client):
 					if json_msg["action"] == 1 or json_msg["action"] == "1":
 						#高电平门锁断电，能够打开
 						gpio_val = 1 - self.DOORLOCK_LEVEL
-						close_door_timer = Timer(DOORLOCK_TIME, self.timer_for_doorlockctl)
-						close_door_timer.setDaemon(False)
-						close_door_timer.start()
+						DOORLOCK_TIME = int(config.config("/root/config.ini").get("DOORLOCK", "OPEN_TIME"))
+						if self.close_door_timer is not None:
+							if self.close_door_timer.isAlive() == True:
+								self.close_door_timer.cancel()
+								self.close_door_timer.join()
+						self.__start_door_close_timer(DOORLOCK_TIME)
 					else:
 						#低电平门锁给电，不能打开
 						gpio_val = self.DOORLOCK_LEVEL
@@ -397,7 +405,7 @@ class mqtt_client(mqtt.Client):
 		publish_thread.setDaemon(False)
 		publish_thread.start()
 
-	def exit_handler(self):
+	def exit_handler(self, signum, frame):
 		self.exit_flag = True
 
 	def run_mqtt(self, host=None, port=1883, keepalive=60):

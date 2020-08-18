@@ -1,0 +1,13 @@
+[Unit]
+Description=zywl watchdog Service
+After=network.target
+
+[Service]
+Type=simple
+RestartSec=5
+ExecStart=/usr/bin/zywlwdt start
+ExecStop=/usr/bin/zywlwdt stop
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
