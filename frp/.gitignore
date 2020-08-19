@@ -1,1 +1,4 @@
-frpc.ini
+*.ini
+frpc
+systemd
+
