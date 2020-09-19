@@ -1,4 +1,5 @@
-*.ini
+frpc.ini
+frpc_full.ini
 frpc
 systemd
-
+LICENSE

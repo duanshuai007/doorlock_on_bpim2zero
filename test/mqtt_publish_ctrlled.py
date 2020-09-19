@@ -113,13 +113,14 @@ class mqtt_client(mqtt.Client):
 					if info.rc == mqtt.MQTT_ERR_SUCCESS:
 						#self.delete_list.append({"mid":info.mid, "msg":msg})
 						info.wait_for_publish()
+						break
 				time.sleep(0.1)
 			except Exception as e:
 				print("select error:{}".format(e))  
 
 	def start_publish_thread(self):    
 		publish_thread = threading.Thread(target = self.do_select)
-		publish_thread.setDaemon(False)
+		publish_thread.setDaemon(True)
 		publish_thread.start()
 
 	def run(self, host=None, port=1883, keepalive=60):

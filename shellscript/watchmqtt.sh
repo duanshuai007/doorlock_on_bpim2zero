@@ -16,10 +16,17 @@ mqtt_start() {
 mqtt_stop() {
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 	echo "${GET_TIMESTAMP}:zywl mqtt service stop!" >> /var/log/zywllog
-	pid=$(ps -ef | grep mqtt_client | grep -v grep | awk -F" " '{print $2}')
-	kill -${EXIT_SIGNAL} ${pid}
-	sleep 1
-	kill -9 ${pid}
+	while true
+	do
+		pid=$(ps -ef | grep mqtt_client | grep -v grep | awk -F" " '{print $2}')
+		if [ -n "${pid}" ];then
+			kill -${EXIT_SIGNAL} ${pid}
+			sleep 1
+			kill -9 ${pid}
+		else
+			break
+		fi
+	done
 }
 
 case $1 in 

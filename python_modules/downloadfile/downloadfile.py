@@ -20,7 +20,7 @@ def callback(a, b, c):
 	global filesize
 	filesize = c
 
-def download(url:str, filename:str)->bool:
+def download(url:str, filename:str)->int:
 	try:
 		global log
 		global filesize
@@ -29,18 +29,18 @@ def download(url:str, filename:str)->bool:
 			r = check.get_filetype(filename)
 			if r is None:
 				log.error("download file type error.")
-				return False
+				return 1
 			size = os.path.getsize(filename)
 			if size == filesize:
-				return True
+				return 0
 			else:
 				log.error("download file size({}) error.".format(size))
-				return False
+				return 2
 		else:
-			return False
+			return 3
 	except Exception as e:
 		log.error("download failed, url:{} filename:{} error:{}".format(url, filename, e))
-		return False
+		return 4
 
 def __get_updatefirmware_token():
 	try:

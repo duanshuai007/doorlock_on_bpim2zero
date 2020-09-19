@@ -8,7 +8,7 @@
 #wlan0通过dhclient -r,dhclient wlan0来获取新的路由信息
 #ppp0通过route add default ppp0来设置路由信息
 NETFILE="/root/net.conf"
-LOGFILE="/var/log/monitor.log"
+LOGFILE="/var/log/zywllog"
 CURRENTNET="/tmp/current_network"
 SIGFIL="/root/signal.conf"
 CONFIG="/root/config.ini"
@@ -50,6 +50,7 @@ net_state=0
 default_net_is_ok=0
 network_status=0
 network_is_bad=0
+network_count=0
 eth0_network_status=0
 wlan0_network_status=0
 ppp0_network_status=0
@@ -71,8 +72,13 @@ get_gateway() {
 	echo ""
 }
 
+get_ip() {
+	echo $(ip ad | grep $1 | grep inet | awk -F" " '{print $2}' | awk -F"/" '{print $1}')
+}
+
 setCurrentRoute() {
-	echo $1 > /tmp/current_network
+	ip=$(get_ip $1)
+	echo $1:${ip} > ${CURRENTNET}
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 	echo "${GET_TIMESTAMP}:set $1 as current route" >> ${LOGFILE}
 	errcount=0
@@ -82,8 +88,10 @@ setCurrentRoute() {
 		route del default
 		case $1 in
 			"wlan0")
-				gw=$(get_gateway wlan0)
-				route add default gw ${gw} wlan0
+				;&
+			"eth0")
+				gw=$(get_gateway $1)
+				route add default gw ${gw} $1
 				;;
 			"ppp0")
 				route add default ppp0
@@ -94,12 +102,6 @@ setCurrentRoute() {
 						break
 					fi
 				fi
-				;;
-			"eth0")
-				#only_one_dhclient eth0
-				#delete_iprule ${ETH0_RULE}	#save this because i can't sure the default route 是否需要删除iprule
-				gw=$(get_gateway eth0)
-				route add default gw ${gw} eth0
 				;;
 			*)
 				echo "${GET_TIMESTAMP}:error paramters" >> ${LOGFILE}
@@ -117,7 +119,7 @@ setCurrentRoute() {
 		fi
 		sleep 0.5
 	done
-	echo "nameserver 114.114.114.114" > /etc/resolv.conf
+#echo "nameserver 114.114.114.114" > /etc/resolv.conf
 }
 
 wlan_monitor_thread_status=0
@@ -242,6 +244,7 @@ get_netstatus() {
 		netsta=${ppp0_network_status}
 		;;
 		*)
+		netsta=0
 		;;
 	esac
 	
@@ -295,7 +298,6 @@ do
 					network_is_bad=0
 				fi
 				kill -${NET_GOOD_SIG} ${start_pid}
-				echo ${CURRENT_NET} > ${CURRENTNET}
 			else
 				#用来处理默认路由因为某种情况被错误的删除
 				#net=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $8}')
@@ -305,7 +307,6 @@ do
 					#如果没能发现默认的路由信息，则添加默认路由
 					setCurrentRoute ${CURRENT_NET}
 					kill -${NET_GOOD_SIG} ${start_pid}
-					echo ${CURRENT_NET} > ${CURRENTNET}
 				fi
 			fi
 		else
@@ -315,20 +316,25 @@ do
 			vail_net=$(get_vaild_network)
 			if [ -n "${vail_net}" ]
 			then
+				network_count=0
 				#发现其他可用的网络，切换到可用网络
 				echo "${GET_TIMESTAMP}:find vaild network[${vail_net}], switch" >> ${LOGFILE}
 				CURRENT_NET=${vail_net}
 				#delete default route
-				net=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $8}')	
+				#net=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $8}')	
 				ip route | grep default > /dev/null
 				if [ $? -eq 0 ];then
 					route del default
 				fi
 			else
-				if [ ${network_is_bad} -eq 0 ];then
-					network_is_bad=1
-					echo "${GET_TIMESTAMP}:not find vaild network" >> ${LOGFILE}
-					python3 /root/showimage.py error
+				network_count=$(expr ${network_count} + 1)
+				if [ ${network_count} -ge 10 ];then
+					network_count=0
+					if [ ${network_is_bad} -eq 0 ];then
+						network_is_bad=1
+						echo "${GET_TIMESTAMP}:not find vaild network" >> ${LOGFILE}
+						python3 /root/showimage.py error
+					fi
 				fi
 			fi
 		fi

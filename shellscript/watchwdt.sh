@@ -10,10 +10,15 @@ wdt_start(){
 }
 
 wdt_stop(){
-	pid=$(ps -ef | grep feed | grep -v grep | awk -F" " '{print $2}')
-	if [ -n "${pid}" ];then
-		kill -${STOPWDT_SIGNAL} ${pid}
-	fi
+	while true
+	do
+		pid=$(ps -ef | grep feed | grep -v grep | awk -F" " '{print $2}')
+		if [ -n "${pid}" ];then
+			kill -${STOPWDT_SIGNAL} ${pid}
+		else
+			break
+		fi
+	done
 	rm /tmp/zywlwdt.pid
 }
 

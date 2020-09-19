@@ -63,15 +63,39 @@ class mqtt_client(mqtt.Client):
 	msg:	an instance of MQTTMessage. This is a class with members ``topic``, ``payload``, ``qos``, ``retain``.
 	'''
 	def on_message(self, mqttc, obj, msg):
-		print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ":on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+		#print(time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()) + ":on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 		try:
-			if msg.retain == 0:
-				#print("retain = Flase")
-				pass
+			msgstr = str(msg.payload, encoding='utf-8')
+			msgjson = json.loads(msgstr)
+			if msg.topic == "/qr_response":
+				if msgjson["status"] == 1:
+					print(time.strftime("[%m-%d %H:%M:%S]", time.localtime()) + ":device:[{}] qrcode contrl success".format(msgjson["device_sn"]))
+					pass
+				else:
+					print(time.strftime("[%m-%d %H:%M:%S]", time.localtime()) + ":device:[{}] qrcode contrl error".format(msgjson["device_sn"]))
+			elif msg.topic == "/door_response":
+				if msgjson["result"] == 1:
+					#print(time.strftime("[%m-%d %H:%M:%S]", time.localtime()) + ":device:[{}] open door success".format(msgjson["device_sn"]))
+					pass
+				else:
+					print(time.strftime("[%m-%d %H:%M:%S]", time.localtime()) + ":device:[{}] open door failed".format(msgjson["device_sn"]))
+			elif msg.topic.startswith("/status/"):
+				if msgjson["status"] == 0:
+					print(time.strftime("[%m-%d %H:%M:%S]", time.localtime()) + ":device:[{}] offline".format(msg.topic[8:]))
+				else:
+					print(time.strftime("[%m-%d %H:%M:%S]", time.localtime()) + ":device:[{}] online".format(msg.topic[8:]))
+			elif msg.topic == "/test/device_info_resp":
+				print(time.strftime("[%m-%d %H:%M:%S]", time.localtime()) + ":device[{}] current:{} ip:{} doorlock:{}".format(msgjson["device_sn"], msgjson["current"], msgjson["ip"], msgjson["doorlock"]))
+			elif msg.topic == "/ssh_enable_resp":
+				if msgjson["status"] == "open":
+					print(time.strftime("[%m-%d %H:%M:%S]", time.localtime()) + ":device[{}] open frpc service".format(msgjson["device_sn"]))
+				else:
+					print(time.strftime("[%m-%d %H:%M:%S]", time.localtime()) + ":device[{}] close frpc service".format(msgjson["device_sn"]))
+			elif msg.topic == "/update_resp":
+				print(time.strftime("[%m-%d %H:%M:%S]", time.localtime()) + ":device[{}]:update status[{}] version[{}]".format(msgjson["device_sn"], msgjson["firmware"]["status"], msgjson["firmware"]["version"]))
 			else:
-				if obj == True:
-					print("Clearing topic " + msg.topic)
-				#print("retain = True")
+				print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ":on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+					
 		except Exception as e:
 			print("on message exception:{}".format(e))
 

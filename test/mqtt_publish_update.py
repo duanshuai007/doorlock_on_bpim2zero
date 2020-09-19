@@ -11,6 +11,7 @@ import queue
 import threading
 import time
 import json
+import hashlib
 
 class mqtt_client(mqtt.Client):
 
@@ -128,7 +129,7 @@ class mqtt_client(mqtt.Client):
 
 	def start_publish_thread(self):		
 		publish_thread = threading.Thread(target = self.do_select)
-		publish_thread.setDaemon(False)
+		publish_thread.setDaemon(True)
 		publish_thread.start()
 			
 	def run(self, host=None, port=1883, keepalive=60):
@@ -151,15 +152,23 @@ if __name__ == "__main__":
 	protocol=MQTTv311 or MQTTv31
 	transport="tcp" or "websockets"
 	'''
-	if len(sys.argv) < 5:
+	if len(sys.argv) < 4:
 		print("please input device_sn and version message")
 		print("like this:")
 		print("python3 xxx.py [device sn] [download] [md5] [version]")
 		exit(1)
 	device_id = sys.argv[1]
 	downloadurl = sys.argv[2]
-	md5 = sys.argv[3]
-	version = sys.argv[4]
+#md5 = sys.argv[3]
+	version = sys.argv[3]
+
+	m = hashlib.md5()
+	with open("../firmware_{}.des3.tar.gz".format(version), 'rb') as f:
+		msg = 's'
+		while msg != b'':
+			msg = f.read(1024)
+			m.update(msg)
+	md5 = m.hexdigest()
 
 	host = "mqtt.iotwonderful.cn"
 	port = 8883

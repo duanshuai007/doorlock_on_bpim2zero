@@ -56,6 +56,7 @@ class mqtt_client(mqtt.Client):
 		}
 		if self.publish_queue is not None:
 			sendmsg = json.dumps(deviceinfo)
+			print(sendmsg)
 			self.publish_queue.put({"topic":"/test/device_info", "payload":sendmsg, 'qos':2, 'retain':False})
 		
 
@@ -128,15 +129,15 @@ class mqtt_client(mqtt.Client):
 
 	def start_publish_thread(self):		
 		publish_thread = threading.Thread(target = self.do_select)
-		publish_thread.setDaemon(False)
+		publish_thread.setDaemon(True)
 		publish_thread.start()
 			
 	def run(self, host=None, port=1883, keepalive=60):
 		self.reconnect_delay_set(min_delay=10, max_delay=120)
 
 		self.username_pw_set(self.username, self.password)
-		self.tls_set(ca_certs=self.cafile, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_1)
-		self.tls_insecure_set(False)
+		self.tls_set(ca_certs=self.cafile, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2)
+		self.tls_insecure_set(True)
 		
 		self.connect(host, port, keepalive)
 		self.subscribe(self.sub_topic_list)

@@ -13,7 +13,10 @@ import config
 def initialization():
 	spilcd_api.on()
 	screen = sc.screen()
-	screen.show_logo()
+	if os.path.exists("/tmp/wx2vcode.jpg"):
+		screen.show_image("/tmp/wx2vcode.jpg")
+	else:
+		screen.show_logo()
 	cfg = config.config("/root/config.ini")
 	close_door_level = int(cfg.get("DOORLOCK", "CLOSE_LEVEL"))
 	spilcd_api.set_doorlock(close_door_level)

@@ -10,7 +10,6 @@ import paho.mqtt.client as mqtt
 import queue
 import threading
 import time
-import config
 import json
 
 class mqtt_client(mqtt.Client):
@@ -125,7 +124,7 @@ class mqtt_client(mqtt.Client):
 
 	def start_publish_thread(self):		
 		publish_thread = threading.Thread(target = self.do_select)
-		publish_thread.setDaemon(False)
+		publish_thread.setDaemon(True)
 		publish_thread.start()
 
 	def run(self, host=None, port=1883, keepalive=60):

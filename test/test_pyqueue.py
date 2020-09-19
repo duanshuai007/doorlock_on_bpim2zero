@@ -21,11 +21,11 @@ class test_queue():
 	def run(self):
 		self.consumer = queue.Queue(32)
 		t = threading.Thread(target = self.ttt)	
-		t.setDaemon(False)
+		t.setDaemon(True)
 		t.start()
 		
 		w = threading.Thread(target = self.www)
-		w.setDaemon(False)
+		w.setDaemon(True)
 		w.start()
 	
 def testTask():
@@ -52,7 +52,8 @@ def test_whileTimer():
 		time.sleep(1)
 		if s.isAlive() == True:
 			print("timer alive")
-		s.cancel()
+		#s.cancel()
+		print("join")
 		s.join()
 		if s.isAlive() == False:
 			print("timer dead")
@@ -60,7 +61,10 @@ def test_whileTimer():
 		print("dsadsadsadas")
 
 if __name__ == "__main__":
-#t = test_queue()
-#	t.run()
+	t = test_queue()
+	t.run()
+	while True:
+		time.sleep(1)
+		print("allllllllllllllllllllll")
 #	testTimer()
-	test_whileTimer()
+#test_whileTimer()

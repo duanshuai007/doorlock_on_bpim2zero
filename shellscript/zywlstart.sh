@@ -4,7 +4,7 @@
 
 PPPD=$(which pppd)
 
-LOG_FILE="/var/log/zywllog"
+LOGFILE="/var/log/zywllog"
 UPDATESTATUS="/home/ubuntu/update_status"
 UPDATE_END="/home/ubuntu/update_end"
 MACFILE="/tmp/eth0macaddr"
@@ -20,11 +20,12 @@ GSMSIMNOTINSERTED_SIGNAL=$(cat ${CONFIG} | grep -w gsmsimnotinserted | awk -F" =
 GSMSIMMODULEERROR_SIGNAL=$(cat ${CONFIG} | grep -w gsmsimmoduleerror | awk -F" = " '{print $2}')
 MQTT_CONN_OK_SIGNAL=$(cat ${CONFIG} | grep -w mqttconnok | awk -F" = " '{print $2}')
 MQTT_CONN_BAD_SIGNAL=$(cat ${CONFIG} | grep -w mqttconnbad | awk -F" = " '{print $2}')
+MQTT_STATUS_OK_SIGNAL=$(cat ${CONFIG} | grep -w mqttstatusok | awk -F" = " '{print $2}')
 DEVICE_UPFATE_SIGNAL=$(cat ${CONFIG} | grep -w deviceupdate | awk -F" = " '{print $2}')
 WDT_ENABLE=$(cat ${CONFIG} | grep -w watchdog | awk -F" = " '{print $2}')
 
-CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-echo "${CUR_TIME}:$0 start work!" >> ${LOG_FILE}
+GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+echo "${GET_TIMESTAMP}:zywlstart script start!" >> ${LOGFILE}
 
 /bin/dmesg -n 1
 
@@ -33,15 +34,20 @@ echo "${CUR_TIME}:$0 start work!" >> ${LOG_FILE}
 
 cp /root/ntp.conf /etc/
 
-service frpc stop
+#service frpc stop
 #timedatectl set-ntp no
 #timedatectl
-systemctl stop systemd-timesyncd
-systemctl disable systemd-timesyncd
+#systemctl stop systemd-timesyncd
+#systemctl disable systemd-timesyncd
 
-cat /dev/null > /tmp/network_timestamp
-cat /dev/null > ${LOG_FILE}
+#cat /dev/null > /tmp/network_timestamp
+#cat /dev/null > ${LOGFILE}
 
+#set default dns
+cat /etc/network/interfaces | grep -w "^dns-nameservers" > /dev/null
+if [ $? -ne 0 ];then
+	echo "dns-nameservers 114.114.114.114" >> /etc/network/interfaces
+fi
 
 eth0macaddr=$(ifconfig eth0 | grep HWaddr | awk -F" " '{print $5}' | awk -F":" '{print $1$2$3$4$5$6}')
 echo ${eth0macaddr} > ${MACFILE}
@@ -57,20 +63,16 @@ pppd_stop() {
 
 wpa_connect_flag=0
 wpa_start_error=0
-check_pppd_count=0
-check_wpa_count=0
-check_temp_time=0
 pppd_wait_count=0
 gsmserial_status=0
 network_status=0
 sim_module_error=0
-check_pppd_cycle=0
-mqtt_conn_status=0
+#mqtt_conn_status=0
 monitor_close=0
 mqtt_run_status=0
 firmware_update_flag=0
 pppd_not_have_online_func_count=0
-watchdog_count=0
+mqtt_last_timestamp=0
 exit_flag=0
 
 thread_exit() {
@@ -78,13 +80,13 @@ thread_exit() {
 }
 
 network_status_is_ok(){
-	echo "network is ok" >> ${LOG_FILE}
+	echo "network is ok" >> ${LOGFILE}
 	network_status=1
 }
 
 #sim module运行正常,可以启动pppd程序
 gsmserial_status_is_ok() {
-	echo "gsm serial is ok" >> ${LOG_FILE}
+	echo "gsm serial is ok" >> ${LOGFILE}
 	gsmserial_status=1
 	sim_module_error=0
 	systemctl stop zywlpppd
@@ -92,7 +94,7 @@ gsmserial_status_is_ok() {
 #sim module检测到没有sim card
 gsm_sim_not_inserted() {
 	systemctl stop zywlpppd
-	echo "sim card not inserted" >> ${LOG_FILE}
+	echo "sim card not inserted" >> ${LOGFILE}
 	sim_module_error=1
 	gsmserial_status=0
 	pppd_stop
@@ -100,23 +102,33 @@ gsm_sim_not_inserted() {
 #sim module检测到有sim卡，但是sim卡不能注册到网络
 gsm_sim_module_error() {
 	systemctl stop zywlpppd
-	echo "sim card can't register!" >> ${LOG_FILE}
+	echo "sim card can't register!" >> ${LOGFILE}
 	sim_module_error=1
 	gsmserial_status=0
 	pppd_stop
 }
 
 mqtt_connect_status_is_bad(){
-	mqtt_conn_status=0
-	echo "mqtt connect bad" >> ${LOG_FILE}
+#	mqtt_conn_status=0
+	network_status=0
+	systemctl restart zywlnet
+	CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+	echo "${CUR_TIME}:mqtt connect bad" >> ${LOGFILE}
 }
 mqtt_connect_status_is_ok(){
-	mqtt_conn_status=1
-	echo "mqtt connect ok" >> ${LOG_FILE}
+#mqtt_conn_status=1
+	systemctl stop zywlnet
+	mqtt_last_timestamp=$(get_system_timestamp)
+	CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+	echo "${CUR_TIME}:mqtt connect ok" >> ${LOGFILE}
+}
+mqtt_status_is_ok(){
+	mqtt_last_timestamp=$(get_system_timestamp)
+	#echo "mqtt thread is ok" >> ${LOGFILE}
 }
 device_will_update(){
 	firmware_update_flag=1
-	echo "i will update firmware" >> ${LOG_FILE}
+	echo "i will update firmware" >> ${LOGFILE}
 }
 
 trap "thread_exit" ${EXIT_SIGNAL}
@@ -126,6 +138,7 @@ trap "gsm_sim_not_inserted" ${GSMSIMNOTINSERTED_SIGNAL}
 trap "gsm_sim_module_error" ${GSMSIMMODULEERROR_SIGNAL}
 trap "mqtt_connect_status_is_bad" ${MQTT_CONN_BAD_SIGNAL}
 trap "mqtt_connect_status_is_ok" ${MQTT_CONN_OK_SIGNAL}
+trap "mqtt_status_is_ok" ${MQTT_STATUS_OK_SIGNAL}
 trap "device_will_update" ${DEVICE_UPFATE_SIGNAL}
 
 python3 /root/showimage.py init
@@ -144,6 +157,7 @@ monitor_thread_exit(){
 	pid=$(ps -ef | grep zywlmonitor | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ];then
 		kill -${EXIT_SIGNAL} ${pid}
+		sleep 1
 	fi
 }
 
@@ -155,16 +169,22 @@ monitor_thread_start(){
 }
 
 feed_watchdog(){
-	pid=$(cat /tmp/zywlwdt.pid)
-	if [ -n "${pid}" ];then
-		kill -${FEEDWDT_SIGNAL} ${pid}
-	else
-		pid=$(ps -ef | grep feed | grep -v grep | awk -F" " '{print $2}')
-		if [ -n "$pid" ];then
-			echo ${pid} > /tmp/zywlwdt.pid
+	if [ -f "/tmp/zywlwdt.pid" ];then
+		pid=$(cat /tmp/zywlwdt.pid)
+		if [ -n "${pid}" ];then
 			kill -${FEEDWDT_SIGNAL} ${pid}
-		fi
-	fi	
+		else
+			pid=$(ps -ef | grep feed | grep -v grep | awk -F" " '{print $2}')
+			if [ -n "$pid" ];then
+				echo ${pid} > /tmp/zywlwdt.pid
+				kill -${FEEDWDT_SIGNAL} ${pid}
+			fi
+		fi	
+	fi
+}
+
+get_system_timestamp(){
+	echo $(date +%s)
 }
 
 if [ -f "${UPDATE_END}" ];then
@@ -173,16 +193,26 @@ fi
 
 if [ -f "${UPDATESTATUS}" ];then
 	firmware_update_flag=1
+else
+	if [ "${WDT_ENABLE}" == "enable" ];then
+		systemctl start zywlwdt
+	fi
 fi
 
-if [ "${WDT_ENABLE}" == "enable" ];then
-	systemctl start zywlwdt
-fi
+curr_timestamp=$(get_system_timestamp)
+mqtt_last_timestamp=${curr_timestamp}
+wdt_timestamp=${curr_timestamp}
+checktemp_timestamp=${curr_timestamp}
+checkwpa_timestamp=${curr_timestamp}
+checkppp_timestamp=${curr_timestamp}
+
+systemctl start zywlnet
 
 while true
 do
 	sleep 1
 
+	curr_timestamp=$(get_system_timestamp)
 	if [ ${exit_flag} -eq 1 ];then
 		if [ "${WDT_ENABLE}" == "enable" ];then
 			systemctl stop zywlwdt
@@ -190,40 +220,58 @@ do
 		exit
 	fi
 
+	subval=$(expr ${curr_timestamp} - ${mqtt_last_timestamp})
+	#如果超过330秒没有接收到mqtt线程发来的signal,则认为mqtt程序中出现了异常。
+	if [ ${subval} -ge 360 ];then
+		mqtt_last_timestamp=${curr_timestamp}
+		CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S") 
+		echo "${CUR_TIME}:check mqtt thread is ok" >> ${LOGFILE}
+		ps -ef | grep mqtt_client | grep -v grep > /dev/null
+		if [ $? -eq 0 ];then
+			feed_watchdog
+			echo "echo ${CUR_TIME}:mqtt thread need restart" >> ${LOGFILE}
+			systemctl restart zywlmqtt
+		fi
+	fi
+
 	if [ "${WDT_ENABLE}" == "enable" ];then
-		watchdog_count=$(expr ${watchdog_count} + 1)
-		if [ ${watchdog_count} -ge 10 ];then
-			watchdog_count=0
+		subval=$(expr ${curr_timestamp} - ${wdt_timestamp})
+		if [ ${subval} -ge 5 ];then
+			wdt_timestamp=${curr_timestamp}
+			#CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+			#echo "${CUR_TIME}:i feed the dog!" >> ${LOGFILE}
 			feed_watchdog
 		fi
 	fi
 
-	if [ ${mqtt_conn_status} -eq 1 ];then
-		if [ ${monitor_close} -eq 1 ];then
-			monitor_close=0
-			monitor_thread_exit
-		fi
-	else
-		if [ ${monitor_close} -eq 0 ];then
-			monitor_close=1
-			monitor_thread_start
-			network_status=0
-		fi
-	fi
+#	if [ ${mqtt_conn_status} -eq 1 ];then
+#		if [ ${monitor_close} -eq 1 ];then
+#			monitor_close=0
+#			feed_watchdog
+#			monitor_thread_exit
+#		fi
+#		systemctl stop zywlnet
+#	else
+#if [ ${monitor_close} -eq 0 ];then
+#			monitor_close=1
+#			monitor_thread_start
+#			network_status=0
+#		fi
+#		systemctl start zywlnet
+#	fi
 
-	check_temp_time=$(expr ${check_temp_time} + 1)
-	if [ ${check_temp_time} -ge 600 ];then
-		check_temp_time=0
+	subval=$(expr ${curr_timestamp} - ${checktemp_timestamp})
+	if [ ${subval} -ge 300 ];then
+		checktemp_timestamp=${curr_timestamp}
 		temp=$(cat /sys/class/thermal/thermal_zone0/temp)
 		CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-		echo "${CUR_TIME}:current temp = ${temp}" >> /var/log/monitor.log
+		echo "${CUR_TIME}:current temp = ${temp}" >> /var/log/cputemplog
 	fi
 
-	#echo "ssid=${ssid} psk=${psk}"
-	check_wpa_count=$(expr ${check_wpa_count} + 1)
-	if [ ${check_wpa_count} -ge 10 ]
+	subval=$(expr ${curr_timestamp} - ${checkwpa_timestamp})
+	if [ ${subval} -ge 10 ]
 	then
-		check_wpa_count=0
+		checkwpa_timestamp=${curr_timestamp}
 		ps -ef | grep wpa_supplicant | grep -v grep > /dev/null
 		if [ $? -ne 0 ] 
 		then 
@@ -231,11 +279,11 @@ do
 			ssid=$(cat /root/net.conf | grep -w ssid | awk -F"=" '{print $2}')
 			psk=$(cat /root/net.conf | grep -w psk | awk -F"=" '{print $2}')
 			CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-			echo "${CUR_TIME}:$0 wlan0 will start" >> ${LOG_FILE}
+			echo "${CUR_TIME}:$0 wlan0 will start" >> ${LOGFILE}
 			wpa_passphrase ${ssid} ${psk} > /etc/wpa.conf
 			echo "ctrl_interface=/var/run/wpa_supplicant" >> /etc/wpa.conf
 			sleep 0.2
-			wpa_supplicant -iwlan0 -c /etc/wpa.conf > /var/log/wpalog 2>&1 &
+			wpa_supplicant -iwlan0 -c /etc/wpa.conf > ${LOGFILE} 2>&1 &
 			sleep 0.2
 			wpa_cli -iwlan0 add_n > /dev/null
 			wpa_start_error=$(expr ${wpa_start_error} + 1)
@@ -259,14 +307,16 @@ do
 
 	if [ ${sim_module_error} -eq 0 ];then
 		check_pppd_count=$(expr ${check_pppd_count} + 1)
-		if [ ${check_pppd_count} -ge 10 ];then
-			check_pppd_count=0
+		subval=$(expr ${curr_timestamp} - ${checkppp_timestamp})
+		if [ ${subval} -ge 10 ];then
+			checkppp_timestamp=${curr_timestamp}
 			ps -ef | grep -w pppd | grep -v grep > /dev/null
 			if [ $? -ne 0 ];then
 				if [ ${gsmserial_status} -eq 1 ];then
 					cat /dev/null > /var/log/ppplogfile
 					${PPPD} call myapp &
 				else
+					feed_watchdog
 					systemctl start zywlpppd
 				fi
 			else
@@ -292,10 +342,12 @@ do
 				fi
 				if [ ${pppd_wait_count} -ge 2 ];then
 					pppd_wait_count=0
+					feed_watchdog
 					pppd_stop
 					systemctl start zywlpppd
 				fi
 				if [ ${pppd_not_have_online_func_count} -ge 3 ];then
+					feed_watchdog
 					systemctl stop zywlpppd
 					pppd_stop
 					sim_module_error=1
@@ -306,9 +358,6 @@ do
 
 	if [ ${firmware_update_flag} -eq 1 ];then
 		if [ -f "${UPDATESTATUS}" ];then
-			if [ "${WDT_ENABLE}" == "enable" ];then
-				systemctl stop zywlwdt
-			fi
 			sta=$(cat ${UPDATESTATUS} | awk -F":" '{print $1}')
 			if [ -n "${sta}" ];then
 				if [ "${sta}" == "done" ];then
@@ -326,6 +375,7 @@ do
 				elif [ "${sta}" == "start" -o "${sta}" == "move" -o "${sta}" == "clear" ];then
 					network_status=0
 					systemctl stop zywlmqtt
+					systemctl stop zywlwdt
 					ps -ef | grep update_firmware | grep -v grep > /dev/null
 					if [ $? -ne 0 ]
 					then
@@ -333,22 +383,22 @@ do
 					fi
 				else
 					rm ${UPDATESTATUS}
-					echo "update firmware: rm update_status file sta:${sta}" >> ${LOG_FILE}
+					echo "update firmware: rm update_status file sta:${sta}" >> ${LOGFILE}
 					network_status=1
 				fi
 			else
 				#如果UPDATESTATUS文件因为某些原因导致没有内容写入，那么就删除该文件
 				rm ${UPDATESTATUS}
-				echo "update firmware: rm update_status file sta is null" >> ${LOG_FILE}
+				echo "update firmware: rm update_status file sta is null" >> ${LOGFILE}
 				network_status=1
 			fi
 #			for var in $(systemctl list-unit-files | grep \.service | awk '{print $1}')
 #				ret=$(systemctl status $var 2>&1 | grep "changed on disk")
 		else
+			firmware_update_flag=0
 			if [ "${WDT_ENABLE}" == "enable" ];then
 				systemctl start zywlwdt
 			fi
-			firmware_update_flag=0
 		fi
 	fi
 
@@ -356,14 +406,23 @@ do
 		if [ ${mqtt_run_status} -eq 0 ];then
 			mqtt_run_status=1
 			feed_watchdog
-			/root/update_time.sh
-			feed_watchdog
-			systemctl start zywlmqtt
+			#/root/update_time.sh
+			#feed_watchdog
+			curr_timestamp=$(get_system_timestamp)
+			mqtt_last_timestamp=${curr_timestamp}
+			wdt_timestamp=${curr_timestamp}
+			checktemp_timestamp=${curr_timestamp}
+			checkwpa_timestamp=${curr_timestamp}
+			checkppp_timestamp=${curr_timestamp}
+			systemctl restart zywlmqtt
 		fi
 	else
 		if [ ${mqtt_run_status} -eq 1 ];then
 			mqtt_run_status=0
+			feed_watchdog
 			systemctl stop zywlmqtt
+			python3 /root/showimage.py error
 		fi
 	fi  
 done
+

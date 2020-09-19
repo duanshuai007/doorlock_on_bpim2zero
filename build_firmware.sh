@@ -168,32 +168,32 @@ do
 done
 cd ${sourcedir}
 
-wlan_enable=$(cat config.ini | grep -w wifi | awk -F" = " '{print $2}')
-eth_enable=$(cat config.ini | grep -w eth | awk -F" = " '{print $2}')
-sim_enable=$(cat config.ini | grep -w sim | awk -F" = " '{print $2}')
-read -p "echo do you sure wlan:${wlan_enable} eth:${eth_enable} ppp=${sim_enable}?[Yy/Nn]: " yes 
-if [ -n "${yes}" ]
-then
-	if [ "${yes}" == "N" -o "${yes}" == "n" ]
-	then
-		echo "please modify config.ini"
-		exit
-	fi  
-else
-	echo "you must make your choice!"
-	exit
-fi
-
-if [ "${wlan_enable}" == "enable" ];then
-	./set_current_wifi.sh choice eth0
-elif [ "${eth_enable}" == "enable" ];then
-	./set_current_wifi.sh choice wlan0
-elif [ "${sim_enable}" == "enable" ];then
-	./set_current_wifi.sh choice ppp0
-else
-	echo "至少要有一个可用的网络,请修改config.ini文件的对应选项"
-	exit
-fi
+#wlan_enable=$(cat config.ini | grep -w wifi | awk -F" = " '{print $2}')
+#eth_enable=$(cat config.ini | grep -w eth | awk -F" = " '{print $2}')
+#sim_enable=$(cat config.ini | grep -w sim | awk -F" = " '{print $2}')
+#read -p "echo do you sure wlan:${wlan_enable} eth:${eth_enable} ppp=${sim_enable}?[Yy/Nn]: " yes 
+#if [ -n "${yes}" ]
+#then
+#	if [ "${yes}" == "N" -o "${yes}" == "n" ]
+#	then
+#		echo "please modify config.ini"
+#		exit
+#	fi  
+#else
+#	echo "you must make your choice!"
+#	exit
+#fi
+#
+#if [ "${wlan_enable}" == "enable" ];then
+#	./shellscript/set_current_wifi.sh choice eth0
+#elif [ "${eth_enable}" == "enable" ];then
+#	./shellscript/set_current_wifi.sh choice wlan0
+#elif [ "${sim_enable}" == "enable" ];then
+#	./shellscript/set_current_wifi.sh choice ppp0
+#else
+#	echo "至少要有一个可用的网络,请修改config.ini文件的对应选项"
+#	exit
+#fi
 
 echo "compress password = ${tarpassword}"
 tar -zcvf - target | openssl des3 -salt -k ${tarpassword} | dd of=firmware_${version}.des3.tar.gz

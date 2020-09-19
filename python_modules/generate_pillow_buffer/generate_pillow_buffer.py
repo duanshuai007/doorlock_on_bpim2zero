@@ -7,7 +7,6 @@ import os
 import qrcode
 import urllib.request as ur
 import time
-import threading
 
 import downloadfile as dl
 import LoggingQueue
@@ -201,10 +200,20 @@ class screen():
 
 	def down_image_and_show_image_on_screen(self, msgdict:dict)->bool:
 		#print("down_image_and_show_image_on_screen url:{}".format(url))
-		if dl.download(msgdict["download"], "/tmp/test.jpg") == True:
-			return self.show_image_on_screen("/tmp/test.jpg", True, True)
-		else:
-			return False
+		imgtype = msgdict["download"].split(".")[-1]
+		imgname = "/tmp/downloadimage.{}".format(imgtype)
+		for i in range(10):
+			ret = dl.download(msgdict["download"], imgname)
+			if ret == 0:
+				return self.show_image_on_screen(imgname, True, True)
+			elif ret == 3:
+				#下载链接为Null
+				return False
+			elif ret == 4:
+				#出现错误，可能的错误包括dns出现错误，...
+				return False
+			time.sleep(0.5)
+		return False
 	
 	def show_erroricon(self):
 		self.show_image_on_screen("/root/image/error_160x160.png", True, True)
@@ -214,6 +223,9 @@ class screen():
 
 	def show_update(self):
 		self.show_image_on_screen("/root/image/updateing_160x160.png", True, True)
+
+	def show_image(self, filename):
+		self.show_image_on_screen(filename, True, True)
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:

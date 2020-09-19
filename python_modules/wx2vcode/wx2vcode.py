@@ -8,6 +8,7 @@ import json
 from urllib import request, parse
 from tempfile import TemporaryFile
 import requests
+import time
 
 import LoggingQueue
 import checkfiletype as check
@@ -94,9 +95,11 @@ class wx_2vcode():
 			data = json.loads(req.text)
 			if data['status'] == 0:
 				return data['data']
+			else:
+				self.logger.error("get server token error:{}".format(data))
 			return None
 		except Exception as e:
-			self.logger.error("__get_token_from_server error:{}".format(e))
+			self.logger.error("get server token except error:{}".format(e))
 			return None
 	
 	def __get_ex_2vcode_byservertoken(self, url:str, msg:dict, token:str)->str:
@@ -105,15 +108,14 @@ class wx_2vcode():
 			jsonmsg = json.dumps(msg)
 			jsonstr = str(jsonmsg)
 			full_url = "{}?access_token={}".format(url, token)
-			self.logger.info("fullurl={}".format(full_url))
-			self.logger.info("body={}".format(jsonstr))
+			#self.logger.info("fullurl={}".format(full_url))
+			#self.logger.info("body={}".format(jsonstr))
 			req = request.Request(full_url, bytes(jsonstr, encoding="utf-8"))
 			with request.urlopen(req) as resp:
 				page = resp.read()
 				if len(page) < 300:
 					respjson = json.loads(str(page, encoding="utf-8"))
-					self.logger.warn("__get_ex_2vcode_byservertoken error:{}".format(page))
-					self.logger.warn("__get_ex_2vcode_byservertoken token:{}".format(token))
+					self.logger.warn("get wx2vcode failed:{} {}".format(page, token))
 					filepath = None
 				else:
 					with open(filepath, 'wb+') as f:
@@ -137,10 +139,13 @@ class wx_2vcode():
 		if ret == "retry":
 			ret = self.__get_ex_2vcode(self.wx_2vcode_url, self.message, self.wx_accesstoken)
 		'''
-		accesstoken = self.__get_token_from_server(self.server_token_url, self.token_paramters)
-		if accesstoken is not None:
-			ret = self.__get_ex_2vcode_byservertoken(self.wx_2vcode_url, self.message, accesstoken)
-			return ret
+		for i in range(10):
+			accesstoken = self.__get_token_from_server(self.server_token_url, self.token_paramters)
+			if accesstoken is not None:
+				ret = self.__get_ex_2vcode_byservertoken(self.wx_2vcode_url, self.message, accesstoken)
+				if ret is not None:
+					return ret
+			time.sleep(0.5)
 		return None
 
 if __name__ == "__main__":

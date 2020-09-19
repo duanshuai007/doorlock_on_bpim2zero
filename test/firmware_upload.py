@@ -23,7 +23,7 @@ class uopload_firmware():
 		files = {"file":msg}
 		req = requests.post(self.url, files=files)
 		text = json.loads(req.text)
-		print(text["status"])
+		#print(text["status"])
 		#print(text["message"].encode("utf-8"))
 		print(text["data"])
 

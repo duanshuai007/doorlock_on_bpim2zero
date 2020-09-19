@@ -13,6 +13,7 @@ def get_token():
 	url="https://acstest.iotwonderful.cn/api/access/token"
 	values = {
 		"device_sn":"02421a71c57b"
+#"device_sn":"024251720577"
 	}
 	req = requests.post(url, params=values)
 	data = json.loads(req.text)
@@ -40,4 +41,4 @@ def get_2vcode(token:str):
 if __name__ == "__main__":
 	token = get_token()
 	print(token)
-	get_2vcode(token)
+#get_2vcode(token)

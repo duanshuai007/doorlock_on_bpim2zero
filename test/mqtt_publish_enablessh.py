@@ -121,7 +121,7 @@ class mqtt_client(mqtt.Client):
 
 	def start_publish_thread(self):		
 		publish_thread = threading.Thread(target = self.do_select)
-		publish_thread.setDaemon(False)
+		publish_thread.setDaemon(True)
 		publish_thread.start()
 
 	def run(self, host=None, port=1883, keepalive=60):
@@ -149,7 +149,10 @@ if __name__ == "__main__":
 		print("like this:")
 		print("python3 xxx.py 0242fe007c52 1/0")
 		exit(1)
-	device_id = sys.argv[1]
+	if sys.argv[1] == "all":
+		device_id = "ffffffffffff"
+	else:
+		device_id = sys.argv[1]
 	enable = sys.argv[2]
 
 	host = "mqtt.iotwonderful.cn"

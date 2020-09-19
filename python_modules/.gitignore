@@ -1,1 +1,11 @@
 build
+checkfiletype/*.c
+checkserial/*.c
+config/*.c
+downloadfile/*.c
+generate_pillow_buffer/*.c
+logger/*.c
+message_struct/*.c
+mqtt/*.c
+uncompressfirmware/*.c
+wx2vcode/*.c

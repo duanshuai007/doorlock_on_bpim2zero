@@ -1,10 +1,12 @@
 #!/bin/bash
 SIGFIL="/root/signal.conf"
+LOGFIL="/var/log/zywllog"
+
 EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
 
 all_start() {
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-	echo "${GET_TIMESTAMP}:zywldl service start!" >> /var/log/zywllog
+	echo "${GET_TIMESTAMP}:zywldl service start!" >> ${LOGFIL}
 	ps -ef | grep "zywlstart" | grep -v grep > /dev/null
 	if [ $? -ne 0 ]
 	then
@@ -14,7 +16,7 @@ all_start() {
 
 all_stop() {
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-	echo "${GET_TIMESTAMP}:zywldl service stop!" >> /var/log/zywllog
+	echo "${GET_TIMESTAMP}:zywldl service stop!" >> ${LOGFIL}
 	pid=$(ps -ef | grep "zywlstart" | grep -v grep | awk -F" " '{print $2}')
 	if [ -n "${pid}" ]
 	then
@@ -47,6 +49,7 @@ all_stop() {
 
 	systemctl stop zywlmqtt
 	systemctl stop zywlpppd
+	sleep 2
 }
 
 all_restart() {

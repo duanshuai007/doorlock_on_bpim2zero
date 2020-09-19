@@ -1,142 +1,43 @@
 #!/usr/nbin/env python3
 #-*- coding:utf-8 -*-
 
-BOARDCAST_ADDR = "ffffffffffff"
-OPENDOOR_TOPIC = "/door_ctrl"
-OPENDOOR_RESP_TOPIC = "/door_response"
-QR_TOPIC = "/qr_ctrl"
-QR_RESP_TOPIC = "/qr_response"
-DEVICE_STATUS_TOPIC = "/status"
-UPDATE_TOPIC = "/update"
-UPDATE_RESP_TOPIC = "/update_resp"
-OPENSSH_TOPIC = "/ssh_enable"
-OPENSSH_RESP_TOPIC = "/ssh_enable_resp"
-
-WLAN_CONFIG_TOPIC = "/wlan_config"
-WLAN_CONFIG_RESP_TOPIC = "/wlan_config_resp"
-
-DEVICE_INFO_TOPIC = "/test/device_info"
-DEVICE_INFO_RESP_TOPIC = "/test/device_info_resp"
+BOARDCAST_ADDR	= "ffffffffffff"
+RESPONSE_TOPIC	= "/response"
+CONCTRL_TOPIC_HEAD	= "/ctrl/"
+COMMON_TOPIC	= "/ask"
 
 DOORSTONE="iotwonderful"
 UPGRADE_TOKEN_URL="https://acstest.iotwonderful.cn/api/upgrade/login"
 UPGRADE_USERNAME="xinchao@iotwonderful.com"
 UPGRADE_PASSWORD="123456"
 
-OPENDOOR_MSG = {
-	"device_sn" : "",
-	"stime" : 0,
-	"action" : 0,
-	"identify" : 0,
+RESPONSE_MSG = {
+	"resp" : 1,
+	"sn" : 010203040506,
+	"time" : 1,
+	"identify" : 55555,
 }
 
-OPENDOOR_RESP_MSG = {
-	"device_sn" : "",
-	"rtime" : 0,
-	"result" : 0,
-	"identify" : 0,
-}
+MQTT_CMD_CHECKSTATUS	= 1
+MQTT_CMD_OPENDOOR		= 2
+MQTT_CMD_QR_BY_WX		= 3
+MQTT_CMD_QR_DOWNLOAD	= 4
+MQTT_CMD_QR_BY_SELF		= 5
+MQTT_CMD_SET_GROUP		= 6
+MQTT_CMD_SET_DOORLOCKTIME	= 7
+MQTT_CMD_UPDATE			= 8
+MQTT_CMD_OPENSSH_OPEN	= 9
+MQTT_CMD_OPENSSH_CLOSE	= 10
+MQTT_CMD_SETWLAN		= 11
+MQTT_CMD_GETWLAN		= 12
 
-QR_GETWX2VCODE = {
-	"device_sn" : "",
-	"stime" : 0,
-	"type" : 0,
-	"identify" : 0,
-	"message" : {
-		"page" : "",
-		"scene" : "",
-	},
-}
+MQTT_RESP_INVAILD		= 50
+MQTT_RESP_TIMEOUT		= 51
 
-QR_DOWN2VCODE = {
-	"device_sn" : "",
-	"stime" : 0,
-	"type" : 0,
-	"identify" : 0,
-	"message" : {
-		"download" : "",
-	},
-}
+MQTT_RESP_ONLINE		= 200
+MQTT_RESP_OFFLINE		= 201
+MQTT_UPGRADE_IGNORE		= 202
+MQTT_UPGRADE_READY		= 203
+MQTT_UPGRADE_DOWNLOAD	= 204
 
-QR_GENERATE2VCODE = {
-	"device_sn" : "",
-	"stime" : 0,
-	"type" : 0,
-	"identify" : 0,
-	"message" : {
-		"data" : "",
-	},
-}
 
-QR_RESPONSE = {
-	"device_sn" : "",
-	"rtime" : 0,
-	"type" : 0,
-	"identify" : 0,
-	"status" : "",
-}
-
-DEVICE_STATUS = {
-	"rtime" : 0,
-	"status" : 0,
-}
-
-UPDATE_INFO = {
-	"device_sn" : "",
-	"stime" : "",
-	"firmware" : {
-		"url" : "",
-		"version" : "",
-		"packetsize" : 0,
-		"enable" : "",
-		"md5" : "",
-	}
-}
-
-UPDATE_RESP_INFO = {
-	"device_sn" : "",
-	"rtime" : "",
-	"firmware" : {
-		"version" : "",
-		"status" : "",
-	}
-}
-
-OPENSSH_INFO = {
-	"device_sn" : "",
-	"stime" : "",
-	"enable" : 0,
-	"opentime" : 0,
-}
-
-OPENSSH_RESP_INFO = {
-	"device_sn" : "",
-	"rtime" : "",
-	"status" : 0,
-}
-
-WLAN_CONFIG_INFO = {
-	"device_sn" : "",
-	"stime" : "",
-	"wlan" : {
-		"ssid" : "",
-		"psk" : "",
-	}
-}
-
-WLAN_CONFIG_RESP_INFO = {
-	"device_sn" : "",
-	"rtime" : "",
-	"status" : 0,
-}
-
-DEVICE_INFO = {
-	"device_sn" : "",
-	"stime" : 0,
-	# 0  = get doorlock time
-	# !0 = set doorlock time
-	"doorlock" : 0,
-	"ip" : "",
-	"current" : "",
-	"thread status" : ""
-}

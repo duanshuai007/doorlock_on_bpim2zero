@@ -13,8 +13,15 @@ pppd_start() {
 pppd_stop() {
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 	echo "${GET_TIMESTAMP}:zywl pppd service stop!" >> /var/log/zywllog
-	pid=$(ps -ef | grep check_tty | grep -v grep | awk -F" " '{print $2}')
-	kill -${EXIT_SIGNAL} ${pid}
+	while true
+	do
+		pid=$(ps -ef | grep check_tty | grep -v grep | awk -F" " '{print $2}')
+		if [ -n "${pid}" ];then
+			kill -${EXIT_SIGNAL} ${pid}
+		else
+			break
+		fi
+	done
 }
 
 case $1 in 
