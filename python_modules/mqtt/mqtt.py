@@ -12,6 +12,7 @@ import json
 import copy
 import random
 import signal
+import re
 from threading import Timer
 
 import config
@@ -188,12 +189,29 @@ class mqtt_client(mqtt.Client):
 		try:
 			for item in self.will_subtopic_list:
 				if item["mid"] == mid:
-					self.will_subtopic_list.remove(item)
-					self.logger.info("subscribe success")
+#					self.logger.info("subscribe success")
 					self.mqtt_resp["resp"] = self.__get_success_code(ms.MQTT_CMD_SET_GROUP)
 					self.mqtt_resp["time"] = int(time.time())
+					groupstr = config.config("/root/config.ini").get("DEVICE", "group")
+					for val in item["idl"]:
+						if len(val) == 0:
+							continue
+						#self.logger.info("str(val) : {}".format(val))
+						gid = val.split(',')[0]
+						rule = "(^{},[0|1|2];|;{},[0|1|2];)".format(gid, gid)
+						pattern = re.compile(r'{}'.format(rule))
+						ret = pattern.findall(groupstr)
+						if len(ret) == 0:
+							groupstr = "{}{};".format(groupstr, val)
+						else:
+							if ret[0][0] == ';':
+								groupstr = groupstr.replace(ret[0], ";{};".format(val))
+							else:
+								groupstr = groupstr.replace(ret[0], "{};".format(val))
+					config.config("/root/config.ini").set("DEVICE", "group", groupstr)
 					respmsg = json.dumps(self.mqtt_resp)
 					self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":respmsg, 'qos':0, 'retain':False})
+					self.will_subtopic_list.remove(item)
 		except Exception as e:
 			self.logger.error("on_subscribe error:{}".format(e))
 	
@@ -202,12 +220,26 @@ class mqtt_client(mqtt.Client):
 		try:
 			for item in self.will_unsubtopic_list:
 				if item["mid"] == mid:
-					self.will_unsubtopic_list.remove(item)
 					self.logger.info("unsubscribe success")
 					self.mqtt_resp["resp"] = self.__get_success_code(ms.MQTT_CMD_SET_GROUP)
 					self.mqtt_resp["time"] = int(time.time())
+					groupstr = config.config("/root/config.ini").get("DEVICE", "group")
+					for val in item["idl"]:
+						if len(val) == 0:
+							continue
+						self.logger.info("str(val) : {}".format(str(val)))
+						rule = "(^{},[0|1|2];|;{},[0|1|2];)".format(val ,val)
+						pattern = re.compile(r'{}'.format(rule))
+						ret = pattern.findall(groupstr)
+						if len(ret) != 0:
+							if ret[0][0] == ';':
+								groupstr = groupstr.replace(ret[0], ';')
+							else:
+								groupstr = groupstr.replace(ret[0], '')
+					config.config("/root/config.ini").set("DEVICE", "group", groupstr)
 					respmsg = json.dumps(self.mqtt_resp)
 					self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":respmsg, 'qos':0, 'retain':False})
+					self.will_unsubtopic_list.remove(item)
 		except Exception as e:
 			self.logger.error("on_unsubscribe error:{}".format(e))
 
@@ -372,7 +404,7 @@ class mqtt_client(mqtt.Client):
 					self.logger.info("new sub topic:{}, qos:{}".format(topic, temp[1]))
 					subtopic.append((topic, int(temp[1])))
 				info = self.subscribe(subtopic)
-				self.will_subtopic_list.append({"mid":info[1], "topiclist":subtopic, "time":int(time.time())})
+				self.will_subtopic_list.append({"mid":info[1], "topiclist":subtopic, "time":int(time.time()), "idl":idlist})
 			if "unset" in json_msg["message"].keys():
 				setstr = json_msg["message"]["unset"]
 				idlist = setstr.split(',')
@@ -384,7 +416,7 @@ class mqtt_client(mqtt.Client):
 					self.logger.info("unsub topic:{}".format(topic))
 					unsubtopic.append(topic)
 				info = self.unsubscribe(unsubtopic)
-				self.will_unsubtopic_list.append({"mid":info[1], "topiclist":unsubtopic, "time":int(time.time())})
+				self.will_unsubtopic_list.append({"mid":info[1], "topiclist":unsubtopic, "time":int(time.time()), "idl":idlist})
 		except Exception as e:
 			self.logger.error("__device_add_or_sub_group error:{}".format(e))
 
@@ -604,6 +636,19 @@ def client_start():
 	private_ctrl_topic = "{}{}".format(ms.CONCTRL_TOPIC_HEAD, device_sn)
 	mc.setsubscribe(topic=private_ctrl_topic, qos=0)	
 	mc.setsubscribe(topic=ms.COMMON_TOPIC, qos=0)
+
+	'''
+	from config get device group info
+	and subscribe /ctrl/{gid}.
+	'''
+	gidstr = config.config("/root/config.ini").get("DEVICE", "group")
+	topiclist = gidstr.split(';')
+	for arr in topiclist:
+		if len(arr) == 0:
+			continue
+		tq = arr.split(',')
+		gtopic = "{}{}".format(ms.CONCTRL_TOPIC_HEAD, tq[0])
+		mc.setsubscribe(topic=gtopic, qos=int(tq[1]))
 
 	mc.set_user_and_password(user, passwd)
 	if mc.set_cafile(cafile) == False:

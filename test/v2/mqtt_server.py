@@ -9,6 +9,7 @@ import queue
 import threading
 import time
 import json
+import random
 
 def initLogging(logFilename):
 	logging.basicConfig(
@@ -31,6 +32,8 @@ class mqtt_client(mqtt.Client):
 	gpio_handler = None
 	gpio_group = None
 	gpio_pin = None
+
+	online_device_list = []
 
 	def set_user_and_password(self, username, password):
 		self.username = username
@@ -82,8 +85,13 @@ class mqtt_client(mqtt.Client):
 				resp = msgjson["resp"]
 				if resp == 200:
 					print(time.strftime("[%m-%d %H:%M:%S]", time.localtime()) + ":topic[/response]=>dev[{}]:online ".format(msgjson["sn"]))
+					self.online_device_list.append({"sn":msgjson["sn"], "time":int(time.time()), "onesend" : True})
+					print(self.online_device_list)
 				elif resp == 201:
 					print(time.strftime("[%m-%d %H:%M:%S]", time.localtime()) + ":topic[/response]=>dev[{}]:offline".format(msgjson["sn"]))
+					for item in self.online_device_list:
+						if item["sn"] == msgjson["sn"]:
+							self.online_device_list.remove(item)
 				else:
 					if  resp % 2 == 0:
 						cmd = int(( resp + 2 - 100 ) / 2)
@@ -106,8 +114,40 @@ class mqtt_client(mqtt.Client):
 	def setsubscribe(self, topic=None, qos=0):
 		self.sub_topic_list.append((topic, qos))
 
+	
+	def work_threading(self):
+		try:
+			while True:
+				time.sleep(1)
+				cur = int(time.time())
+				for item in self.online_device_list:
+					if len(item) == 0:
+						continue
+					if cur - item["time"] >= 300 or item["onesend"] == True:	#300 Seconds = 5 Minutes
+						item["time"] = cur
+						item["onesend"] = False
+						topic = "{}{}".format("/ctrl/", item["sn"])
+						ctrlmsg = {
+							"cmd" : 5,
+							"identify" : random.randint(0, 65535),
+							"time" : int(time.time()),
+							"message" : {
+								"data" : "this is a test string,and have a random number in there=>{}".format(random.randint(100000, 999999)),
+							}
+						}
+						sendmsg = json.dumps(ctrlmsg)
+						print("send ctrl message to {}".format(item["sn"]))
+						self.publish(topic = topic, payload = sendmsg, qos=0, retain = False)
+		except Exception as e:
+			print("work_threading error:{}".format(e))
+
+
 	def run(self, host=None, port=1883, keepalive=60):
 		self.reconnect_delay_set(min_delay=10, max_delay=120)
+
+		t = threading.Thread(target = self.work_threading, args=[])
+		t.setDaemon(True)
+		t.start()
 
 		self.username_pw_set(self.username, self.password)
 		self.tls_set(ca_certs=self.cafile, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_1)

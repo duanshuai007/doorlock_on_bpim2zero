@@ -37,8 +37,8 @@ cp /root/ntp.conf /etc/
 #service frpc stop
 #timedatectl set-ntp no
 #timedatectl
-#systemctl stop systemd-timesyncd
-#systemctl disable systemd-timesyncd
+systemctl stop systemd-timesyncd
+systemctl disable systemd-timesyncd
 
 #cat /dev/null > /tmp/network_timestamp
 #cat /dev/null > ${LOGFILE}
@@ -220,19 +220,19 @@ do
 		exit
 	fi
 
-	subval=$(expr ${curr_timestamp} - ${mqtt_last_timestamp})
-	#如果超过330秒没有接收到mqtt线程发来的signal,则认为mqtt程序中出现了异常。
-	if [ ${subval} -ge 360 ];then
-		mqtt_last_timestamp=${curr_timestamp}
-		CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S") 
-		echo "${CUR_TIME}:check mqtt thread is ok" >> ${LOGFILE}
-		ps -ef | grep mqtt_client | grep -v grep > /dev/null
-		if [ $? -eq 0 ];then
-			feed_watchdog
-			echo "echo ${CUR_TIME}:mqtt thread need restart" >> ${LOGFILE}
-			systemctl restart zywlmqtt
-		fi
-	fi
+#	subval=$(expr ${curr_timestamp} - ${mqtt_last_timestamp})
+#	#如果超过330秒没有接收到mqtt线程发来的signal,则认为mqtt程序中出现了异常。
+#	if [ ${subval} -ge 360 ];then
+#		mqtt_last_timestamp=${curr_timestamp}
+#		CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S") 
+#		echo "${CUR_TIME}:check mqtt thread is ok" >> ${LOGFILE}
+#		ps -ef | grep mqtt_client | grep -v grep > /dev/null
+#		if [ $? -eq 0 ];then
+#			feed_watchdog
+#			echo "echo ${CUR_TIME}:mqtt thread need restart" >> ${LOGFILE}
+#			systemctl restart zywlmqtt
+#		fi
+#	fi
 
 	if [ "${WDT_ENABLE}" == "enable" ];then
 		subval=$(expr ${curr_timestamp} - ${wdt_timestamp})
@@ -406,8 +406,8 @@ do
 		if [ ${mqtt_run_status} -eq 0 ];then
 			mqtt_run_status=1
 			feed_watchdog
-			#/root/update_time.sh
-			#feed_watchdog
+			/root/update_time.sh
+			feed_watchdog
 			curr_timestamp=$(get_system_timestamp)
 			mqtt_last_timestamp=${curr_timestamp}
 			wdt_timestamp=${curr_timestamp}

@@ -409,8 +409,8 @@ static PyObject * spilcd_show(PyObject *self,PyObject *args)
 */
 	//start write data to screen
 	//enable display
-	write_cmd(0xa8 | (0 << 2) | (0 << 1) | (1 << 0));
-	c_sleep_msec(5);
+	//write_cmd(0xa8 | (0 << 2) | (0 << 1) | (1 << 0));
+	c_sleep_msec(1);
 	begin_write_data();
 	for (i = 0; i < 160; i++) {
 		for (j = 0; j < 81; j++) {
@@ -418,6 +418,9 @@ static PyObject * spilcd_show(PyObject *self,PyObject *args)
 		}
 	}
 	end_write_data();
+
+	write_cmd(0xa8 | (0 << 2) | (0 << 1) | (1 << 0));
+	c_sleep_msec(20);
 
 	sem_post(&sem_write);
 	//printf("spilcd show start\n");

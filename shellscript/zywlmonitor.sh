@@ -294,7 +294,7 @@ do
 				setCurrentRoute ${CURRENT_NET}
 				if [ ${network_is_bad} -eq 1 ]
 				then
-					python3 /root/showimage.py logo
+					#python3 /root/showimage.py logo
 					network_is_bad=0
 				fi
 				kill -${NET_GOOD_SIG} ${start_pid}

@@ -64,7 +64,8 @@ do
 	if [ ${exit_flag} -eq 1 ]
 	then
 		ip route flush table ${ETH0_RULE}
-		ip rule delete lookup ${ETH0_RULE}
+		#ip rule delete lookup ${ETH0_RULE}
+		delete_iprule ${ETH0_RULE}
 		exit
 	fi
 

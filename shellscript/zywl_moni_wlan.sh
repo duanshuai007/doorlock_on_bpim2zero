@@ -69,7 +69,8 @@ do
 	if [ ${exit_flag} -eq 1 ]
 	then
 		ip route flush table ${WLAN0_RULE}
-		ip rule delete lookup ${WLAN0_RULE}
+		#ip rule delete lookup ${WLAN0_RULE}
+		delete_iprule ${WLAN0_RULE}
 		exit
 	fi	
 

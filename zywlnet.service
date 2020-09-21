@@ -1,0 +1,14 @@
+[Unit]
+Description=zywl network monitor Service
+After=network.target
+
+[Service]
+Type=simple
+RestartSec=5
+ExecStart=/usr/bin/zywlnet start
+ExecStop=/usr/bin/zywlnet stop
+ExecReload=/usr/bin/zywlnet restart
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

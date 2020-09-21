@@ -49,7 +49,7 @@ class mqtt_client(mqtt.Client):
 				"identify" : random.randint(0, 65535),
 				"time" : int(time.time()),
 				"message" : {
-					"data" : "i am a happy dogge",
+					"data" : self.gmsg,
 				},
 			}
 
@@ -93,8 +93,9 @@ class mqtt_client(mqtt.Client):
 	def set_deviceid(self, devid):
 		self.device_sn = devid
 
-	def set_groupid(self, gid):
+	def set_groupid(self, gid, gmsg):
 		self.gid = gid
+		self.gmsg = gmsg
 
 	def do_select(self):
 		self.publish_queue = queue.Queue(8)
@@ -137,13 +138,14 @@ if __name__ == "__main__":
 	transport="tcp" or "websockets"
 	'''
 
-	if len(sys.argv) < 3:
+	if len(sys.argv) < 4:
 		print("run like this:")
-		print("python3 script.py [device sn] [group id]")
+		print("python3 script.py [device sn] [group id] [group message]")
 		exit(1)
 
 	devid = sys.argv[1]
 	gid = int(sys.argv[2])
+	gmsg = sys.argv[3]
 
 	host = "mqtt.iotwonderful.cn"
 	port = 8883
@@ -191,7 +193,7 @@ tXfw8qEIFXkmqPXch2AyF5Jq6iTE
 	mc.set_user_and_password(user, passwd)
 	mc.set_cafile(cafile)
 	mc.set_deviceid(devid)
-	mc.set_groupid(gid)
+	mc.set_groupid(gid, gmsg)
 	mc.start_publish_thread()
 	mc.run(host=host, port=port, keepalive=60)
 
