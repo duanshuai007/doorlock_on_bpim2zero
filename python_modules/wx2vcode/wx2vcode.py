@@ -16,9 +16,9 @@ import checkfiletype as check
 #获取微信接口的二维码文件
 class wx_2vcode():
 
-	wx_token_url = "https://api.weixin.qq.com/cgi-bin/token"
-	wx_2vcode_url="https://api.weixin.qq.com/wxa/getwxacodeunlimit"
-	server_token_url = "https://acstest.iotwonderful.cn/api/access/token"
+	wx_token_url		= "https://api.weixin.qq.com/cgi-bin/token"
+	wx_2vcode_url		= "https://api.weixin.qq.com/wxa/getwxacodeunlimit"
+	server_token_url	= "https://acstest.iotwonderful.cn/api/access/token"
 
 	message = {
 		"scene" : "n=1",
@@ -133,7 +133,8 @@ class wx_2vcode():
 
 		self.message["page"] = msgdict["page"]
 		if len(msgdict["scene"]) != 0:
-			self.message["scene"] = msgdict["scene"]
+			#self.message["scene"] = msgdict["scene"]
+			self.message["scene"] = "{}-{}".format(self.token_paramters["device_sn"], msgdict["scene"])
 		'''
 		ret = self.__get_ex_2vcode(self.wx_2vcode_url, self.message, self.wx_accesstoken)
 		if ret == "retry":

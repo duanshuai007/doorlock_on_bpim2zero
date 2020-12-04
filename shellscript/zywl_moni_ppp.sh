@@ -34,11 +34,12 @@ get_net_ipaddr() {
 delete_iprule() {
 	while true
 	do
-		ip rule delete lookup $1 > /dev/null
-		if [ $? -ne 0 ]
-		then
+		ip rule delete lookup $1
+		sleep 0.2 
+		ip rule | grep "lookup $1" > /dev/null
+		if [ $? -ne 0 ];then
 			break
-		fi
+		fi  
 	done
 }
 
@@ -56,7 +57,8 @@ do
 	if [ ${exit_flag} -eq 1 ]
 	then
 		ip route flush table ${PPP0_RULE}
-		ip rule delete lookup ${PPP0_RULE}
+		#ip rule delete lookup ${PPP0_RULE}
+		delete_iprule ${PPP0_RULE}
 		exit
 	fi
 

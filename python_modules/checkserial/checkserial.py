@@ -15,6 +15,9 @@ from threading import Timer
 
 import LoggingQueue
 
+#GSM模块电源使能引脚PA3
+#高电平使能
+
 class checkserial():
 
 	uart = None

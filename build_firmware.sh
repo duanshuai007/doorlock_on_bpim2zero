@@ -111,6 +111,8 @@ cp zywlmqtt.service ${target}/systemd
 echo "systemd/zywlmqtt.service:/lib/systemd/system/zywlmqtt.service" >> ${BUILDFILE}
 cp zywlwdt.service ${target}/systemd
 echo "systemd/zywlwdt.service:/lib/systemd/system/zywlwdt.service" >> ${BUILDFILE}
+cp zywlnet.service ${target}/systemd
+echo "systemd/zywlnet.service:/lib/systemd/system/zywlnet.service" >> ${BUILDFILE}
 
 cp frp/frpc.ini	${target}/frp
 echo "frp/frpc.ini:/etc/frp/frpc.ini" >> ${BUILDFILE}

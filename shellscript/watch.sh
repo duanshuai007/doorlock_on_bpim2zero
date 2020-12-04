@@ -49,6 +49,7 @@ all_stop() {
 
 	systemctl stop zywlmqtt
 	systemctl stop zywlpppd
+	systemctl stop zywlnet
 	sleep 2
 }
 

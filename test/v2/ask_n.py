@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+#-*- coding:utf-8 -*-
+
+
+import sys
+import os
+import logging
+import ssl
+import paho.mqtt.client as mqtt
+import time
+import json
+import random
+import config
+
+class mqtt_client(mqtt.Client):
+	username = None
+	password = None
+	def set_user_and_password(self, username, password):
+		self.username = username
+		self.password = password
+
+	def set_cafile(self, filename:str)->bool:
+		if not os.path.exists(filename):
+			print("cafile is not exists")
+			exit(1)
+		self.cafile = filename
+
+	def run(self, host=None, port=1883, keepalive=60):
+		self.reconnect_delay_set(min_delay=10, max_delay=120)
+		self.username_pw_set(self.username, self.password)
+		self.tls_set(ca_certs=self.cafile, certfile=None, keyfile=None, cert_reqs=ssl.CERT_OPTIONAL, tls_version=ssl.PROTOCOL_TLSv1_1)
+		self.tls_insecure_set(False)
+		self.connect(host, port, keepalive)
+		opendoor = {
+			"cmd" : 1,
+			"identify" : random.randint(0, 65535),
+			"time" : int(time.time()),
+		}
+		sendmsg = json.dumps(opendoor)
+		self.publish(topic = '/acs/ask', payload = sendmsg, qos = 0, retain = False)
+
+if __name__ == "__main__":
+	host = config.MQTT_SERVER_URL
+	port = config.MQTT_SERVER_PORT
+	user = config.MQTT_USER
+	passwd = config.MQTT_PASSWD
+	cafile = config.MQTT_CAFILE_PATH
+
+	if not os.path.exists(cafile):
+		with open(cafile, "w") as w:
+			w.write(crtfile)
+
+	print("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
+	mc = mqtt_client(	client_id = "id_shenyang_test_ctrlled",
+						clean_session = False,
+						userdata = None,
+						protocol = mqtt.MQTTv31,
+						transport = 'tcp')
+	mc.set_user_and_password(user, passwd)
+	mc.set_cafile(cafile)
+	time.sleep(0.5)
+	mc.run(host=host, port=port, keepalive=60)
+

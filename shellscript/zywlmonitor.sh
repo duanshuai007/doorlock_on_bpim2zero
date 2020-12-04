@@ -44,11 +44,10 @@ fi
 
 EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
 NET_GOOD_SIG=$(cat ${SIGFIL} | grep -w NETWORKOK | awk -F"=" '{print $2}')
+NET_BAD_SIG=$(cat ${SIGFIL} | grep -w NETWORKBAD | awk -F"=" '{print $2}')
 
 count=0
 net_state=0
-default_net_is_ok=0
-network_status=0
 network_is_bad=0
 network_count=0
 eth0_network_status=0
@@ -76,11 +75,18 @@ get_ip() {
 	echo $(ip ad | grep $1 | grep inet | awk -F" " '{print $2}' | awk -F"/" '{print $1}')
 }
 
+createCurrentNetfile() {
+	ip=$(get_ip $1)
+	echo $1:${ip} > ${CURRENTNET}
+	sync
+}
+
 setCurrentRoute() {
 	ip=$(get_ip $1)
 	echo $1:${ip} > ${CURRENTNET}
 	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 	echo "${GET_TIMESTAMP}:set $1 as current route" >> ${LOGFILE}
+	sync
 	errcount=0
 	add_ppp_errcount=0
 	while true
@@ -91,7 +97,13 @@ setCurrentRoute() {
 				;&
 			"eth0")
 				gw=$(get_gateway $1)
-				route add default gw ${gw} $1
+				if [ -n "${gw}" ];then
+					route add default gw ${gw} $1
+				else
+					echo "${GET_TIMESTAMP}:gw is null" >> ${LOGFILE}
+					echo 0
+					return
+				fi
 				;;
 			"ppp0")
 				route add default ppp0
@@ -99,7 +111,9 @@ setCurrentRoute() {
 					add_ppp_errcount=$(expr ${add_ppp_errcount} + 1)
 					if [ ${add_ppp_errcount} -ge 3 ];then
 						ppp0_network_status=0
-						break
+						#break
+						echo 0
+						return
 					fi
 				fi
 				;;
@@ -108,14 +122,17 @@ setCurrentRoute() {
 				;;
 		esac
 		#cur_default_route=$(route -n | awk '{if($1=="0.0.0.0") print($8)}')
-		cur_default_route=$(ip route | grep default | awk -F" " '{print $5}')
-		if [ "${cur_default_route}" == "$1" ]
-		then
-			break
+		ip route | grep default | grep $1 > /dev/null
+		if [ $? -eq 0 ];then
+			#break
+			echo 1 
+			return
 		fi
 		errcount=$(expr ${errcount} + 1)
 		if [ ${errcount} -ge 3 ];then
-			break
+			#break
+			echo 0
+			return
 		fi
 		sleep 0.5
 	done
@@ -288,34 +305,51 @@ do
 		
 		net_state=$(get_netstatus ${CURRENT_NET})
 		if [ ${net_state} -eq 1 ];then
-			#equl 1 mean network is fine
-			if [ ${network_status} -eq 0 ];then
-				network_status=1
-				setCurrentRoute ${CURRENT_NET}
-				if [ ${network_is_bad} -eq 1 ]
-				then
-					#python3 /root/showimage.py logo
-					network_is_bad=0
+			#用来处理默认路由因为某种情况被错误的删除
+			curroute=$(ip route | grep default | awk -F" " '{print $5}')
+			if [ -n "${curroute}" ];then
+				#发现默认路由
+				if [ "${curroute}" != "${CURRENT_NET}" ];then
+					#默认路由与当前的网络不同
+					ret=$(setCurrentRoute ${CURRENT_NET})
+					if [ ${ret} -eq 1 ];then
+						/root/update_time.sh
+						kill -${NET_GOOD_SIG} ${start_pid}
+					fi
+				else
+					#默认路由网络与当前网络相同
+					curgw=$(ip route | grep default | awk -F" " '{print $3}')
+					cat /run/resolvconf/interface/${CURRENT_NET}.dhclient | grep "${curgw}" > /dev/null
+					if [ $? -ne 0 ];then
+						#当前路由不是我们希望的路由
+						ret=$(setCurrentRoute ${CURRENT_NET})
+						if [ ${ret} -eq 1 ];then
+							/root/update_time.sh
+							kill -${NET_GOOD_SIG} ${start_pid}
+						fi					
+					else
+						#当前路由就是我们希望的路由
+						createCurrentNetfile ${CURRENT_NET}
+						/root/update_time.sh
+						kill -${NET_GOOD_SIG} ${start_pid}
+					fi
 				fi
-				kill -${NET_GOOD_SIG} ${start_pid}
 			else
-				#用来处理默认路由因为某种情况被错误的删除
-				#net=$(route -n | awk -F" " '{if($1=="0.0.0.0") print $8}')
-				#if [ -z "${net}" ]
-				ip route | grep default > /dev/null
-				if [ $? -ne 0 ];then
-					#如果没能发现默认的路由信息，则添加默认路由
-					setCurrentRoute ${CURRENT_NET}
+				#没发现默认路由，添加我们希望的路由
+				GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+				echo "${GET_TIMESTAMP}:route default is null, add ${CURRENT_NET} as default route" >> ${LOGFILE}
+				ret=$(setCurrentRoute ${CURRENT_NET})
+				if [ ${ret} -eq 1 ];then
+					/root/update_time.sh
+					echo "${GET_TIMESTAMP}:add ${CURRENT_NET} as default route ok" >> ${LOGFILE}
 					kill -${NET_GOOD_SIG} ${start_pid}
 				fi
 			fi
 		else
-			network_status=0
 			GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 			echo "${GET_TIMESTAMP}:network[${CURRENT_NET}] is bad" >> ${LOGFILE}
 			vail_net=$(get_vaild_network)
-			if [ -n "${vail_net}" ]
-			then
+			if [ -n "${vail_net}" ];then
 				network_count=0
 				#发现其他可用的网络，切换到可用网络
 				echo "${GET_TIMESTAMP}:find vaild network[${vail_net}], switch" >> ${LOGFILE}
@@ -333,7 +367,8 @@ do
 					if [ ${network_is_bad} -eq 0 ];then
 						network_is_bad=1
 						echo "${GET_TIMESTAMP}:not find vaild network" >> ${LOGFILE}
-						python3 /root/showimage.py error
+						#python3 /root/showimage.py error
+						kill -${NET_BAD_SIG} ${start_pid}
 					fi
 				fi
 			fi

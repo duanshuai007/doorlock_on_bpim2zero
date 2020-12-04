@@ -1,0 +1,5 @@
+[1;36m[2020-11-24 14:07:39,634][acs][mqtt_server_n.py(218)][INFO][0m:host=mqtttest.iotwonderful.cn, port=8883, username=test_001, password=NjBlNjY3ZWRlZ, cafile=./.mqtttest.iotwonderful.cn.crt
+[1;36m[2020-11-24 14:07:39,801][acs][mqtt_server_n.py(74)][INFO][0m:onConnection returned result: Connection Accepted.
+[1;36m[2020-11-24 14:07:39,801][acs][mqtt_server_n.py(76)][INFO][0m:connect success
+[1;36m[2020-11-24 14:07:39,831][acs][mqtt_server_n.py(147)][INFO][0m:onSubscribed: 1 (0,)
+[1;36m[2020-11-24 14:07:39,899][acs][mqtt_server_n.py(127)][INFO][0m:topic[/acs/response]=>dev[862167051501405]:online 

@@ -40,8 +40,8 @@ class mqtt_client(mqtt.Client):
 	update_flag = False
 	close_door_timer = None
 	
-	update_status_file = "/home/ubuntu/update_status"
-	update_end_file = "/home/ubuntu/update_end"
+	update_status_file = "/home/update_status"
+	update_end_file = "/home/update_end"
 
 	cmd_status = {
 		"hasCMD" : False,
@@ -54,11 +54,19 @@ class mqtt_client(mqtt.Client):
 		"sn" : "",
 		"time" : 0,
 		"identify" : 0,
+	}
+
+	mqtt_errorcode_resp = {
+		"resp" : 0,
+		"sn" : "",
+		"time" : 0,
+		"identify" : 0,
 		"errorcode" : 0,
 	}
 
 	def set_device_sn(self, sn, pid):
 		self.mqtt_resp["sn"] = sn
+		self.mqtt_errorcode_resp["sn"] = sn
 		self.zywlstart_pid = pid
 		self.work_queue = queue.Queue(32)
 		self.publish_queue = queue.Queue(32)
@@ -95,13 +103,12 @@ class mqtt_client(mqtt.Client):
 				if self.exit_flag != True and self.update_flag != True:
 					self.logger.info("connect success")
 					self.subscribe(self.sub_topic_list)
-					
 					'''
 					send online message
 					'''
 					self.mqtt_resp["resp"] = ms.MQTT_RESP_ONLINE
 					self.mqtt_resp["time"] = int(time.time())
-					self.mqtt_resp["identify"] = random.randint(0, 65535)
+					self.mqtt_resp["identify"] = 0
 					respjson = json.dumps(self.mqtt_resp)
 					self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":respjson, 'qos':0, 'retain':True})
 					self.publish_queue.put("success")
@@ -113,20 +120,16 @@ class mqtt_client(mqtt.Client):
 								result = line.split(':')[0]
 								version = line.split(':')[1]
 								reason = line.split(':')[2]
-								temp_resp = {
-									"resp" : 0,
-									"time" : int(time.time()),
-									"identify" : 0,
-									"sn" : self.mqtt_resp["sn"],
-									"errorcode" : 0,
-								}
+								self.mqtt_errorcode_resp["time"] = int(time.time())
+								self.mqtt_errorcode_resp["identify"] = 0
 								if result == "success":
 									#send firmware update success message
-									temp_resp["resp"] = self.__get_success_code(ms.MQTT_CMD_UPDATE)
+									self.mqtt_errorcode_resp["resp"] = self.__get_success_code(ms.MQTT_CMD_UPDATE)
+									self.mqtt_errorcode_resp["errorcode"] = 0
 								else:
-									temp_resp["resp"] = self.__get_failed_code(ms.MQTT_CMD_UPDATE)
-									temp_resp["errorcode"] = int(reason)
-								sendmsg = json.dumps(temp_resp)
+									self.mqtt_errorcode_resp["resp"] = self.__get_failed_code(ms.MQTT_CMD_UPDATE)
+									self.mqtt_errorcode_resp["errorcode"] = int(reason)
+								sendmsg = json.dumps(self.mqtt_errorcode_resp)
 								self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":sendmsg, 'qos':2, 'retain':False})
 							except Exception as e:
 								self.logger.error("read update status file error:{}".format(e))
@@ -154,25 +157,33 @@ class mqtt_client(mqtt.Client):
 			if self.exit_flag != True and self.update_flag != True:
 				json_msg = json.loads(str(msg.payload, encoding="utf-8"))
 				self.logger.info("on message:" + msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-				local_time = int(time.time())
-				recv_time = int(json_msg["time"])
-				if (abs(local_time - recv_time) < 20):
-					if self.work_queue is not None:
-						self.work_queue.put(json_msg)
-						if self.cmd_status["hasCMD"] == False:
-							self.cmd_status["hasCMD"] = True
-							self.cmd_status["timestamp"] = local_time
-							self.cmd_status["maxwait"] = 5
+				if self.cmd_status["hasCMD"] == False:
+					local_time = int(time.time())
+					recv_time = int(json_msg["time"])
+					if (abs(local_time - recv_time) < 20):
+						if self.work_queue is not None:
+							self.work_queue.put(json_msg)
+							if self.cmd_status["hasCMD"] == False:
+								self.cmd_status["hasCMD"] = True
+								self.cmd_status["timestamp"] = local_time
+								self.cmd_status["maxwait"] = 5
+					else:
+						#timeout, message lost
+						self.logger.warn("on message: this message timestamp was timeout")
+						self.mqtt_errorcode_resp["resp"] = self.__get_failed_code(json_msg["cmd"])
+						self.mqtt_errorcode_resp["errorcode"] = ms.MQTT_RESP_TIMEOUT
+						self.mqtt_errorcode_resp["time"] = int(time.time())
+						self.mqtt_errorcode_resp["identify"] = json_msg["identify"]
+						respmsg = json.dumps(self.mqtt_errorcode_resp)
+						self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":respmsg, 'qos':0, 'retain':False})
 				else:
-					#timeout, message lost
-					self.logger.warn("on message: this message timestamp was timeout")
-					self.mqtt_resp["resp"] = self.__get_failed_code(json_msg["cmd"])
-					self.mqtt_resp["errorcode"] = ms.MQTT_RESP_TIMEOUT
-					self.mqtt_resp["time"] = int(time.time())
-					self.mqtt_resp["identify"] = json_msg["identify"]
-					respmsg = json.dumps(self.mqtt_resp)
+					self.logger.warn("on message: device busy")
+					self.mqtt_errorcode_resp["resp"] = self.__get_failed_code(json_msg["cmd"])
+					self.mqtt_errorcode_resp["errorcode"] = ms.MQTT_RESP_DEIVCE_BUSY
+					self.mqtt_errorcode_resp["time"] = int(time.time())
+					self.mqtt_errorcode_resp["identify"] = json_msg["identify"]
+					respmsg = json.dumps(self.mqtt_errorcode_resp)
 					self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":respmsg, 'qos':0, 'retain':False})
-					pass
 		except Exception as e:
 			self.logger.error("on message exception:{}".format(e))
 
@@ -260,7 +271,7 @@ class mqtt_client(mqtt.Client):
 			try:
 				if not self.publish_queue.empty():
 					msg = self.publish_queue.get()
-					self.logger.info("publish_queue get a message")
+					#self.logger.info("publish_queue get a message")
 					if isinstance(msg, dict) == True:
 						info = self.publish(topic = msg["topic"], payload = msg["payload"], qos = msg["qos"], retain = msg["retain"])
 						if info.rc == mqtt.MQTT_ERR_SUCCESS:
@@ -312,31 +323,29 @@ class mqtt_client(mqtt.Client):
 			self.update_flag = True
 			version = int(config.config("/root/config.ini").get("FIRMWARE", "VERSION"))
 			update_version = int(json_msg["message"]["version"])
-			temp_resp = {
-				"sn" : self.mqtt_resp["sn"],
-				"identify" : self.mqtt_resp["identify"],
-				"time" : int(time.time()),
-			}
+			self.mqtt_errorcode_resp["identify"] = json_msg["identify"]
+			self.mqtt_errorcode_resp["time"] = int(time.time())
 			if version >= update_version:
 				#当前版本高于等待升级的版本，不升级
-				temp_resp["resp"] = self.__get_failed_code(json_msg["cmd"])
-				temp_resp["errorcode"] = ms.MQTT_UPGRADE_IGNORE
-				sendmsg = json.dumps(temp_resp)
+				self.mqtt_errorcode_resp["resp"] = self.__get_failed_code(json_msg["cmd"])
+				self.mqtt_errorcode_resp["errorcode"] = ms.MQTT_UPGRADE_IGNORE
+				sendmsg = json.dumps(self.mqtt_errorcode_resp)
 				self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+				self.update_flag = False
 			else:
 				#当前版本低于等待升级的版本，进行升级
-				temp_resp["resp"] = self.__get_success_code(json_msg["cmd"])
-				temp_resp["errorcode"] = ms.MQTT_UPGRADE_READY
-				sendmsg = json.dumps(temp_resp)
+				self.mqtt_errorcode_resp["resp"] = self.__get_success_code(json_msg["cmd"])
+				self.mqtt_errorcode_resp["errorcode"] = ms.MQTT_UPGRADE_READY
+				sendmsg = json.dumps(self.mqtt_errorcode_resp)
 				self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
 				md5str = json_msg["message"]["md5"]
 				download_url = json_msg["message"]["url"]
 				filename = "/home/download/firmware_{}.des3.tar.gz".format(json_msg["message"]["version"])
 				if downloadtool.download_firmware(download_url, md5str, filename) == True:
-					temp_resp["resp"] = self.__get_success_code(json_msg["cmd"])
-					temp_resp["errorcode"] = ms.MQTT_UPGRADE_DOWNLOAD
-					temp_resp["time"] = int(time.time())
-					sendmsg = json.dumps(temp_resp)
+					self.mqtt_errorcode_resp["resp"] = self.__get_success_code(json_msg["cmd"])
+					self.mqtt_errorcode_resp["errorcode"] = ms.MQTT_UPGRADE_DOWNLOAD
+					self.mqtt_errorcode_resp["time"] = int(time.time())
+					sendmsg = json.dumps(self.mqtt_errorcode_resp)
 					self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
 					time.sleep(0.5)
 					with open(self.update_status_file, "w") as f:
@@ -344,10 +353,10 @@ class mqtt_client(mqtt.Client):
 						f.write(update_message)
 					os.kill(self.zywlstart_pid, self.DEVICE_UPDATE_SIG)
 				else:
-					temp_resp["resp"] = self.__get_failed_code(json_msg["cmd"])
-					temp_resp["errorcode"] = ms.MQTT_UPGRADE_DOWNLOAD
-					temp_resp["time"] = int(time.time())
-					sendmsg = json.dumps(temp_resp)
+					self.mqtt_errorcode_resp["resp"] = self.__get_failed_code(json_msg["cmd"])
+					self.mqtt_errorcode_resp["errorcode"] = ms.MQTT_UPGRADE_DOWNLOAD
+					self.mqtt_errorcode_resp["time"] = int(time.time())
+					sendmsg = json.dumps(self.mqtt_errorcode_resp)
 					self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
 					self.update_flag = False
 		except Exception as e:
@@ -355,17 +364,31 @@ class mqtt_client(mqtt.Client):
 	
 	def __device_open_ssh(self, json_msg:dict):
 		try:
-			if json_msg["cmd"] == ms.MQTT_CMD_OPENSSH_CLOSE:
+			if json_msg["message"]["openssh"] == "disable":
 				cmd = "service frpc stop"
 				os.system(cmd)
-			else:	#open ssh
+				self.mqtt_resp["resp"] = self.__get_success_code(json_msg["cmd"])
+			elif json_msg["message"]["openssh"] == "enable":	#open ssh
 				cmd = "service frpc start"
 				os.system(cmd)
-			self.mqtt_resp["resp"] = self.__get_success_code(json_msg["cmd"])
+				self.mqtt_resp["resp"] = self.__get_success_code(json_msg["cmd"])
+			else:
+				self.mqtt_resp["resp"] = self.__get_failed_code(json_msg["cmd"])
 			sendmsg = json.dumps(self.mqtt_resp)
 			self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
 		except Exception as e:
 			self.logger.error("__device_open_ssh error:{}".format(e))
+
+	def __device_wlan(self, json_msg:dict):
+		try:
+			if json_msg["message"]["method"] == "set":
+				self.__set_device_wlan(json_msg)
+			elif json_msg["message"]["method"] == "get":
+				self.__get_device_wlan(json_msg)
+			else:
+				self.logger.error("__device_wlan method unvaild")
+		except Exception as e:
+			self.logger.error("__device_wlan error:{}".format(e))
 
 	def __set_device_wlan(self, json_msg:dict):
 		try:
@@ -379,6 +402,41 @@ class mqtt_client(mqtt.Client):
 		except Exception as e:
 			self.logger.error("__set_device_wlan error:{}".format(e))
 	
+	def __get_device_wlan(self, json_msg:dict):
+		try:
+			tmp_resp = {
+				"sn" : self.mqtt_resp["sn"],
+				"identify" : self.mqtt_resp["identify"],
+				"time" : int(time.time()),
+				"resp" : self.__get_success_code(json_msg["cmd"]),
+				"device" : {
+					"current" : "",
+					"ip" : "",
+					"ssid" : "",
+					"psk" : "",
+				}
+			}
+			with open("/tmp/current_network", 'r') as f:
+				line = f.readline().split(":")
+				tmp_resp["device"]["current"] = line[0]
+				tmp_resp["device"]["ip"] = line[1].split('\n')[0]
+			with open("/root/net.conf", 'r') as f:
+				while True:
+					line = f.readline()
+					if len(line) == 0:
+						break
+					else:
+						line = line.split('\n')[0]
+						if line is not None:
+							if line.startswith("ssid="):
+								tmp_resp["device"]["ssid"] = line.split("=")[1]
+							if line.startswith("psk="):
+								tmp_resp["device"]["psk"] = line.split("=")[1]
+			sendmsg = json.dumps(tmp_resp)
+			self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
+		except Exception as e:
+			self.logger.error("__get_device_wlan error:{}".format(e))
+
 	def __set_doorlock_time(self, json_msg:dict):
 		try:
 			ret = config.config("/root/config.ini").set("DOORLOCK", "OPEN_TIME", str(json_msg["message"]["config"]))
@@ -417,42 +475,19 @@ class mqtt_client(mqtt.Client):
 					unsubtopic.append(topic)
 				info = self.unsubscribe(unsubtopic)
 				self.will_unsubtopic_list.append({"mid":info[1], "topiclist":unsubtopic, "time":int(time.time()), "idl":idlist})
+			if "get" in json_msg["message"].keys():
+				tmp_resp = {
+					"sn" : self.mqtt_resp["sn"],
+					"time" : int(time.time()),
+					"identify" : json_msg["identify"],
+					"resp" : self.__get_success_code(json_msg["cmd"]),
+					"group" : config.config("/root/config.ini").get("DEVICE", "group"),
+				}
+				respmsg = json.dumps(tmp_resp)
+				self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":respmsg, 'qos':0, 'retain':False})
+				pass
 		except Exception as e:
 			self.logger.error("__device_add_or_sub_group error:{}".format(e))
-
-	def __get_device_wlan(self):
-		try:
-			tmp_resp = {
-				"sn" : self.mqtt_resp["sn"],
-				"identify" : self.mqtt_resp["identify"],
-				"time" : int(time.time()),
-				"device" : {
-					"current" : "",
-					"ip" : "",
-					"ssid" : "",
-					"psk" : "",
-				}
-			}
-			with open("/tmp/current_network", 'r') as f:
-				line = f.readline().split(":")
-				tmp_resp["device"]["current"] = line[0]
-				tmp_resp["device"]["ip"] = line[1].split('\n')[0]
-			with open("/root/net.conf", 'r') as f:
-				while True:
-					line = f.readline()
-					if len(line) == 0:
-						break
-					else:
-						line = line.split('\n')[0]
-						if line is not None:
-							if line.startswith("ssid="):
-								tmp_resp["device"]["ssid"] = line.split("=")[1]
-							if line.startswith("psk="):
-								tmp_resp["device"]["psk"] = line.split("=")[1]
-			sendmsg = json.dumps(tmp_resp)
-			self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
-		except Exception as e:
-			self.logger.error("__get_device_wlan error:{}".format(e))
 
 	def do_hardware_work(self):
 		spilcd_api.on()
@@ -506,12 +541,10 @@ class mqtt_client(mqtt.Client):
 					elif cmd == ms.MQTT_CMD_UPDATE:
 						self.cmd_status["maxwait"] = 60
 						self.__device_upgrade(json_msg)
-					elif cmd == ms.MQTT_CMD_OPENSSH_OPEN or cmd == ms.MQTT_CMD_OPENSSH_CLOSE:
+					elif cmd == ms.MQTT_CMD_SET_OPENSSH:
 						self.__device_open_ssh(json_msg)
-					elif cmd == ms.MQTT_CMD_SETWLAN:
-						self.__set_device_wlan(json_msg)
-					elif cmd == ms.MQTT_CMD_GETWLAN:
-						self.__get_device_wlan()
+					elif cmd == ms.MQTT_CMD_WLAN:
+						self.__device_wlan(json_msg)
 					else:
 						self.logger.info("invaild cmd = {}".format(cmd))
 						self.mqtt_resp["errorcode"] = ms.MQTT_RESP_INVAILD

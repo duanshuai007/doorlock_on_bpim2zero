@@ -23,6 +23,7 @@ mqtt_stop() {
 			kill -${EXIT_SIGNAL} ${pid}
 			sleep 1
 			kill -9 ${pid}
+			sleep 1
 		else
 			break
 		fi

@@ -2,7 +2,7 @@
 
 #update firmware
 DOWNLOADDIR="/home/firmware"
-UPDATESTATUS="/home/ubuntu/update_status"
+UPDATESTATUS="/home/update_status"
 BACKUPDIR="/home/backfile"
 
 if [ ! -f "${UPDATESTATUS}" ]
@@ -22,7 +22,7 @@ then
 	exit
 fi
 
-cat /dev/null > /home/ubuntu/updatelog
+cat /dev/null > /home/updatelog
 
 all_file_backup() {
 	mkdir -p ${BACKUPDIR}
@@ -59,6 +59,7 @@ resume_all_file() {
 
 tarfile() {
 	python3 /root/showimage.py update
+	sleep 1
 	if [ -d "${DOWNLOADDIR}.back" ]
 	then 
 		rm -rf "${DOWNLOADDIR}.back"
@@ -93,7 +94,7 @@ tarfile() {
 	do
 		oldmd5val=$(cat ${firmwaredir}/md5file | grep "${var}" | awk -F" " '{print $1}')
 		newmd5val=$(md5sum ${firmwaredir}/${var} | awk -F" " '{print $1}')
-		echo "file:${var} old:${oldmd5val} new:${newmd5val}" >> /home/ubuntu/updatelog
+		echo "file:${var} old:${oldmd5val} new:${newmd5val}" >> /home/updatelog
 		if [ "${oldmd5val}" != "${newmd5val}" ];then
 			echo "error:${version}:4" > ${UPDATESTATUS}
 			sync
@@ -130,6 +131,8 @@ move() {
 			exit
 		fi
 
+		mv /root/config.ini /root/config.ini.back
+
 		for var in $(cat ${prefix}/buildfile)
 		do
 			src=$(echo ${var} | awk -F":" '{print $1}')
@@ -137,6 +140,13 @@ move() {
 			cp ${prefix}/${src} ${dst}
 		done
 		
+		group=$(cat /root/config.ini.back | grep group | awk -F" = " '{print $2}')
+		open_time=$(cat /root/config.ini.back | grep open_time | awk -F" = " '{print $2}')
+		watchdog=$(cat /root/config.ini.back | grep watchdog | awk -F" = " '{print $2}')
+		/root/set_config.sh "group " " ${group}"
+		/root/set_config.sh "open_time " " ${open_time}"
+		/root/set_config.sh "watchdog " " ${watchdog}"
+
 		echo "clear:${version}:0" > ${UPDATESTATUS}
 		sync
 	fi
@@ -147,7 +157,7 @@ update_clear() {
 	rm /home/download/*
 
 	errornumber=0
-	echo "==================" >> /home/ubuntu/updatelog
+	echo "==================" >> /home/updatelog
 
 	prefix=${DOWNLOADDIR}/target
 	for var in $(cat ${prefix}/buildfile)
@@ -155,9 +165,13 @@ update_clear() {
 		src=$(echo ${var} | awk -F":" '{print $1}')
 		dst=$(echo ${var} | awk -F":" '{print $2}')
 		
+		if [ "${src}" == "config.ini" ];then
+			continue
+		fi
+
 		after=$(md5sum ${dst} | awk -F" " '{print $1}')
 		before=$(cat ${prefix}/md5file | grep "${src}" | awk -F" " '{print $1}')
-		echo "file:${src} after:${after} before:${before}" >> /home/ubuntu/updatelog
+		echo "file:${src} after:${after} before:${before}" >> /home/updatelog
 		if [ "${after}" != "${before}" ];then
 			errornumber=1
 		fi
@@ -181,6 +195,9 @@ update_clear() {
 	fi
 	if [ ! -f /usr/bin/zywlwdt ];then
 		ln -s /root/watchwdt.sh /usr/bin/zywlwdt
+	fi
+	if [ ! -f /usr/bin/zywlnet ];then
+		ln -s /root/watchnet.sh /usr/bin/zywlnet
 	fi
 
 	/root/set_config.sh "version " " ${version}"

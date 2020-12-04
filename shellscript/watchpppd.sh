@@ -18,6 +18,7 @@ pppd_stop() {
 		pid=$(ps -ef | grep check_tty | grep -v grep | awk -F" " '{print $2}')
 		if [ -n "${pid}" ];then
 			kill -${EXIT_SIGNAL} ${pid}
+			sleep 1
 		else
 			break
 		fi

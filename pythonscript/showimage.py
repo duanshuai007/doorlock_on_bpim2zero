@@ -20,33 +20,26 @@ def initialization():
 	cfg = config.config("/root/config.ini")
 	close_door_level = int(cfg.get("DOORLOCK", "CLOSE_LEVEL"))
 	spilcd_api.set_doorlock(close_door_level)
-	wdten = cfg.get("WATCHDOG", "ENABLE")
-	if wdten == "true":
-		wdtfile = "/home/watchdog/feed.py"
-		enablewdt = False
-		if os.path.exists(wdtfile):
-			s = os.path.getsize(wdtfile)
-			if s > 80:
-				enablewdt = True
-		if enablewdt == False:
-			if os.path.exists("/root/watchdog/feed.py"):
-				s = os.path.getsize("/root/watchdog/feed.py")
-				if s > 80:
-					enablewdt = True
-					shutil.copyfile("/root/watchdog/feed.py", wdtfile)
-		if enablewdt == True:	
-			watchdog.open()
 
 #显示出错标志
 def display_error_image():
 	screen = sc.screen()
 	screen.show_erroricon()
+
 #显示设备logo
 def display_logo_image():
+	spilcd_api.on()
+	cfg = config.config("/root/config.ini")
+	close_door_level = int(cfg.get("DOORLOCK", "CLOSE_LEVEL"))
+	spilcd_api.set_doorlock(close_door_level)
 	screen = sc.screen()
 	screen.show_logo()
 #显示设备升级
 def display_update_image():
+	spilcd_api.on()
+	cfg = config.config("/root/config.ini")
+	close_door_level = int(cfg.get("DOORLOCK", "CLOSE_LEVEL"))
+	spilcd_api.set_doorlock(close_door_level)
 	screen = sc.screen()
 	screen.show_update()
 

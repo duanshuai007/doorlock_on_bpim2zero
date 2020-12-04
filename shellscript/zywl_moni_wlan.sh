@@ -45,9 +45,10 @@ get_net_ipaddr() {
 delete_iprule() {
 	while true
 	do
-		ip rule delete lookup $1 > /dev/null
-		if [ $? -ne 0 ]
-		then
+		ip rule delete lookup $1
+		sleep 0.2
+		ip rule | grep "lookup $1" > /dev/null
+		if [ $? -ne 0 ];then
 			break
 		fi
 	done
@@ -65,18 +66,16 @@ echo "monitor wlan: main pid = ${moni_main_pid}" >> ${LOGFILE}
 while true
 do
 	sleep 1
-
-	if [ ${exit_flag} -eq 1 ]
-	then
+	if [ ${exit_flag} -eq 1 ];then
 		ip route flush table ${WLAN0_RULE}
 		#ip rule delete lookup ${WLAN0_RULE}
 		delete_iprule ${WLAN0_RULE}
 		exit
 	fi	
 
-	ip addr | grep wlan0 > /dev/null
-	if [ $? -ne 0 ]
-	then
+	ifconfig | grep wlan0 > /dev/null
+	if [ $? -ne 0 ];then
+		ifconfig wlan0 up
 		continue
 	fi
 

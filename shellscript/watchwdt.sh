@@ -15,6 +15,7 @@ wdt_stop(){
 		pid=$(ps -ef | grep feed | grep -v grep | awk -F" " '{print $2}')
 		if [ -n "${pid}" ];then
 			kill -${STOPWDT_SIGNAL} ${pid}
+			sleep 1
 		else
 			break
 		fi

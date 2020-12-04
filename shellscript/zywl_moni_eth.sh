@@ -40,9 +40,10 @@ get_net_ipaddr() {
 delete_iprule() {
 	while true
 	do
-		ip rule delete lookup $1 > /dev/null
-		if [ $? -ne 0 ] 
-		then
+		ip rule delete lookup $1
+		sleep 0.2 
+		ip rule | grep "lookup $1" > /dev/null
+		if [ $? -ne 0 ];then
 			break
 		fi  
 	done
@@ -61,12 +62,17 @@ echo "monitor eth: main pid = ${moni_main_pid}" >> ${LOGFILE}
 while true
 do
 	sleep 1
-	if [ ${exit_flag} -eq 1 ]
-	then
+	if [ ${exit_flag} -eq 1 ];then
 		ip route flush table ${ETH0_RULE}
 		#ip rule delete lookup ${ETH0_RULE}
 		delete_iprule ${ETH0_RULE}
 		exit
+	fi
+
+	ifconfig | grep eth0 > /dev/null
+	if [ $? -ne 0 ];then
+		ifconfig eth0 up
+		continue
 	fi
 
 	ifconfig eth0 | grep RUNNING > /dev/null
