@@ -2,9 +2,9 @@
 #-*- coding:utf-8 -*-
 
 BOARDCAST_ADDR	= "ffffffffffff"
-RESPONSE_TOPIC	= "/response"
-CONCTRL_TOPIC_HEAD	= "/ctrl/"
-COMMON_TOPIC	= "/ask"
+RESPONSE_TOPIC	= "/acs/response"
+CONCTRL_TOPIC_HEAD	= "/acs/ctrl/"
+COMMON_TOPIC	= "/acs/ask"
 
 DOORSTONE="iotwonderful"
 UPGRADE_TOKEN_URL="https://acstest.iotwonderful.cn/api/upgrade/login"

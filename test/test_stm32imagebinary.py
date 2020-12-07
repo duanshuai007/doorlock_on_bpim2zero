@@ -3,24 +3,22 @@
 
 import json
 import requests
-import binascii
+#import binascii
 
-url="https://acstest.iotwonderful.cn/get/binary/data"
+url="http://1acstest.iotwonderful.cn/gbd"
 msg = {
 	#"device_sn":"02421a71c57b"
-	"device_sn":"321321"
+	"device_sn":"862167051501041"
 }
 
 def get_token(url):
 	values = {
-		#"device_sn":"02421a71c57b"
-		"device_sn":"100012"
+		"device_sn":"862167051501041"
 	}
 	req = requests.post(url, params=values)
 	print(req.status_code)
-	#print(req.content)
 	print("len={}".format(len(req.content)))
-	if len(req.content) == 3200:
+	if len(req.content) == 1762:
 		count = 0
 		m = ""
 		for i in req.content:

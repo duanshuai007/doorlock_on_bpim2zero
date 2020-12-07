@@ -22,7 +22,8 @@ setup(
 			"downloadfile/downloadfile.py",
 			"checkfiletype/checkfiletype.py",
 			"uncompressfirmware/uncompressfirmware.py",
-			"checkserial/checkserial.py"
+			"checkserial/checkserial.py",
+			"imagedata/imagedata.py"
 		])
 	  )
 

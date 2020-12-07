@@ -42,6 +42,11 @@ if [ $? -eq 0 ];then
 	PPP_BAD_SIG=$(cat ${SIGFIL} | grep -w PPPBADSIG | awk -F"=" '{print $2}')
 fi
 
+if [ ${wifi_enable} -eq 0 -a ${eth_enable} -eq 0 -a ${sim_enable} -eq 0 ];then
+	echo "!!!!!!!!!!!!!   ALL NETWORK DISABLE !!!!!!!!!!!"
+	return
+fi
+
 EXIT_SIGNAL=$(cat ${SIGFIL} | grep -w SCRIPTEXIT | awk -F"=" '{print $2}')
 NET_GOOD_SIG=$(cat ${SIGFIL} | grep -w NETWORKOK | awk -F"=" '{print $2}')
 NET_BAD_SIG=$(cat ${SIGFIL} | grep -w NETWORKBAD | awk -F"=" '{print $2}')

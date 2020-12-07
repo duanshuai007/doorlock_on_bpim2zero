@@ -185,10 +185,10 @@ update_clear() {
 	fi
 
 	if [ ! -f /usr/bin/zywldl ];then
-		ln -s /root/watch.sh /usr/bin/zywlmqtt
+		ln -s /root/watch.sh /usr/bin/zywldl
 	fi
 	if [ ! -f /usr/bin/zywlpppd ];then
-		ln -s /root/watchpppd.sh /usr/bin/zywlmqtt
+		ln -s /root/watchpppd.sh /usr/bin/zywlpppd
 	fi
 	if [ ! -f /usr/bin/zywlmqtt ];then
 		ln -s /root/watchmqtt.sh /usr/bin/zywlmqtt

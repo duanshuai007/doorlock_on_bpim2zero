@@ -100,7 +100,7 @@ do
 			cycle_time=0
 			start_dhcp_time=0
 			#iphead=$(ifconfig eth0 | grep "inet addr" | awk -F" " '{print $2}' | awk -F":" '{print $2}' | awk -F"." '{print $1"\."$2"\."$3"\."}')
-			iphead=$(ip ad | grep wlan0 | grep "inet" | awk -F" " '{print $2}' | awk -F"/" '{print $1}' | awk -F"." '{print $1"\."$2"\."$3"\."}')
+			iphead=$(ip ad | grep eth0 | grep "inet" | awk -F" " '{print $2}' | awk -F"/" '{print $1}' | awk -F"." '{print $1"\."$2"\."$3"\."}')
 			if [ -n "${iphead}" ]
 			then
 				gateway=$(cat /run/resolvconf/interface/eth0.dhclient | grep -w nameserver | grep "${iphead}" | awk -F" " '{print $2}')

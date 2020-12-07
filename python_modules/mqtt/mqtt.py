@@ -520,7 +520,7 @@ class mqtt_client(mqtt.Client):
 						self.publish_queue.put({"topic":ms.RESPONSE_TOPIC, "payload":sendmsg, 'qos':0, 'retain':False})
 					elif cmd == ms.MQTT_CMD_QR_DOWNLOAD:
 						self.cmd_status["maxwait"] = 30
-						ret = self.screen.down_image_and_show_image_on_screen(json_msg["message"])
+						ret = self.screen.down_image_and_show_image_on_screen(json_msg["message"], self.mqtt_resp["sn"])
 						if ret == True:
 							self.mqtt_resp["resp"] = self.__get_success_code(cmd)
 						self.mqtt_resp["time"] = int(time.time())
@@ -651,7 +651,7 @@ def client_start():
 	#passwd = c.get("MQTT", "PASSWD")
 	#cafile = c.get("MQTT", "CAFILE")
 	
-	host="mqtt.iotwonderful.cn"
+	host="mqtttest.iotwonderful.cn"
 	port=8883
 	user="test_001"
 	passwd="NjBlNjY3ZWRlZ"
