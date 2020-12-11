@@ -35,14 +35,11 @@ echo "${GET_TIMESTAMP}:zywlstart script start!" >> ${LOGFILE}
 
 cp /root/ntp.conf /etc/
 
-#service frpc stop
 #timedatectl set-ntp no
 #timedatectl
 systemctl stop systemd-timesyncd
 systemctl disable systemd-timesyncd
-
-#cat /dev/null > /tmp/network_timestamp
-#cat /dev/null > ${LOGFILE}
+systemctl disable frpc
 
 #set default dns
 cat /etc/network/interfaces | grep -w "^dns-nameservers" > /dev/null
@@ -226,14 +223,13 @@ systemctl start zywlnet
 while true
 do
 	sleep 1
-
-	curr_timestamp=$(get_system_timestamp)
-	if [ ${exit_flag} -eq 1 ];then
-		if [ "${WDT_ENABLE}" == "enable" ];then
-			systemctl stop zywlwdt
-		fi
-		exit
-	fi
+#	curr_timestamp=$(get_system_timestamp)
+#	if [ ${exit_flag} -eq 1 ];then
+#		if [ "${WDT_ENABLE}" == "enable" ];then
+#			systemctl stop zywlwdt
+#		fi
+#		exit
+#	fi
 
 #	subval=$(expr ${curr_timestamp} - ${mqtt_last_timestamp})
 #	#如果超过330秒没有接收到mqtt线程发来的signal,则认为mqtt程序中出现了异常。
@@ -249,30 +245,14 @@ do
 #		fi
 #	fi
 
-	if [ "${WDT_ENABLE}" == "enable" ];then
-		subval=$(expr ${curr_timestamp} - ${wdt_timestamp})
-		if [ ${subval} -ge 5 ];then
-			wdt_timestamp=${curr_timestamp}
-			#CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
-			#echo "${CUR_TIME}:i feed the dog!" >> ${LOGFILE}
-			feed_watchdog
-		fi
-	fi
-
-#	if [ ${mqtt_conn_status} -eq 1 ];then
-#		if [ ${monitor_close} -eq 1 ];then
-#			monitor_close=0
+#	if [ "${WDT_ENABLE}" == "enable" ];then
+#		subval=$(expr ${curr_timestamp} - ${wdt_timestamp})
+#		if [ ${subval} -ge 5 ];then
+#			wdt_timestamp=${curr_timestamp}
+#			#CUR_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+#			#echo "${CUR_TIME}:i feed the dog!" >> ${LOGFILE}
 #			feed_watchdog
-#			monitor_thread_exit
 #		fi
-#		systemctl stop zywlnet
-#	else
-#if [ ${monitor_close} -eq 0 ];then
-#			monitor_close=1
-#			monitor_thread_start
-#			network_status=0
-#		fi
-#		systemctl start zywlnet
 #	fi
 
 	subval=$(expr ${curr_timestamp} - ${checktemp_timestamp})

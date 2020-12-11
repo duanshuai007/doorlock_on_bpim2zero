@@ -19,8 +19,10 @@ netmonitor_stop() {
 	do
 		pid=$(ps -ef | grep zywlmonitor | grep -v grep | awk -F" " '{print $2}')
 		if [ -n "${pid}" ];then
+			#GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+			#echo "${GET_TIMESTAMP}:netmonitor send kill signal" >> /var/log/zywllog
 			kill -${EXIT_SIGNAL} ${pid}
-			sleep 1
+			sleep 0.5
 		else
 			break
 		fi

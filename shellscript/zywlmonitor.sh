@@ -249,6 +249,8 @@ if [ ${sim_enable} -eq 1 ];then
 fi
 
 thread_exit(){
+	GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+	echo "${GET_TIMESTAMP}:netmonitor get exit signal" >> ${LOGFILE}
 	exit_flag=1
 }
 
@@ -295,8 +297,9 @@ while true
 do
 	if [ ${exit_flag} -eq 1 ];then
 		donot_monitor_network
+		sync
 		GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-		echo "${GET_TIMESTAMP}:monitor script exit now!" >> ${LOGFILE}
+		echo "${GET_TIMESTAMP}:monitor script exit now" >> ${LOGFILE}
 		sync
 		exit
 	fi
@@ -316,10 +319,12 @@ do
 				#发现默认路由
 				if [ "${curroute}" != "${CURRENT_NET}" ];then
 					#默认路由与当前的网络不同
+					GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+					echo "${GET_TIMESTAMP}:current route:${curroute}, CURRENT_NET:${CURRENT_NET}" >> ${LOGFILE}
 					ret=$(setCurrentRoute ${CURRENT_NET})
 					if [ ${ret} -eq 1 ];then
-						/root/update_time.sh
 						kill -${NET_GOOD_SIG} ${start_pid}
+						/root/update_time.sh
 					fi
 				else
 					#默认路由网络与当前网络相同
@@ -327,16 +332,20 @@ do
 					cat /run/resolvconf/interface/${CURRENT_NET}.dhclient | grep "${curgw}" > /dev/null
 					if [ $? -ne 0 ];then
 						#当前路由不是我们希望的路由
+						GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+						echo "${GET_TIMESTAMP}:current route:${curroute}, CURRENT_NET:${CURRENT_NET} need change!" >> ${LOGFILE}
 						ret=$(setCurrentRoute ${CURRENT_NET})
 						if [ ${ret} -eq 1 ];then
-							/root/update_time.sh
 							kill -${NET_GOOD_SIG} ${start_pid}
+							/root/update_time.sh
 						fi					
 					else
 						#当前路由就是我们希望的路由
+						GET_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+						echo "${GET_TIMESTAMP}:current route:${curroute}, CURRENT_NET:${CURRENT_NET}, no need change!" >> ${LOGFILE}
 						createCurrentNetfile ${CURRENT_NET}
-						/root/update_time.sh
 						kill -${NET_GOOD_SIG} ${start_pid}
+						/root/update_time.sh
 					fi
 				fi
 			else
@@ -345,9 +354,9 @@ do
 				echo "${GET_TIMESTAMP}:route default is null, add ${CURRENT_NET} as default route" >> ${LOGFILE}
 				ret=$(setCurrentRoute ${CURRENT_NET})
 				if [ ${ret} -eq 1 ];then
-					/root/update_time.sh
 					echo "${GET_TIMESTAMP}:add ${CURRENT_NET} as default route ok" >> ${LOGFILE}
 					kill -${NET_GOOD_SIG} ${start_pid}
+					/root/update_time.sh
 				fi
 			fi
 		else
