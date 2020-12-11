@@ -18,7 +18,7 @@ class wx_2vcode():
 
 	wx_token_url		= "https://api.weixin.qq.com/cgi-bin/token"
 	wx_2vcode_url		= "https://api.weixin.qq.com/wxa/getwxacodeunlimit"
-	server_token_url	= "https://acstest.iotwonderful.cn/api/access/token"
+	server_token_url	= 
 
 	message = {
 		"scene" : "n=1",

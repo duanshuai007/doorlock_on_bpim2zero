@@ -11,6 +11,7 @@ import queue
 import threading
 import time
 import json
+import config
 
 class mqtt_client(mqtt.Client):
 
@@ -156,47 +157,15 @@ if __name__ == "__main__":
 	ssid = sys.argv[2]
 	psk = sys.argv[3]
 
-	host = "mqtt.iotwonderful.cn"
-	port = 8883
-	user = "test_001"
-	passwd = "NjBlNjY3ZWRlZ"
-	cafile = "./.mqtt.iotwonderful.cn.crt"
-	crtfile= ''' 
------BEGIN CERTIFICATE-----
-MIIEATCCAumgAwIBAgIJAJueN6AjXSA0MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYD
-VQQGEwJDTjEQMA4GA1UECAwHQmVpamluZzEQMA4GA1UEBwwHQmVpamluZzEVMBMG
-A1UECgwMSW90V29uZGVyZnVsMQwwCgYDVQQLDANQcmQxFTATBgNVBAMMDGlvdHdv
-bmRlcmZ1bDEnMCUGCSqGSIb3DQEJARYYd3VzaHVhaUBpb3R3b25kZXJmdWwuY29t
-MB4XDTIwMDYwOTA3MDcwNVoXDTMwMDYwNzA3MDcwNVowgZYxCzAJBgNVBAYTAkNO
-MRAwDgYDVQQIDAdCZWlqaW5nMRAwDgYDVQQHDAdCZWlqaW5nMRUwEwYDVQQKDAxJ
-b3RXb25kZXJmdWwxDDAKBgNVBAsMA1ByZDEVMBMGA1UEAwwMaW90d29uZGVyZnVs
-MScwJQYJKoZIhvcNAQkBFhh3dXNodWFpQGlvdHdvbmRlcmZ1bC5jb20wggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC4Wjj7eziKCl1bESQUumO0Er00a9YW
-vMC4zR3v63esqbthjN5mqP0zd30Z5uVyn0dzum0a1Un7WlIdsaEQUW5HcixfmUDc
-sBVep0XmmWxtuVzMUpPVRVWUtIbagL8RJjx2cpb33w2t2lDxh5Gj7phZTPDDlyI6
-OSSjauUlv1mOpkHcDBi0iU/wqUXUEo7hsBUft/6uMQK27HXlGn8TvgRT1oXFEVZo
-HvPf9sDRjDxV39iNEhUKRHX2dxxsgLbA6IqI1W2k0h+WVnafp7hjy9QCbjRkBGWK
-1HJ/HqICNBv+UTURsn7DFDioEcuFELGFf0m9Z5nVT7O7Pek10Q7BVBivAgMBAAGj
-UDBOMB0GA1UdDgQWBBS7sWlXl0ZdB5LXA9/TCmk9mdVwRzAfBgNVHSMEGDAWgBS7
-sWlXl0ZdB5LXA9/TCmk9mdVwRzAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUA
-A4IBAQBKw3odroL+BPLewpskJ228+PqqvSQvC3MwMfRA9r6rvIGqQmlW8Utj0Gux
-x7MiDo9wgj61DnndbrSac/oJ5icT8gI7suKeCSh23eLQ58MxZuJzYCekT2s4qVAi
-VLbeb7b4iQadlt3TeIjzvvj60qEHq4Md0SOf1gc01tGc6fMW7Ql29P4RdD682Xad
-KaSWcB3N/NRGZ0zW9321tUgN6VKOEOWqt4vt9G2mPViLeUH7ZVB1gor+pR4N6ljG
-C0FvxTyyS61Jgy/zDfPidUOGCUGukl67T5xQjlewckKnyrTORLDIvMgvLdyD3y2U
-tXfw8qEIFXkmqPXch2AyF5Jq6iTE
------END CERTIFICATE-----
-	'''
-
 	if not os.path.exists(cafile):
 		with open(cafile, "w") as w:
 			w.write(crtfile)
 
 	print("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
-	mc = mqtt_client(	client_id = "id_shenyang_test_enable_ssh", 
-						clean_session = False,
+	mc = mqtt_client(	
+						clean_session = True,
 						userdata = None,
-						protocol = mqtt.MQTTv31,
+						protocol = mqtt.MQTTv311,
 						transport = 'tcp')
 	mc.setsubscribe(topic="/wlan_config_resp", qos=2)
 	mc.set_user_and_password(user, passwd)

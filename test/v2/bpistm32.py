@@ -6,10 +6,9 @@ import requests
 import math
 #import binascii
 
-url="http://1acstest.iotwonderful.cn/gbd"
+url=
 msg = {
-	#"device_sn":"02421a71c57b"
-	"device_sn":"862167051501041"
+	"device_sn":
 }
 
 show_2vcode_image = [

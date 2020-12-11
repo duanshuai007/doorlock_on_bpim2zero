@@ -651,17 +651,17 @@ def client_start():
 	#passwd = c.get("MQTT", "PASSWD")
 	#cafile = c.get("MQTT", "CAFILE")
 	
-	host="mqtttest.iotwonderful.cn"
-	port=8883
-	user="test_001"
-	passwd="NjBlNjY3ZWRlZ"
+	host=
+	port=
+	user=
+	passwd=
 	cafile="/root/crtfile/mqtt.iotwonderful.cn.crt"
 
 	#logger.info("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
 	mc = mqtt_client(   client_id = device_sn, 
 			clean_session = True,
 			userdata = None,
-			protocol = mqtt.MQTTv31,
+			protocol = mqtt.MQTTv311,
 			transport = 'tcp')
 	mc.set_logger(logger)
 	mc.set_device_sn(device_sn, zywlstart_pid)

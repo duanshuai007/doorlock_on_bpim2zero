@@ -8,7 +8,7 @@ import json
 
 class uopload_firmware():
 
-	url = "https://acstest.iotwonderful.cn/upgrade/upload"
+	url = ""
 	filename = None
 
 	def set_upload_file(self, filename:str):

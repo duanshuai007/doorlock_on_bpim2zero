@@ -5,15 +5,11 @@ import json
 import requests
 #import binascii
 
-url="http://1acstest.iotwonderful.cn/gbd"
-msg = {
-	#"device_sn":"02421a71c57b"
-	"device_sn":"862167051501041"
-}
+url=
 
 def get_token(url):
 	values = {
-		"device_sn":"862167051501041"
+		"device_sn":
 	}
 	req = requests.post(url, params=values)
 	print(req.status_code)

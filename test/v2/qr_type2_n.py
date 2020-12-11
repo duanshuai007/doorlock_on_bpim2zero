@@ -12,6 +12,7 @@ import threading
 import time
 import json
 import random
+import config
 
 class mqtt_client(mqtt.Client):
 	username = None
@@ -70,17 +71,16 @@ if __name__ == "__main__":
 	devid = sys.argv[1]
 	dlurl = sys.argv[2]
 
-	host = "mqtttest.iotwonderful.cn"
-	port = 8883
-	user = "test_001"
-	passwd = "NjBlNjY3ZWRlZ"
-	cafile = "./.mqtttest.iotwonderful.cn.crt"
-
+	host = config.MQTT_SERVER_URL
+	port = config.MQTT_SERVER_PORT
+	user = config.MQTT_USER
+	passwd = config.MQTT_PASSWD
+	cafile = config.MQTT_CAFILE_PATH
 	print("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
-	mc = mqtt_client(	client_id = "id_shenyang_test_qrreq_type3",
-						clean_session = False,
+	mc = mqtt_client(	
+						clean_session = True,
 						userdata = None,
-						protocol = mqtt.MQTTv31,
+						protocol = mqtt.MQTTv311,
 						transport = 'tcp')
 	mc.set_user_and_password(user, passwd)
 	mc.set_cafile(cafile)

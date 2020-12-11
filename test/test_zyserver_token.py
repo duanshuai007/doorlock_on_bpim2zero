@@ -4,16 +4,10 @@
 import json
 import requests
 
-url="https://acstest.iotwonderful.cn/api/access/token"
-msg = {
-	"device_sn":"02421a71c57b"
-}
-
 def get_token():
-	url="https://acstest.iotwonderful.cn/api/access/token"
+	url=
 	values = {
-		"device_sn":"02421a71c57b"
-#"device_sn":"024251720577"
+		"device_sn":
 	}
 	req = requests.post(url, params=values)
 	data = json.loads(req.text)

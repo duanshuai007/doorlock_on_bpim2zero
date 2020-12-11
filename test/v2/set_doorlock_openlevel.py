@@ -70,7 +70,6 @@ if __name__ == "__main__":
 	devid = sys.argv[1]
 	opentime = int(sys.argv[2])
 
-
 	host = config.MQTT_SERVER_URL
 	port = config.MQTT_SERVER_PORT
 	user = config.MQTT_USER
@@ -82,10 +81,10 @@ if __name__ == "__main__":
 			f.write(config.MQTT_CAFILE_MESSAGE)
 
 	print("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
-	mc = mqtt_client(	client_id = "id_shenyang_test_qrreq_type3",
-						clean_session = False,
+	mc = mqtt_client(	
+						clean_session = True,
 						userdata = None,
-						protocol = mqtt.MQTTv31,
+						protocol = mqtt.MQTTv311,
 						transport = 'tcp')
 	mc.set_user_and_password(user, passwd)
 	mc.set_cafile(cafile)

@@ -45,11 +45,8 @@ def download(url:str, filename:str)->int:
 def __get_updatefirmware_token():
 	try:
 		#post
-		#token_url = "https://acstest.iotwonderful.cn/api/upgrade/login"
 		token_url = ms.UPGRADE_TOKEN_URL
 		message = { 
-			#"user" : "xinchao@iotwonderful.com",
-			#"password" : "123456"
 			"user" : ms.UPGRADE_USERNAME,
 			"password" : ms.UPGRADE_PASSWORD
 		}   

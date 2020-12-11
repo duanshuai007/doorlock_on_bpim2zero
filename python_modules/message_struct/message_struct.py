@@ -7,9 +7,9 @@ CONCTRL_TOPIC_HEAD	= "/acs/ctrl/"
 COMMON_TOPIC	= "/acs/ask"
 
 DOORSTONE="iotwonderful"
-UPGRADE_TOKEN_URL="https://acstest.iotwonderful.cn/api/upgrade/login"
-UPGRADE_USERNAME="xinchao@iotwonderful.com"
-UPGRADE_PASSWORD="123456"
+UPGRADE_TOKEN_URL=
+UPGRADE_USERNAME=
+UPGRADE_PASSWORD=
 
 RESPONSE_MSG = {
 	"resp" : 1,

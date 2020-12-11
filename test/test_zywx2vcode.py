@@ -14,8 +14,8 @@ import logging
 wx_token_url = "https://api.weixin.qq.com/cgi-bin/token"
 get_token_msg = {
  "grant_type" : "client_credential",
-  "appid" : "wxd459af37673abbd6",
-  "secret" : "ee3b7bc1a4eed49b99e574794acaf51c",
+  "appid" : 
+  "secret" : 
 }
 
 def initLogging(logFilename):
@@ -51,7 +51,7 @@ def get_accesstoken(url:str, msg:dict):
 class wx_2vcode():
 
 	wx_2vcode_url="https://api.weixin.qq.com/wxa/getwxacodeunlimit"
-	server_token_url = "https://acstest.iotwonderful.cn/api/access/token"
+	server_token_url = 
 
 	message = { 
 		"scene" : "n=1",

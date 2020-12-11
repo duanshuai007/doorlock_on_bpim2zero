@@ -200,8 +200,6 @@ if __name__ == "__main__":
 	protocol=MQTTv311 or MQTTv31
 	transport="tcp" or "websockets"
 	'''
-
-
 	host = config.MQTT_SERVER_URL
 	port = config.MQTT_SERVER_PORT
 	user = config.MQTT_USER
@@ -216,10 +214,10 @@ if __name__ == "__main__":
 			w.write(crtfile)
 	
 	logger.info("host={}, port={}, username={}, password={}, cafile={}".format(host, port, user, passwd, cafile))
-	mc = mqtt_client(	client_id = "iot_acs_doorlock_monitor", 
-						clean_session = False,
+	mc = mqtt_client(	
+						clean_session = True,
 						userdata = None,
-						protocol = mqtt.MQTTv31,
+						protocol = mqtt.MQTTv311,
 						transport = 'tcp')
 	mc.setsubscribe(topic="#", qos=0)
 	mc.set_logger(logger)

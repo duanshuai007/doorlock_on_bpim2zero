@@ -15,7 +15,7 @@ DEBUG = True  # 标记是否在开发环境
 LOGGERNAME = "acs"
 
 #LOGFILE = config.config("/root/config.ini").get("CONFIG", "LOGFILE")
-LOGFILE = "./acsdoorlock/monitor.log"
+LOGFILE = "{}/acsdoorlock/monitor.log".format(os.path.abspath(os.path.dirname(__file__)))
 if not os.path.exists(LOGFILE):
 	r=os.path.split(LOGFILE)
 	if not os.path.exists(r[0]):

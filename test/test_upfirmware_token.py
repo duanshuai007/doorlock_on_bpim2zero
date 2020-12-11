@@ -6,10 +6,10 @@ import hashlib
 def __get_updatefirmware_token():
 	try:
 		#post
-		token_url = "https://acstest.iotwonderful.cn/api/upgrade/login"
+		token_url = 
 		message = { 
-			"user" : "xinchao@iotwonderful.com",
-			"password" : "123456"
+			"user" : 
+			"password" : 
 		}   
 		data = urllib.parse.urlencode(message).encode()
 		req = urllib.request.Request(token_url, data=data)
@@ -27,8 +27,7 @@ def __get_updatefirmware_token():
 
 def __down_firmware(token:str):
 	try:
-		#url = "https://acstest.iotwonderful.cn/api/upgrade/download?file_name=upgrade/7d0f4085.png"
-		url = "https://acstest.iotwonderful.cn/api/upgrade/download?file_name=upgrade/6b863767.gz"
+		url = 
 		fullurl = "{}&token={}".format(url, token)
 		print(fullurl)
 		m = hashlib.md5()
@@ -48,8 +47,7 @@ def __down_firmware(token:str):
 	
 def __down_2(token):
 	try:
-		#url = "https://acstest.iotwonderful.cn/api/upgrade/download?file_name=upgrade/7d0f4085.png"
-		url = "https://acstest.iotwonderful.cn/api/upgrade/download?file_name=upgrade/6b863767.gz"
+		url = 
 		fullurl = "{}&token={}".format(url, token)
 		#print(fullurl)
 		r = urllib.request.urlretrieve(fullurl, "./test.png")
